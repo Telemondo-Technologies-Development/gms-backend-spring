@@ -7,7 +7,7 @@ START TRANSACTION;
 
 CREATE TABLE actors (
   id              binary(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
-  type            ENUM('user','system') NOT NULL,
+  type            varchar(255) NOT NULL,
   created_at      datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   deactivated_at  datetime(6) NULL
 );
@@ -40,14 +40,14 @@ CREATE TABLE branch (
   longitude       varchar(255) NOT NULL,
   latitude        varchar(255) NOT NULL,
   -- Not yet final
-  status          enum('active','closed','fired') NOT NULL,
-  profile_picture binary(16) NOT NULL,
+  status          varchar(255) NOT NULL,
+  profile_picture binary(16) NULL,
   created_by      binary(16) NOT NULL,
   updated_by      binary(16) NOT NULL,
   created_at      datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at      datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   -- Not sure if i include ang address for uniqueness
-  CONSTRAINT branch_ibfk_1 FOREIGN KEY (profile_picture) REFERENCES object_storage (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT branch_ibfk_1 FOREIGN KEY (profile_picture) REFERENCES object_storage (id) ON DELETE SET NULL,
   CONSTRAINT branch_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT branch_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
@@ -72,15 +72,15 @@ CREATE TABLE employees (
   first_name      varchar(255) NOT NULL,
   middle_name     varchar(255) DEFAULT NULL,
   suffix          varchar(10) DEFAULT NULL,
-  contact_no      varchar(13) DEFAULT NULL,
+  contact_no      varchar(25) DEFAULT NULL,
   -- Not yet final
-  status          enum('employed','retired','fired') NOT NULL,
-  profile_picture binary(16) NOT NULL,
+  status          varchar(255) NOT NULL,
+  profile_picture binary(16) NULL,
   created_at      datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at      datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   CONSTRAINT employees_ibfk_1 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT employees_ibfk_2 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT employees_ibfk_3 FOREIGN KEY (profile_picture) REFERENCES object_storage (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT employees_ibfk_3 FOREIGN KEY (profile_picture) REFERENCES object_storage (id) ON DELETE SET NULL
 );
 
 CREATE TABLE employee_objects (
@@ -94,7 +94,7 @@ CREATE TABLE employee_objects (
 CREATE TABLE roles (
   id          binary(16) PRIMARY KEY,
   name        varchar(255) UNIQUE NOT NULL,
-  description varchar(255) NOT NULL,
+  description varchar(255) NULL,
   created_by  binary(16) NOT NULL,
   updated_by  binary(16) NOT NULL,
   created_at  datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -135,8 +135,8 @@ CREATE TABLE members (
   middle_name 		varchar(255) DEFAULT NULL,
   suffix 			varchar(10) DEFAULT NULL,
   -- Not yet final
-  status 			enum('active','inactive') NOT NULL,
-  profile_picture 	binary(16) NOT NULL,
+  status 			varchar(255) NOT NULL,
+  profile_picture 	binary(16) NULL,
   created_by 		binary(16) NOT NULL,
   updated_by 		binary(16) NOT NULL,
   created_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -144,7 +144,7 @@ CREATE TABLE members (
   CONSTRAINT members_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT members_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT members_ibfk_3 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT members_ibfk_4 FOREIGN KEY (profile_picture) REFERENCES object_storage (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT members_ibfk_4 FOREIGN KEY (profile_picture) REFERENCES object_storage (id) ON DELETE SET NULL
 );
 
 CREATE TABLE member_objects (
@@ -157,14 +157,26 @@ CREATE TABLE member_objects (
 
 CREATE TABLE progress (
   id 		binary(16) PRIMARY KEY,
-  name 		varchar(255) UNIQUE NOT NULL
+  name 		varchar(255) UNIQUE NOT NULL,
+  created_by 		binary(16) NOT NULL,
+  updated_by 		binary(16) NOT NULL,
+  created_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT progress_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT progress_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE progress_options (
   id 			binary(16) PRIMARY KEY,
   progress_id 	binary(16) NOT NULL,
   name 			varchar(255) UNIQUE NOT NULL,
-  CONSTRAINT progress_options_ibfk_1 FOREIGN KEY (progress_id) REFERENCES progress (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  created_by 	binary(16) NOT NULL,
+  updated_by 	binary(16) NOT NULL,
+  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT progress_options_ibfk_1 FOREIGN KEY (progress_id) REFERENCES progress (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT progress_options_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT progress_options_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE member_progress (
@@ -172,9 +184,9 @@ CREATE TABLE member_progress (
   actor_id 				binary(16) NOT NULL,
   progress_option_id 	binary(16) NOT NULL,
   branch_id 			binary(16) NOT NULL,
-  remarks 				varchar(255) NOT NULL,
+  remarks 				text NULL,
   -- Not yet final
-  status				enum('ongoing','canceled') NOT NULL,
+  status				varchar(255) NOT NULL,
   created_by 			binary(16) NOT NULL,
   updated_by 			binary(16) NOT NULL,
   created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -186,31 +198,26 @@ CREATE TABLE member_progress (
   CONSTRAINT member_progress_ibfk_4 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-CREATE TABLE attendance_types (
-  id 		binary(16) PRIMARY KEY,
-  name 		varchar(255) UNIQUE NOT NULL
-);
 
 CREATE TABLE attendance (
   id 					binary(16) PRIMARY KEY,
   actor_id 				binary(16) NOT NULL,
   branch_id 			binary(16) NOT NULL,
-  attendance_type_id 	binary(16) NOT NULL,
-  remarks 				varchar(255) NOT NULL,
+  attendance_type 		varchar(255) NOT NULL,
+  remarks 				varchar(255) NULL,
   -- Not yet final
-  type 					enum('in','out','undecided') NOT NULL,
+  type 					varchar(255) NOT NULL,
   created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   CONSTRAINT attendance_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT attendance_ibfk_2 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT attendance_ibfk_3 FOREIGN KEY (attendance_type_id) REFERENCES attendance_types (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT attendance_ibfk_2 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE billing_cycles (
   id 				binary(16) PRIMARY KEY,
   name 				varchar(255) NOT NULL,
-  intervals 		enum('daily','weekly','monthly','yearly') NOT NULL,
+  intervals 		varchar(255) NOT NULL,
   interval_count 	int NOT NULL,
-  grace_period 		int NOT NULL,
+  grace_period_days int NOT NULL,
   created_by 		binary(16) NOT NULL,
   updated_by 		binary(16) NOT NULL,
   created_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -223,6 +230,7 @@ CREATE TABLE subscriptions (
   id 					binary(16) PRIMARY KEY,
   billing_cycle_id 		binary(16) NOT NULL,
   name 					varchar(255) NOT NULL,
+  description 			text NULL,
   amount 				decimal(10,2) NOT NULL,
   created_by 			binary(16) NOT NULL,
   updated_by 			binary(16) NOT NULL,
@@ -238,9 +246,9 @@ CREATE TABLE subscriptions_availed (
   subscription_id 	binary(16) NOT NULL,
   name 				varchar(255) NOT NULL,
   amount 			decimal(10,2) NOT NULL,
-  intervals 		enum('daily','weekly','monthly','yearly') NOT NULL,
+  intervals 		varchar(255) NOT NULL,
   interval_count 	int NOT NULL,
-  grace_period 	int NOT NULL,
+  grace_period_days int NOT NULL,
   CONSTRAINT subscriptions_availed_ibfk_1 FOREIGN KEY (subscription_id) REFERENCES subscriptions (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
@@ -249,10 +257,10 @@ CREATE TABLE member_subscriptions (
   actor_id 					binary(16) NOT NULL,
   subscription_availed_id 	binary(16) NOT NULL,
   branch_id 				binary(16) NOT NULL,
-  start_date 				date NOT NULL,
-  end_date					date NULL,
+  start_date 				datetime(6) NOT NULL,
+  end_date					datetime(6) NULL,
   -- Not yet sure what to put
-  status 					enum('active','paused','canceled') NOT NULL,
+  status 					varchar(255) NOT NULL,
   created_by 				binary(16) NOT NULL,
   updated_by 				binary(16) NOT NULL,
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -272,7 +280,7 @@ CREATE TABLE invoices (
   subscription_availed_id 	binary(16) NOT NULL,
   branch_id 				binary(16) NOT NULL,
   -- Not yet sure what to put
-  status 					enum('draft','issued','paid','overnight') NOT NULL,
+  status 					varchar(255) NOT NULL,
   subtotal 					decimal(10,2) NOT NULL,
   discount 					decimal(10,2) NULL,
   convenience_fee 			decimal(10,2) NULL,
@@ -292,19 +300,33 @@ CREATE TABLE invoices (
 );
 
 CREATE TABLE payment_methods (
-  id 	binary(16) PRIMARY KEY,
-  name 	varchar(255) UNIQUE NOT NULL
+  id 			binary(16) PRIMARY KEY,
+  name 			varchar(255) UNIQUE NOT NULL,
+  created_by 	binary(16) NOT NULL,
+  updated_by 	binary(16) NOT NULL,
+  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT payment_methods_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT payment_methods_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE payment_method_objects (
+  payment_method_id binary(16) NOT NULL,
+  object_id 		binary(16) NOT NULL,
+  PRIMARY KEY (payment_method_id,object_id),
+  CONSTRAINT payment_method_objects_ibfk_1 FOREIGN KEY (payment_method_id) REFERENCES payment_methods (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT payment_method_objects_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 CREATE TABLE payments (
   id 					binary(16) PRIMARY KEY,
   invoice_id 			binary(16) NOT NULL,
   -- Not yet sure what to put
-  status 				enum('pending','failed','paid','refund') NOT NULL,
+  status 				varchar(255) NOT NULL,
   payment_method_id 	binary(16) NOT NULL,
   amount 				decimal(10,2) NOT NULL,
-  paid_at 				datetime(6) NOT NULL,
-  failure_reason 		varchar(255) NULL,
+  paid_at 				datetime(6) NULL,
+  failure_reason 		text NULL,
   created_by 			binary(16) NOT NULL,
   updated_by 			binary(16) NOT NULL,
   created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -323,14 +345,14 @@ CREATE TABLE ledgers (
   invoice_id 				binary(16) NOT NULL,
   payment_id 				binary(16) NOT NULL,
   -- Not yet sure what to put
-  entry_type 				enum('invoice','payment','refund') NOT NULL,
+  entry_type 				varchar(255) NOT NULL,
   subscription_name 		varchar(255) NOT NULL,
   branch_name 				varchar(255) NOT NULL,
   intervals 				varchar(255) NOT NULL,
   interval_count 			int NOT NULL,
-  grace_period 				int NOT NULL,
+  grace_period_days 		int NOT NULL,
   amount 					decimal(10,2) NOT NULL,
-  payment_method 			varchar(255) NOT NULL,
+  payment_method_name 		varchar(255) NOT NULL,
   created_by 				binary(16) NOT NULL,
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   CONSTRAINT ledgers_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
@@ -348,7 +370,7 @@ CREATE TABLE branch_personnel (
   actor_id 		binary(16) NOT NULL,
   branch_id 	binary(16) NOT NULL,
   -- Not final
-  status 		enum('active','moved') NOT NULL,
+  status 		varchar(255) NOT NULL,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -362,14 +384,20 @@ CREATE TABLE branch_personnel (
 -- Asset Tracking
 
 CREATE TABLE asset_categories (
-  id 	binary(16) PRIMARY KEY,
-  name 	varchar(255) UNIQUE NOT NULL
+  id 			binary(16) PRIMARY KEY,
+  name 			varchar(255) UNIQUE NOT NULL,
+  created_by 	binary(16) NOT NULL,
+  updated_by 	binary(16) NOT NULL,
+  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT asset_categories_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT asset_categories_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE maintenance_schedules (
   id 			binary(16) PRIMARY KEY,
   start_date 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  intervals 	enum('daily','weekly','monthly','yearly') NOT NULL,
+  intervals 	varchar(255) NOT NULL,
   interval_count int NOT NULL
 );
 
@@ -381,7 +409,7 @@ CREATE TABLE assets (
   name 						varchar(255) NOT NULL,
   manufactured_date 		datetime(6) NULL,
   end_of_life 				datetime(6) NULL,
-  remarks 					varchar(255) NOT NULL,
+  remarks 					text NULL,
   -- Not final
   created_by 				binary(16) NOT NULL,
   updated_by 				binary(16) NOT NULL,
@@ -405,8 +433,8 @@ CREATE TABLE asset_objects (
 CREATE TABLE asset_maintenance (
   id 			binary(16) PRIMARY KEY,
   asset_id 		binary(16) NOT NULL,
-  status 		enum('due','done','skipped','stopped') NOT NULL,
-  description 	varchar(255) NOT NULL,
+  status 		varchar(255) NOT NULL,
+  description 	text NULL,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -427,9 +455,10 @@ CREATE TABLE asset_maintenance_objects (
 CREATE TABLE supplies (
   id 			binary(16) PRIMARY KEY,
   branch_id 	binary(16) NOT NULL,
-  name 		varchar(255) NOT NULL,
+  name 			varchar(255) NOT NULL,
+  description 	text NULL,
   -- derived from the supplies_log
-  quantity 	int NOT NULL,
+  quantity 		int NOT NULL,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -443,6 +472,7 @@ CREATE TABLE supplies_logs (
   id 			binary(16) PRIMARY KEY,
   supplies_id 	binary(16) NOT NULL,
   name 			varchar(255) NOT NULL,
+  remarks		text NULL,
   quantity 		int NOT NULL,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
@@ -484,7 +514,7 @@ CREATE TABLE salary_expenses (
   branch_id 	binary(16) NOT NULL,
   -- Employee
   actor_id 		binary(16) NOT NULL,
-  salary_type 	enum('full','partial','advanced') NOT NULL,
+  salary_type 	varchar(255) NOT NULL,
   amount 		decimal(10,2) NOT NULL,
   period 		date NOT NULL,
   paid_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -507,8 +537,14 @@ CREATE TABLE salary_expense_objects (
 );
 
 CREATE TABLE utility_types (
-  id 	binary(16) PRIMARY KEY,
-  name 	varchar(255) UNIQUE NOT NULL
+  id 			binary(16) PRIMARY KEY,
+  name 			varchar(255) UNIQUE NOT NULL,
+  created_by 	binary(16) NOT NULL,
+  updated_by 	binary(16) NOT NULL,
+  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT utility_types_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT utility_types_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE utility_expenses (
@@ -538,8 +574,14 @@ CREATE TABLE utility_expense_objects (
 );
 
 CREATE TABLE other_expense_types (
-  id 		binary(16) PRIMARY KEY,
-  name 		varchar(255) UNIQUE NOT NULL
+  id 			binary(16) PRIMARY KEY,
+  name 			varchar(255) UNIQUE NOT NULL,
+  created_by 	binary(16) NOT NULL,
+  updated_by 	binary(16) NOT NULL,
+  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT other_expense_types_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT other_expense_types_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE other_expenses (
@@ -617,8 +659,14 @@ CREATE TABLE supplies_expense_objects (
 -- Report Tracking System
 
 CREATE TABLE report_types (
-  id 	binary(16) PRIMARY KEY,
-  name 	varchar(255) UNIQUE NOT NULL
+  id 			binary(16) PRIMARY KEY,
+  name 			varchar(255) UNIQUE NOT NULL,
+  created_by 	binary(16) NOT NULL,
+  updated_by 	binary(16) NOT NULL,
+  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT report_types_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT report_types_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE reports (
@@ -626,7 +674,7 @@ CREATE TABLE reports (
   branch_id 		binary(16) NOT NULL,
   actor_id 			binary(16) NOT NULL,
   report_type_id 	binary(16) NOT NULL,
-  description 		varchar(255) NOT NULL,
+  description 		text NULL,
   occurred_at 		datetime(6) NULL,
   created_by 		binary(16) NOT NULL,
   updated_by 		binary(16) NOT NULL,
