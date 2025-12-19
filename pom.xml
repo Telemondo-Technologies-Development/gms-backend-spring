@@ -16,6 +16,27 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>gms-backend-spring</name>
+    <description>Demo project for Spring Boot</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Adrian Carlo A. Menguita</name>
+        </developer>
+        <developer>
+            <name>Sharlynne W. Yap</name>
+        </developer>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+
     <modules>
         <module>launcher</module>
         <module>db</module>
@@ -25,6 +46,84 @@
     <properties>
         <java.version>17</java.version>
         <kotlin.version>2.2.21</kotlin.version>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
+
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
+        <database.rider.version>1.41.0</database.rider.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.code.style>official</kotlin.code.style>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-reflect</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-test-junit5</artifactId>
+                <version>${kotlin.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${org.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${org.mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.database-rider</groupId>
+                <artifactId>rider-spring</artifactId>
+                <version>${database.rider.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin.version}</version>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>process-sources</phase>
+                            <goals><goal>compile</goal></goals>
+                        </execution>
+                        <execution>
+                            <id>test-compile</id>
+                            <phase>test-compile</phase>
+                            <goals><goal>test-compile</goal></goals>
+                        </execution>
+                    </executions>
+
+                    <configuration>
+                        <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
+                        <args>
+                            <arg>-Xjsr305=strict</arg>
+                            <arg>-Xannotation-default-target=param-property</arg>
+                        </args>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
