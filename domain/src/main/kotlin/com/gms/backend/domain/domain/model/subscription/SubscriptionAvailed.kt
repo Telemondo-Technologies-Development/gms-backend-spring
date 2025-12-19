@@ -1,0 +1,48 @@
+package com.gms.backend.domain.domain.model.subscription
+
+import com.gms.backend.domain.domain.model.billing.Invoice
+import com.gms.backend.domain.domain.model.billing.Ledger
+import com.gms.backend.domain.domain.model.member.MemberSubscription
+import jakarta.persistence.*
+import org.hibernate.annotations.UuidGenerator
+import java.math.BigDecimal
+import java.util.*
+
+@Entity
+@Table(name = "subscription_availed")
+class SubscriptionAvailed {
+
+    @Id
+    @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    var id: UUID? = null
+
+    @Column(nullable = false)
+    var name: String? = null
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    var amount: BigDecimal? = null
+
+    @Column(nullable = false)
+    var intervals: String? = null
+
+    @Column(nullable = false)
+    var intervalCount: Int? = null
+
+    @Column(nullable = false)
+    var gracePeriodDays: Int? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id", nullable = false)
+    var subscription: Subscription? = null
+
+    @OneToMany(mappedBy = "subscriptionAvailed")
+    var subscriptionAvailedMemberSubscriptions = mutableSetOf<MemberSubscription>()
+
+    @OneToMany(mappedBy = "subscriptionAvailed")
+    var subscriptionAvailedInvoices = mutableSetOf<Invoice>()
+
+    @OneToMany(mappedBy = "subscriptionAvailed")
+    var subscriptionAvailedLedgers = mutableSetOf<Ledger>()
+}
