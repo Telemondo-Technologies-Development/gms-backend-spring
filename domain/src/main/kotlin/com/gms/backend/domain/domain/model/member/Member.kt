@@ -13,6 +13,12 @@ import java.util.*
 @Table(name = "members")
 class Member {
 
+    enum class MemberStatus {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -32,7 +38,8 @@ class Member {
     var suffix: String? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: MemberStatus
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -50,12 +57,12 @@ class Member {
     @JoinColumn(name = "updated_by", nullable = false)
     var updatedBy: Actor? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "actor_id", nullable = false)
     var actor: Actor? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_picture_id", nullable = true)
+    @JoinColumn(name = "profile_picture", nullable = true)
     var profilePicture: ObjectStorage? = null
 
     @ManyToMany(fetch = FetchType.LAZY)

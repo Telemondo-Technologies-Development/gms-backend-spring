@@ -13,6 +13,12 @@ import java.util.*
 @Table(name = "member_progress")
 class MemberProgress {
 
+    enum class MemberProgressStatus {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -26,7 +32,8 @@ class MemberProgress {
     var remarks: String? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: MemberProgressStatus
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

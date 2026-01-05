@@ -12,6 +12,12 @@ import java.util.*
 @Table(name = "branch_personnel")
 class BranchPersonnel {
 
+    enum class BranchPersonnelStatus {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -19,7 +25,8 @@ class BranchPersonnel {
     var id: UUID? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: BranchPersonnelStatus
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

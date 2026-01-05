@@ -14,6 +14,12 @@ import java.util.*
 @Table(name = "member_subscriptions")
 class MemberSubscription {
 
+    enum class MemberSubscriptionStatus {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -27,7 +33,8 @@ class MemberSubscription {
     var endDate: Instant? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: MemberSubscriptionStatus
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

@@ -14,6 +14,12 @@ import java.util.*
 @Table(name = "asset_maintenance")
 class AssetMaintenance {
 
+    enum class AssetMaintenanceStatus {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -21,7 +27,8 @@ class AssetMaintenance {
     var id: UUID? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: AssetMaintenanceStatus
 
     @Column(nullable = true, name = "description")
     var description: String? = null

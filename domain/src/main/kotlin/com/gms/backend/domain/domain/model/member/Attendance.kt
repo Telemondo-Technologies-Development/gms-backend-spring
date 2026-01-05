@@ -12,6 +12,12 @@ import java.util.*
 @Table(name = "attendance")
 class Attendance {
 
+    enum class AttendanceType {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -22,7 +28,8 @@ class Attendance {
     var remarks: String? = null
 
     @Column(nullable = false)
-    var type: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var type: AttendanceType
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -35,8 +42,4 @@ class Attendance {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
     var branch: Branch? = null
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attendance_type_id", nullable = false)
-    var attendanceType: AttendanceType? = null
 }

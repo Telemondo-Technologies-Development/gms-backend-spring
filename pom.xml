@@ -104,6 +104,24 @@
 
                     <executions>
                         <execution>
+                            <id>kapt</id>
+                            <goals>
+                                <goal>kapt</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirs>
+                                    <sourceDir>src/main/kotlin</sourceDir>
+                                </sourceDirs>
+                                <annotationProcessorPaths>
+                                    <annotationProcessorPath>
+                                        <groupId>org.mapstruct</groupId>
+                                        <artifactId>mapstruct-processor</artifactId>
+                                        <version>${org.mapstruct.version}</version>
+                                    </annotationProcessorPath>
+                                </annotationProcessorPaths>
+                            </configuration>
+                        </execution>
+                        <execution>
                             <id>compile</id>
                             <phase>process-sources</phase>
                             <goals><goal>compile</goal></goals>
@@ -121,7 +139,59 @@
                             <arg>-Xjsr305=strict</arg>
                             <arg>-Xannotation-default-target=param-property</arg>
                         </args>
+                        <compilerPlugins>
+                            <plugin>spring</plugin>
+                            <plugin>jpa</plugin>
+                            <plugin>all-open</plugin>
+                        </compilerPlugins>
+
+                        <pluginOptions>
+                            <option>all-open:annotation=jakarta.persistence.Entity</option>
+                            <option>all-open:annotation=jakarta.persistence.MappedSuperclass</option>
+                            <option>all-open:annotation=jakarta.persistence.Embeddable</option>
+                        </pluginOptions>
                     </configuration>
+
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-allopen</artifactId>
+                            <version>${kotlin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-noarg</artifactId>
+                            <version>${kotlin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <!-- Not sure if working -->
+                <plugin>
+                    <groupId>org.hibernate.orm.tooling</groupId>
+                    <artifactId>hibernate-enhance-maven-plugin</artifactId>
+                    <version>6.6.40.Final</version>
+
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>enhance</goal>
+                            </goals>
+                            <configuration>
+                                <!-- Enable lazy loading for to-one associations -->
+                                <enableLazyInitialization>true</enableLazyInitialization>
+                                <!-- Optional: Enable dirty tracking for better performance -->
+                                <enableDirtyTracking>true</enableDirtyTracking>
+                                <!-- Optional: Automatically manage bidirectional associations -->
+                                <!-- <enableAssociationManagement>true</enableAssociationManagement> -->
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -22,6 +22,12 @@ import java.util.*
 @Table(name = "branch")
 class Branch {
 
+    enum class BranchStatus {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -41,7 +47,8 @@ class Branch {
     var latitude: String? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: BranchStatus
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -52,7 +59,7 @@ class Branch {
     var updatedAt: Instant? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_picture_id", nullable = true)
+    @JoinColumn(name = "profile_picture", nullable = true)
     var profilePicture: ObjectStorage? = null
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -13,6 +13,12 @@ import java.util.*
 @Table(name = "payments")
 class Payment {
 
+    enum class PaymentStatus {
+        IN,
+        OUT,
+        UNDECIDED,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -20,7 +26,8 @@ class Payment {
     var id: UUID? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: PaymentStatus
 
     @Column(nullable = false, precision = 10, scale = 2)
     var amount: BigDecimal? = null
