@@ -172,27 +172,27 @@
                     </dependencies>
                 </plugin>
                 <!-- Not sure if working -->
-                <plugin>
-                    <groupId>org.hibernate.orm.tooling</groupId>
-                    <artifactId>hibernate-enhance-maven-plugin</artifactId>
-                    <version>6.6.40.Final</version>
+<!--                <plugin>-->
+<!--                    <groupId>org.hibernate.orm.tooling</groupId>-->
+<!--                    <artifactId>hibernate-enhance-maven-plugin</artifactId>-->
+<!--                    <version>6.6.40.Final</version>-->
 
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>enhance</goal>
-                            </goals>
-                            <configuration>
-                                <!-- Enable lazy loading for to-one associations -->
-                                <enableLazyInitialization>true</enableLazyInitialization>
-                                <!-- Optional: Enable dirty tracking for better performance -->
-                                <enableDirtyTracking>true</enableDirtyTracking>
-                                <!-- Optional: Automatically manage bidirectional associations -->
-                                <!-- <enableAssociationManagement>true</enableAssociationManagement> -->
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <goals>-->
+<!--                                <goal>enhance</goal>-->
+<!--                            </goals>-->
+<!--                            <configuration>-->
+<!--                                &lt;!&ndash; Enable lazy loading for to-one associations &ndash;&gt;-->
+<!--                                <enableLazyInitialization>true</enableLazyInitialization>-->
+<!--                                &lt;!&ndash; Optional: Enable dirty tracking for better performance &ndash;&gt;-->
+<!--                                <enableDirtyTracking>true</enableDirtyTracking>-->
+<!--                                &lt;!&ndash; Optional: Automatically manage bidirectional associations &ndash;&gt;-->
+<!--                                &lt;!&ndash; <enableAssociationManagement>true</enableAssociationManagement> &ndash;&gt;-->
+<!--                            </configuration>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                </plugin>-->
             </plugins>
         </pluginManagement>
     </build>

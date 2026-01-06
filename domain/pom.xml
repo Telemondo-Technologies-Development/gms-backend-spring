@@ -64,10 +64,10 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.hibernate.orm.tooling</groupId>
-                <artifactId>hibernate-enhance-maven-plugin</artifactId>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.hibernate.orm.tooling</groupId>-->
+<!--                <artifactId>hibernate-enhance-maven-plugin</artifactId>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

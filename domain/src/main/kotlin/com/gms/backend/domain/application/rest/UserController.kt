@@ -52,7 +52,7 @@ class UserController(private val userService: UserServiceImpl) {
     }
 
     @DeleteMapping("/{id}")
-    fun optional(@PathVariable id: UUID): ResponseEntity<String> {
+    fun deleteUser(@PathVariable id: UUID): ResponseEntity<String> {
         return try {
             userService.deleteUser(id)
             ResponseEntity.ok("User Deleted")

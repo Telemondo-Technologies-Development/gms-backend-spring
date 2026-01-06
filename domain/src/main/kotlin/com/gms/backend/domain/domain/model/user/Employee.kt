@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.model.user
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -53,11 +54,19 @@ class Employee {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     var user: User? = null
+
+    @Column(name = "user_id", insertable = false, updatable = false)
+    var userId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "actor_id", nullable = false)
+    @JsonIgnore
     var actor: Actor? = null
+
+    @Column(name = "actor_id", insertable = false, updatable = false)
+    var actorId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_picture", nullable = true)

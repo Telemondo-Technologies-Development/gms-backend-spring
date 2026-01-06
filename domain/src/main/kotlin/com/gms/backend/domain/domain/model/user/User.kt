@@ -11,7 +11,7 @@ import java.util.*
 
 @Entity
 @Table(name = "users")
-@DynamicUpdate // Only updates changed field
+//@DynamicUpdate // Only updates changed field (Seems to be inefficient for small tables with few data)
 class User {
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
