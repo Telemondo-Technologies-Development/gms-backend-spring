@@ -1,9 +1,9 @@
 package com.gms.backend.domain.application.rest
 
+import com.gms.backend.domain.application.response.toCreatedResponse
+import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.domain.model.member.Member
 import com.gms.backend.domain.impl.domain.service.member.MemberServiceImpl
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -24,16 +24,10 @@ class MemberController(private val memberService: MemberServiceImpl) {
     )
 
     @GetMapping("")
-    fun getAllUsers(): ResponseEntity<List<MemberTableDTO>> {
-        val members = memberService.getMembers()
-        return ResponseEntity.ok(members)
-    }
+    fun getAllUsers() = memberService.getMembers().toOkResponse()
 
     @GetMapping("/{id}")
-    fun getMember(@PathVariable id: UUID): ResponseEntity<Optional<Member>> {
-        val member = memberService.getMemberById(id)
-        return ResponseEntity.ok(member)
-    }
+    fun getMember(@PathVariable id: UUID) = memberService.getMemberById(id).toOkResponse()
 
     data class MemberPostDTO(
         val surname: String,
@@ -46,10 +40,8 @@ class MemberController(private val memberService: MemberServiceImpl) {
     )
 
     @PostMapping("")
-    fun createMember(@RequestBody body: MemberPostDTO): ResponseEntity<String> {
-        val something = memberService.createMember(body)
-        return ResponseEntity.ok("Member Successfully Created!")
-    }
+    fun createMember(@RequestBody body: MemberPostDTO) =
+        memberService.createMember(body).toCreatedResponse("Member Successfully Created!")
 
     data class MemberPutDTO(
         val surname: String,
@@ -62,26 +54,11 @@ class MemberController(private val memberService: MemberServiceImpl) {
     )
 
     @PutMapping("/{id}")
-    fun updateMember(@PathVariable id: UUID, @RequestBody body: MemberPutDTO): ResponseEntity<String> {
-        return try {
-            memberService.updateMember(id, body)
-            ResponseEntity.ok("Member updated")
-        } catch (e: Exception) {
-            // Catch all other exceptions
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error updating member: ${e.message}")
-        }
-    }
+    fun updateMember(@PathVariable id: UUID, @RequestBody body: MemberPutDTO) =
+        memberService.updateMember(id, body).toOkResponse("Member updated")
+
 
     @DeleteMapping("/{id}")
-    fun deleteMember(@PathVariable id: UUID): ResponseEntity<String> {
-        return try {
-            memberService.deleteMember(id)
-            ResponseEntity.ok("Member Deleted")
-        } catch (e: Exception) {
-            // Catch all other exceptions
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error deleting member: ${e.message}")
-        }
-    }
+    fun deleteMember(@PathVariable id: UUID) =
+        memberService.deleteMember(id).toOkResponse("Member Deleted")
 }

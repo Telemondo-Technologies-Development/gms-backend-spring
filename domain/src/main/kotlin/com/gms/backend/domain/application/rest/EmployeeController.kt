@@ -1,9 +1,9 @@
 package com.gms.backend.domain.application.rest
 
+import com.gms.backend.domain.application.response.toCreatedResponse
+import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.impl.domain.service.user.EmployeeServiceImpl
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -26,16 +26,10 @@ class EmployeeController(
     )
 
     @GetMapping("")
-    fun getAllUsers(): ResponseEntity<List<EmployeeTableDTO>> {
-        val employees = employeeService.getEmployees()
-        return ResponseEntity.ok(employees)
-    }
+    fun getAllUsers() = employeeService.getEmployees().toOkResponse()
 
     @GetMapping("/{id}")
-    fun getEmployee(@PathVariable id: UUID): ResponseEntity<Optional<Employee>> {
-        val employee = employeeService.getEmployeeById(id)
-        return ResponseEntity.ok(employee)
-    }
+    fun getEmployee(@PathVariable id: UUID) = employeeService.getEmployeeById(id).toOkResponse()
 
     data class EmployeePostDTO(
         val userId: UUID?,
@@ -49,10 +43,8 @@ class EmployeeController(
     )
 
     @PostMapping("")
-    fun createEmployee(@RequestBody body: EmployeePostDTO): ResponseEntity<String> {
-        val something = employeeService.createEmployee(body)
-        return ResponseEntity.ok("Employee Successfully Created!")
-    }
+    fun createEmployee(@RequestBody body: EmployeePostDTO) =
+        employeeService.createEmployee(body).toCreatedResponse()
 
     data class EmployeePutDTO(
         val userId: UUID?,
@@ -66,26 +58,10 @@ class EmployeeController(
     )
 
     @PutMapping("/{id}")
-    fun updateEmployee(@PathVariable id: UUID, @RequestBody body: EmployeePutDTO): ResponseEntity<String> {
-        return try {
-            employeeService.updateEmployee(id, body)
-            ResponseEntity.ok("Employee updated")
-        } catch (e: Exception) {
-            // Catch all other exceptions
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error updating employee: ${e.message}")
-        }
-    }
+    fun updateEmployee(@PathVariable id: UUID, @RequestBody body: EmployeePutDTO) =
+        employeeService.updateEmployee(id, body).toOkResponse()
 
     @DeleteMapping("/{id}")
-    fun deleteEmployee(@PathVariable id: UUID): ResponseEntity<String> {
-        return try {
-            employeeService.deleteEmployee(id)
-            ResponseEntity.ok("Employee Deleted")
-        } catch (e: Exception) {
-            // Catch all other exceptions
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error deleting employee: ${e.message}")
-        }
-    }
+    fun deleteEmployee(@PathVariable id: UUID) =
+        employeeService.deleteEmployee(id).toOkResponse("Employee Deleted")
 }
