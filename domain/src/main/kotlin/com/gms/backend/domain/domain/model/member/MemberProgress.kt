@@ -23,12 +23,12 @@ class MemberProgress {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false, columnDefinition = "binary(16)")
     var progressOptionId: UUID? = null
 
-    @Column(nullable = true)
+    @Column
     var remarks: String? = null
 
     @Column(nullable = false)
@@ -37,11 +37,11 @@ class MemberProgress {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @UpdateTimestamp
     @Column(nullable = false)
-    var updatedAt: Instant? = null
+    lateinit var updatedAt: Instant
 
     @Column
     var completedAt: Instant? = null

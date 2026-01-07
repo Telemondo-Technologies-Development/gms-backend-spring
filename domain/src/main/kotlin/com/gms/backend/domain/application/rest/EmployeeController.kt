@@ -25,7 +25,7 @@ class EmployeeController(
         val status: Employee.EmployeeStatus,
     )
 
-    @GetMapping("")
+    @GetMapping
     fun getAllUsers() = employeeService.getEmployees().toOkResponse()
 
     @GetMapping("/{id}")
@@ -42,7 +42,7 @@ class EmployeeController(
         val profilePictureId: UUID?
     )
 
-    @PostMapping("")
+    @PostMapping
     fun createEmployee(@RequestBody body: EmployeePostDTO) =
         employeeService.createEmployee(body).toCreatedResponse()
 

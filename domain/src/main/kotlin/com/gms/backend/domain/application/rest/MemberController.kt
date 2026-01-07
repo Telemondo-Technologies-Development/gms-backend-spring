@@ -17,13 +17,13 @@ class MemberController(private val memberService: MemberServiceImpl) {
         val surname: String,
         val firstName: String,
         val middleName: String?,
-        val suffix: String?, // Might set to enum
+        val suffix: String?,
         val status: Member.MemberStatus,
         val createdById: UUID,
         val updatedById: UUID
     )
 
-    @GetMapping("")
+    @GetMapping
     fun getAllUsers() = memberService.getMembers().toOkResponse()
 
     @GetMapping("/{id}")
@@ -39,7 +39,7 @@ class MemberController(private val memberService: MemberServiceImpl) {
         val createdById: UUID,
     )
 
-    @PostMapping("")
+    @PostMapping
     fun createMember(@RequestBody body: MemberPostDTO) =
         memberService.createMember(body).toCreatedResponse("Member Successfully Created!")
 

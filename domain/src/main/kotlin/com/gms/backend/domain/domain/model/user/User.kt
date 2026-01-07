@@ -3,7 +3,6 @@ package com.gms.backend.domain.domain.model.user
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
 import java.time.Instant
@@ -17,22 +16,22 @@ class User {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
-    var email: String? = null
+    lateinit var email: String
 
     @Column(nullable = false)
     @JsonIgnore
-    var password: String? = null
+    lateinit var password: String
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @UpdateTimestamp
     @Column(nullable = false)
-    var updatedAt: Instant? = null
+    lateinit var updatedAt: Instant
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "actor_id", nullable = false)

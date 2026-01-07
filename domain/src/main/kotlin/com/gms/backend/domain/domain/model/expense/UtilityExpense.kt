@@ -20,13 +20,13 @@ class UtilityExpense {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false)
     var meter: String? = null
 
     @Column(nullable = false, precision = 10, scale = 2)
-    var amount: BigDecimal? = null
+    var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
     var period: LocalDate? = null
@@ -36,11 +36,11 @@ class UtilityExpense {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @UpdateTimestamp
     @Column(nullable = false)
-    var updatedAt: Instant? = null
+    lateinit var updatedAt: Instant
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)

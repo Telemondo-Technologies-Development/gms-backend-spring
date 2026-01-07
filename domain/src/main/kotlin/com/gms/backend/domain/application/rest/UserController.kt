@@ -16,7 +16,7 @@ class UserController(private val userService: UserServiceImpl) {
         val actorId: UUID
     )
 
-    @GetMapping("")
+    @GetMapping
     fun getAllUsers() = userService.getUsers().toOkResponse()
 
     @GetMapping("/{id}")
@@ -25,7 +25,7 @@ class UserController(private val userService: UserServiceImpl) {
 
     data class UserPostDTO(val email: String, val password: String)
 
-    @PostMapping("")
+    @PostMapping
     fun createUser(@RequestBody body: UserPostDTO) =
         userService.createUser(body).toCreatedResponse()
 

@@ -19,13 +19,13 @@ class Invoice {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false)
     var status: String? = null
 
     @Column(nullable = false, precision = 10, scale = 2)
-    var subtotal: BigDecimal? = null
+    var subtotal: BigDecimal = BigDecimal.ZERO
 
     @Column(precision = 10, scale = 2)
     var discount: BigDecimal? = null
@@ -34,7 +34,7 @@ class Invoice {
     var convenienceFee: BigDecimal? = null
 
     @Column(nullable = false, precision = 10, scale = 2)
-    var total: BigDecimal? = null
+    var total: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
     var dueDate: Instant? = null
@@ -47,11 +47,11 @@ class Invoice {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @UpdateTimestamp
     @Column(nullable = false)
-    var updatedAt: Instant? = null
+    lateinit var updatedAt: Instant
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "actor_id", nullable = false)

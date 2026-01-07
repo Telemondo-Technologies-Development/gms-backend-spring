@@ -8,6 +8,7 @@ import org.mapstruct.ReportingPolicy
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface MemberMapper {
+    fun memberToMemberTableDTO(member: Member): MemberController.MemberTableDTO
     fun memberPostDTOToMember(dto: MemberController.MemberPostDTO): Member
     fun memberPutDTOToMember(dto: MemberController.MemberPutDTO, @MappingTarget member: Member): Member
 }

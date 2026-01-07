@@ -11,6 +11,7 @@ import com.gms.backend.domain.domain.service.Employee.EmployeeService
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class EmployeeServiceImpl(
@@ -35,13 +36,14 @@ class EmployeeServiceImpl(
     @Transactional
     override fun getEmployees(): List<EmployeeController.EmployeeTableDTO> {
         val employees = employeeRepository.findAll()
-        return employeeMapper.employeesToDTO(employees)
+        return employeeMapper.employeesToEmployeeTableDTO(employees)
 //        return employeeRepository.findAllProjectedBy()
     }
 
     @Transactional
-    override fun getEmployeeById(id: UUID): Optional<Employee> {
-        return employeeRepository.findById(id)
+    override fun getEmployeeById(id: UUID): EmployeeController.EmployeeTableDTO? {
+        val employee = employeeRepository.findById(id).getOrNull()
+        return employee?.let {employeeMapper.employeeToEmployeeTableDTO(it)}
     }
 
     @Transactional

@@ -13,7 +13,7 @@ class MaintenanceSchedule {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false)
     var startDate: Instant? = null

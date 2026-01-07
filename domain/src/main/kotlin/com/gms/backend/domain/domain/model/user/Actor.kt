@@ -53,7 +53,7 @@ class Actor {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @Column
     var deactivatedAt: Instant? = null

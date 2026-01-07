@@ -7,6 +7,6 @@ import org.mapstruct.ReportingPolicy
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface UserMapper {
-    fun userToUserDTO(user: User): UserController.UserPostDTO
-    fun userDTOToUser(userDTO: UserController.UserPostDTO): User
+    fun userToUserTableDTO(user: User): UserController.UserTableDTO
+    fun userPostDTOToUser(userDTO: UserController.UserPostDTO): User
 }

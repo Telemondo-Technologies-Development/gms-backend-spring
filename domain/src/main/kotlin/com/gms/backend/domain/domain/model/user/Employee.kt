@@ -23,13 +23,13 @@ class Employee {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false)
-    var surname: String? = null
+    lateinit var surname: String
 
     @Column(nullable = false)
-    var firstName: String? = null
+    lateinit var firstName: String
 
     @Column
     var middleName: String? = null
@@ -46,11 +46,11 @@ class Employee {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @UpdateTimestamp
     @Column(nullable = false)
-    var updatedAt: Instant? = null
+    lateinit var updatedAt: Instant
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

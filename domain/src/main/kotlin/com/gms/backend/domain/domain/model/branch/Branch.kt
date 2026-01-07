@@ -32,10 +32,10 @@ class Branch {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
-    var name: String? = null
+    lateinit var name: String
 
     @Column(nullable = false, columnDefinition = "longtext")
     var address: String? = null
@@ -52,11 +52,11 @@ class Branch {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @UpdateTimestamp
     @Column(nullable = false)
-    var updatedAt: Instant? = null
+    lateinit var updatedAt: Instant
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_picture", nullable = true)

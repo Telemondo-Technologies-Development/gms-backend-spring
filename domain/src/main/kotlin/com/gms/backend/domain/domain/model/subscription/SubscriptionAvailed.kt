@@ -16,13 +16,13 @@ class SubscriptionAvailed {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false)
     var name: String? = null
 
     @Column(nullable = false, precision = 10, scale = 2)
-    var amount: BigDecimal? = null
+    var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
     var intervals: String? = null

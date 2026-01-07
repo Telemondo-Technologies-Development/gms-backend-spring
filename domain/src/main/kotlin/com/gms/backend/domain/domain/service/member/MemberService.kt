@@ -1,14 +1,12 @@
 package com.gms.backend.domain.domain.service.Member
 
 import com.gms.backend.domain.application.rest.MemberController
-import com.gms.backend.domain.domain.model.member.Member
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 
 interface MemberService {
-    fun createMember(body: MemberController.MemberPostDTO): Member
+    fun createMember(body: MemberController.MemberPostDTO)
     fun getMembers(): List<MemberController.MemberTableDTO>
-    fun getMemberById(id: UUID): Optional<Member>
+    fun getMemberById(id: UUID): MemberController.MemberTableDTO?
     fun updateMember(id: UUID, body: MemberController.MemberPutDTO)
     fun deleteMember(id: UUID)
 }

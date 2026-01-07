@@ -18,7 +18,7 @@ class Ledger {
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
-    var id: UUID? = null
+    lateinit var id: UUID
 
     @Column(nullable = false)
     var entryType: String? = null
@@ -39,14 +39,14 @@ class Ledger {
     var gracePeriodDays: Int? = null
 
     @Column(nullable = false, precision = 10, scale = 2)
-    var amount: BigDecimal? = null
+    var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
     var paymentMethodName: String? = null
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    var createdAt: Instant? = null
+    lateinit var createdAt: Instant
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "actor_id", nullable = false)
