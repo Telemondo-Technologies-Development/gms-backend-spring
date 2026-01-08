@@ -1,8 +1,11 @@
 package com.gms.backend.domain.application.rest
 
+import com.gms.backend.domain.application.mapper.BranchPersonnelMapper
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.rest.BranchController.BranchPostDTO
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
+import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,9 +14,10 @@ import java.time.Instant
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/branch-personnel")
+@RequestMapping("/api/branch/personnel")
 class BranchPersonnelController(
-    private val branchPersonnelService: BranchPersonnelService
+    private val branchPersonnelService: BranchPersonnelService,
+    private val branchPersonnelMapper: BranchPersonnelMapper
 ) {
 
     data class BranchPersonnelTableDTO(
@@ -41,7 +45,7 @@ class BranchPersonnelController(
         val updatedById: UUID
     )
 
-    @PostMapping("")
+    @PostMapping
     fun createBranchPersonnel(@RequestBody body: BranchPersonnelPostDTO) =
         branchPersonnelService.createBranchPersonnel(body).toCreatedResponse("Branch Personnel Created")
 
@@ -49,16 +53,13 @@ class BranchPersonnelController(
     fun updateBranchPersonnel(@PathVariable id: UUID, @RequestBody body: BranchPersonnelPutDTO) =
         branchPersonnelService.updateBranchPersonnel(id, body).toOkResponse("Branch Personnel Updated")
 
-
-    @GetMapping("")
+    @GetMapping
     fun getAllBranchPersonnel() =
         branchPersonnelService.getBranchPersonnel().toOkResponse()
-
 
     @GetMapping("/{id}")
     fun getBranchPersonnel(@PathVariable id: UUID) =
         branchPersonnelService.getBranchPersonnelById(id).toOkResponse()
-
 
     @DeleteMapping("/{id}")
     fun deleteBranchPersonnel(@PathVariable id: UUID) =

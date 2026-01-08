@@ -56,7 +56,7 @@ class BranchController (
         val profilePictureObjectId: UUID?
     )
 
-    @PostMapping("")
+    @PostMapping
     fun createBranch(@RequestBody body: BranchPostDTO) =
         branchService.createBranch(body).toCreatedResponse("Branch Created")
 
@@ -64,7 +64,7 @@ class BranchController (
     fun updateBranch(@PathVariable id: UUID, @RequestBody body: BranchPutDTO) =
         branchService.updateBranch(id, body).toOkResponse("Branch Updated")
 
-    @GetMapping("")
+    @GetMapping
     fun getAllBranches() =
         branchService.getBranches().toOkResponse()
 

@@ -8,13 +8,12 @@ import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.branch.BranchService
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 import java.util.Optional
 
 @Service
-@Transactional
 class BranchServiceImpl(
     private val branchRepository: BranchRepository,
     private val actorRepository: ActorRepository,
@@ -22,12 +21,13 @@ class BranchServiceImpl(
     private val branchMapper: BranchMapper,
 ) : BranchService {
 
+    @Transactional
     override fun createBranch(body: BranchController.BranchPostDTO): BranchController.BranchTableDTO {
-        val actionActor = actorRepository.getReferenceById(body.createdById)
+        val actionActorRef = actorRepository.getReferenceById(body.createdById)
 
         val branch = branchMapper.branchDTOToBranch(body).apply {
-            createdBy = actionActor
-            updatedBy = actionActor
+            createdBy = actionActorRef
+            updatedBy = actionActorRef
         }
 
         body.profilePictureObjectId?.let {
@@ -39,6 +39,7 @@ class BranchServiceImpl(
         return branchMapper.branchToDTO(reloaded)
     }
 
+    @Transactional
     override fun updateBranch(id: UUID, body: BranchController.BranchPutDTO): BranchController.BranchTableDTO {
         val branch = branchRepository.findById(id).orElseThrow {
             NoSuchElementException("Branch not found with ID: $id")
@@ -58,11 +59,13 @@ class BranchServiceImpl(
         return branchMapper.branchToDTO(branch)
     }
 
+    @Transactional(readOnly = true)
     override fun getBranches(): List<BranchController.BranchTableDTO> {
         val branches = branchRepository.findAll()
         return branchMapper.branchesToDTO(branches)
     }
 
+    @Transactional(readOnly = true)
     override fun getBranchById(id: UUID): BranchController.BranchTableDTO {
         val branch = branchRepository.findById(id).orElseThrow {
             NoSuchElementException("Branch not found with ID: $id")
@@ -70,6 +73,7 @@ class BranchServiceImpl(
         return branchMapper.branchToDTO(branch)
     }
 
+    @Transactional
     override fun deleteBranch(id: UUID) {
         val branch = branchRepository.findById(id).orElseThrow {
             NoSuchElementException("Branch not found with ID: $id")

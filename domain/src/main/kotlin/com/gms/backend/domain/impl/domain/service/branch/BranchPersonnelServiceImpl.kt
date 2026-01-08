@@ -6,12 +6,11 @@ import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
-@Transactional
 class BranchPersonnelServiceImpl(
     private val branchPersonnelRepository: BranchPersonnelRepository,
     private val actorRepository: ActorRepository,
@@ -19,24 +18,20 @@ class BranchPersonnelServiceImpl(
     private val branchPersonnelMapper: BranchPersonnelMapper
 ) : BranchPersonnelService {
 
+    @Transactional
     override fun createBranchPersonnel(
         body: BranchPersonnelController.BranchPersonnelPostDTO
     ): BranchPersonnelController.BranchPersonnelTableDTO {
 
-        val actor = actorRepository.findById(body.actorId)
-            .orElseThrow { NoSuchElementException("Actor not found: ${body.actorId}") }
-
-        val branch = branchRepository.findById(body.branchId)
-            .orElseThrow { NoSuchElementException("Branch not found: ${body.branchId}") }
-
-        val actionActor = actorRepository.findById(body.createdById)
-            .orElseThrow { NoSuchElementException("CreatedBy actor not found: ${body.createdById}") }
+        val actorRef = actorRepository.getReferenceById(body.actorId)
+        val branchRef = branchRepository.getReferenceById(body.branchId)
+        val actionActorRef = actorRepository.getReferenceById(body.createdById)
 
         val branchPersonnel = branchPersonnelMapper.branchPersonnelDTOToBranchPersonnel(body).apply {
-            this.actor = actor
-            this.branch = branch
-            this.createdBy = actionActor
-            this.updatedBy = actionActor
+            this.actor = actorRef
+            this.branch = branchRef
+            this.createdBy = actionActorRef
+            this.updatedBy = actionActorRef
         }
 
         val saved = branchPersonnelRepository.saveAndFlush(branchPersonnel)
@@ -44,6 +39,7 @@ class BranchPersonnelServiceImpl(
         return branchPersonnelMapper.branchPersonnelToDTO(reloaded)
     }
 
+    @Transactional
     override fun updateBranchPersonnel(
         id: UUID,
         body: BranchPersonnelController.BranchPersonnelPutDTO
@@ -54,7 +50,6 @@ class BranchPersonnelServiceImpl(
         }
 
         branchPersonnelMapper.branchPersonnelPutDTOToBranchPersonnel(body, branchPersonnel)
-        branchPersonnel.id = id
 
         branchPersonnel.actor = actorRepository.getReferenceById(body.actorId)
         branchPersonnel.branch = branchRepository.getReferenceById(body.branchId)
@@ -67,11 +62,13 @@ class BranchPersonnelServiceImpl(
         return branchPersonnelMapper.branchPersonnelToDTO(reloaded)
     }
 
+    @Transactional(readOnly = true)
     override fun getBranchPersonnel(): List<BranchPersonnelController.BranchPersonnelTableDTO> {
         val rows = branchPersonnelRepository.findAll()
         return branchPersonnelMapper.branchPersonnelsToDTO(rows)
     }
 
+    @Transactional(readOnly = true)
     override fun getBranchPersonnelById(id: UUID): BranchPersonnelController.BranchPersonnelTableDTO {
         val row = branchPersonnelRepository.findById(id).orElseThrow {
             NoSuchElementException("BranchPersonnel not found with ID: $id")
@@ -79,6 +76,7 @@ class BranchPersonnelServiceImpl(
         return branchPersonnelMapper.branchPersonnelToDTO(row)
     }
 
+    @Transactional
     override fun deleteBranchPersonnel(id: UUID) {
         val bp = branchPersonnelRepository.findById(id).orElseThrow {
             NoSuchElementException("BranchPersonnel not found with ID: $id")
