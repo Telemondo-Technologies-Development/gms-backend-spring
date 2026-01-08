@@ -1,0 +1,9 @@
+package com.gms.backend.domain.domain.repository.user
+
+import com.gms.backend.domain.domain.model.user.Role
+import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
+
+interface RoleRepository : JpaRepository<Role, UUID> {
+    fun findAllByUserRoleUsersId(id: UUID): List<Role>
+}
