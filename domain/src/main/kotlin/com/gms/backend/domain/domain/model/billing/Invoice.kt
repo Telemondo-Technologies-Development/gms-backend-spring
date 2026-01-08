@@ -15,6 +15,13 @@ import java.util.*
 @Table(name = "invoices")
 class Invoice {
 
+    enum class InvoiceStatus {
+        DRAFT,
+        ISSUED,
+        PAID,
+        OVERDUE
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -22,7 +29,8 @@ class Invoice {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var status: String? = null
+    @Enumerated(EnumType.STRING)
+    lateinit var status: InvoiceStatus
 
     @Column(nullable = false, precision = 10, scale = 2)
     var subtotal: BigDecimal = BigDecimal.ZERO

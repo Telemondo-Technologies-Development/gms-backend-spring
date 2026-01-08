@@ -20,7 +20,7 @@ class Supply {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var name: String? = null
+    lateinit var name: String
 
     @Column
     var description: String? = null

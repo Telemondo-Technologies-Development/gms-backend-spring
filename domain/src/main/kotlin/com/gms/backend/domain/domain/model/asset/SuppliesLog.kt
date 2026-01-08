@@ -23,7 +23,7 @@ class SuppliesLog {
     lateinit var name: String
 
     @Column(nullable = false)
-    var quantity: Int? = null
+    var quantity: Int = 0
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
