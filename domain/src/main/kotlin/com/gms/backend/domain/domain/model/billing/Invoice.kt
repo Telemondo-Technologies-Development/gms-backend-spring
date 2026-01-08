@@ -1,0 +1,89 @@
+package com.gms.backend.domain.domain.model.billing
+
+import com.gms.backend.domain.domain.model.branch.Branch
+import com.gms.backend.domain.domain.model.subscription.SubscriptionAvailed
+import com.gms.backend.domain.domain.model.user.Actor
+import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
+import org.hibernate.annotations.UuidGenerator
+import java.math.BigDecimal
+import java.time.Instant
+import java.util.*
+
+@Entity
+@Table(name = "invoices")
+class Invoice {
+
+    enum class InvoiceStatus {
+        DRAFT,
+        ISSUED,
+        PAID,
+        OVERDUE
+    }
+
+    @Id
+    @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    lateinit var id: UUID
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    lateinit var status: InvoiceStatus
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    var subtotal: BigDecimal = BigDecimal.ZERO
+
+    @Column(precision = 10, scale = 2)
+    var discount: BigDecimal? = null
+
+    @Column(precision = 10, scale = 2)
+    var convenienceFee: BigDecimal? = null
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    var total: BigDecimal = BigDecimal.ZERO
+
+    @Column(nullable = false)
+    var dueDate: Instant? = null
+
+    @Column(nullable = false)
+    var issuedAt: Instant? = null
+
+    @Column(nullable = false, columnDefinition = "tinyint", length = 1)
+    var systemGenerated: Boolean? = null
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    lateinit var createdAt: Instant
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    lateinit var updatedAt: Instant
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "actor_id", nullable = false)
+    var actor: Actor? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_availed_id", nullable = false)
+    var subscriptionAvailed: SubscriptionAvailed? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "branch_id", nullable = false)
+    var branch: Branch? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", nullable = false)
+    var createdBy: Actor? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by", nullable = false)
+    var updatedBy: Actor? = null
+
+    @OneToMany(mappedBy = "invoice")
+    var invoicePayments = mutableSetOf<Payment>()
+
+    @OneToMany(mappedBy = "invoice")
+    var invoiceLedgers = mutableSetOf<Ledger>()
+}
