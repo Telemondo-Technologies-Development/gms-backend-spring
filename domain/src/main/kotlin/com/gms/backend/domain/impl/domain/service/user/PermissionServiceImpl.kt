@@ -1,4 +1,4 @@
-package com.gms.backend.domain.impl.domain.service.permission
+package com.gms.backend.domain.impl.domain.service.user
 
 import com.gms.backend.domain.application.mapper.user.PermissionMapper
 import com.gms.backend.domain.domain.model.user.Permission

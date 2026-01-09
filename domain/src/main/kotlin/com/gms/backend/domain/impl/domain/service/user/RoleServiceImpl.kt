@@ -1,4 +1,4 @@
-package com.gms.backend.domain.impl.domain.service.role
+package com.gms.backend.domain.impl.domain.service.user
 
 import com.gms.backend.domain.application.mapper.user.RoleMapper
 import com.gms.backend.domain.application.response.ApiErrorType
