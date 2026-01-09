@@ -1,5 +1,6 @@
 package com.gms.backend.domain.application.response
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -11,9 +12,17 @@ class GlobalExceptionHandler {
     // TODO: Figure out if a custom error message is sent and the actual error is logged
     // TODO: Talk about how much data should be relayed to the user
 
+    companion object {
+        // Defines the logger for this class
+        private val log = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+    }
+
     // Handle custom Domain errors
     @ExceptionHandler(DomainExceptions::class)
     fun handleDomainExceptions(ex: DomainExceptions): ResponseEntity<ApiResponse<Nothing>> {
+//        val codes = ex.errors?.map { it.code } ?: emptyList()
+        log.warn("Domain validation failed: {} | Errors: {}", ex.message, ex.errors)
+
         return ApiResponse.error(
             message = ex.message ?: "Action failed",
             status = ex.status,
@@ -23,6 +32,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException::class)
     fun handleDomainException(ex: DomainException): ResponseEntity<ApiResponse<Nothing>> {
+        log.warn("Domain error: {} - {}", ex.error, ex.description)
+
         return ApiResponse.error(
             message = ex.message ?: "Action failed",
             status = ex.status,
@@ -32,6 +43,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNotFound(ex: NoSuchElementException): ResponseEntity<ApiResponse<Nothing>> {
+        log.info("Resource not found: {}", ex.message)
+
         return ApiResponse.error(
             message = ex.message ?: "Resource not found",
             status = HttpStatus.NOT_FOUND,
@@ -41,11 +54,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
     fun handleTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<ApiResponse<Nothing>> {
-        val name = ex.name
-        val type = ex.requiredType?.simpleName
-        val value = ex.value
-
-        val errorMessage = "Parameter '$name' expected type '$type' but got '$value'"
+        val errorMessage = "Parameter '${ex.name}' expected type '${ex.requiredType?.simpleName}' but got '${ex.value}'"
+        log.debug("Type mismatch error: {}", errorMessage)
 
         return ApiResponse.error(
             message = errorMessage,
@@ -56,7 +66,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleGeneralError(ex: Exception): ResponseEntity<ApiResponse<Nothing>> {
-        println("Exception: $ex")
+        log.error("Unhandled exception occurred: ", ex)
         return ApiResponse.error("An internal error occurred", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

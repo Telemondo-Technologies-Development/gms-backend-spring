@@ -72,12 +72,11 @@ enum class ApiErrorType(val code: String, val description: String) {
     MALFORMED_JSON("VAL_003", "The request body contains invalid JSON syntax."),
 
     // Create
-    NULL_UPDATE("VAL_004", "The updated failed as the data provided does not exist."),
-
+    MISSING_UPDATE("VAL_004", "The updated failed as some of the data provided do not exist."),
 
     // Delete
     NO_DELETE("VAL_005", "No entry was sent to be deleted."),
-    NULL_DELETE("VAL_006", "The delete failed as the data provided does not exist."),
+    MISSING_DELETE("VAL_006", "The delete failed as some of the data provided does not exist."),
 
     // 404 Not Found Errors
     RESOURCE_NOT_FOUND("VAL_401", "The requested resource could not be located."),

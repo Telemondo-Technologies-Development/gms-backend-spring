@@ -8,6 +8,7 @@ import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.repository.user.PermissionRepository
 import com.gms.backend.domain.domain.repository.user.RoleRepository
 import com.gms.backend.domain.domain.service.user.RoleService
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -53,12 +54,20 @@ class RoleServiceImpl(
     @Transactional
     override fun updateRolePermissions(id: UUID, body: RoleController.RolePermissionDTO) {
         val role = roleRepository.findById(id).orElseThrow()
-        val permissions = body.permissionIds.map {
-            permissionRepository.getReferenceById(it)
-        }.toMutableSet()
 
-        val added = role.permissions.addAll(permissions)
-        if (!added) throw DomainException(ApiErrorType.NULL_UPDATE)
+        val foundPermissions = permissionRepository.findAllById(body.permissionIds)
+        if (foundPermissions.size != body.permissionIds.size) {
+            val foundIds = foundPermissions.map { it.id }.toSet()
+            val missingIds = body.permissionIds.filter { it !in foundIds }
+            throw DomainException(
+                ApiErrorType.MISSING_UPDATE,
+                "Some permissions do not exist: $missingIds",
+                "Role Permission Update Failed",
+                HttpStatus.NOT_FOUND
+            )
+        }
+
+        role.permissions.addAll(foundPermissions)
     }
 
     @Transactional
@@ -66,11 +75,19 @@ class RoleServiceImpl(
         val role = roleRepository.findById(id).orElseThrow()
         if (body.permissionIds.isEmpty()) throw DomainException(ApiErrorType.NO_DELETE)
 
-        val permissions = body.permissionIds.map {
-            permissionRepository.getReferenceById(it)
-        }.toMutableSet()
+        // Strict Checking to ensure intent is right
+        val foundPermissions = permissionRepository.findAllById(body.permissionIds)
+        if (foundPermissions.size != body.permissionIds.size) {
+            val foundIds = foundPermissions.map { it.id }.toSet()
+            val missingIds = body.permissionIds.filter { it !in foundIds }
+            throw DomainException(
+                ApiErrorType.MISSING_DELETE,
+                "Some permissions do not exist: $missingIds",
+                "Role Permission Delete Failed",
+                HttpStatus.NOT_FOUND
+            )
+        }
 
-        val removed = role.permissions.removeAll(permissions)
-        if (!removed) throw DomainException(ApiErrorType.NULL_DELETE)
+        role.permissions.removeAll(foundPermissions)
     }
 }
