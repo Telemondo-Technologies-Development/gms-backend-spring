@@ -36,9 +36,17 @@ class Actor {
         MEMBER,
         ADMIN,
         // Machine
+        FLYWAY,
         SYSTEM,
         CRON,
         API,
+    }
+
+    enum class ActorStatus {
+        // Human
+        ACTIVE,
+        SUSPENDED,
+        DELETED,
     }
 
     @Id
@@ -50,6 +58,10 @@ class Actor {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     lateinit var type: ActorType
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    lateinit var status: ActorStatus
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

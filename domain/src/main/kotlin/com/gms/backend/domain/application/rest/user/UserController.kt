@@ -1,4 +1,4 @@
-package com.gms.backend.domain.application.rest
+package com.gms.backend.domain.application.rest.user
 
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse

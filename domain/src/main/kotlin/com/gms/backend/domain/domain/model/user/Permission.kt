@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.model.user
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import java.util.*
@@ -17,11 +18,7 @@ class Permission {
     @Column(nullable = false, unique = true)
     lateinit var name: String
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "role_permissions",
-        joinColumns = [JoinColumn(name = "permission_id")],
-        inverseJoinColumns = [JoinColumn(name = "role_id")],
-    )
-    var rolePermissionRoles = mutableSetOf<Role>()
+    @ManyToMany(mappedBy = "permissions")
+    @JsonIgnore
+    var roles: MutableSet<Role> = mutableSetOf()
 }
