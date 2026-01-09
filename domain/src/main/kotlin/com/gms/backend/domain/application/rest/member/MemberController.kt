@@ -6,8 +6,15 @@ import com.gms.backend.domain.domain.model.member.Member
 import com.gms.backend.domain.impl.domain.service.member.MemberServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
-import org.springframework.web.bind.annotation.*
-import java.util.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/member")
@@ -75,7 +82,6 @@ class MemberController(private val memberService: MemberServiceImpl) {
 
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete an employee by id")
     fun deleteMember(@PathVariable id: UUID) =
         memberService.deleteMember(id).toOkResponse("Member Deleted")
 }

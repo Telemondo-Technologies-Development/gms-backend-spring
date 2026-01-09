@@ -1,5 +1,6 @@
 package com.gms.backend.domain.application.rest
 
+import com.gms.backend.domain.application.mapper.user.EmployeeMapper
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.domain.model.user.Employee
@@ -11,7 +12,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/employee")
 class EmployeeController(
-    private val employeeService: EmployeeServiceImpl
+    private val employeeService: EmployeeServiceImpl, private val employeeMapper: EmployeeMapper
 ) {
 
     data class EmployeeTableDTO(
@@ -47,8 +48,7 @@ class EmployeeController(
 
     @PostMapping
     @Operation(summary = "Create a new employee")
-    fun createEmployee(@RequestBody body: EmployeePostDTO) =
-        employeeService.createEmployee(body).toCreatedResponse()
+    fun createEmployee(@RequestBody body: EmployeePostDTO) = employeeService.createEmployee(body).toCreatedResponse()
 
     data class EmployeePutDTO(
         val userId: UUID?,
@@ -68,6 +68,5 @@ class EmployeeController(
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an employee by id")
-    fun deleteEmployee(@PathVariable id: UUID) =
-        employeeService.deleteEmployee(id).toOkResponse("Employee Deleted")
+    fun deleteEmployee(@PathVariable id: UUID) = employeeService.deleteEmployee(id).toOkResponse("Employee Deleted")
 }

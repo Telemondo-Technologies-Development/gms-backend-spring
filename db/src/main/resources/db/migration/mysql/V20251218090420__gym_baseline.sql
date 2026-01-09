@@ -8,6 +8,7 @@ START TRANSACTION;
 CREATE TABLE actors (
   id              binary(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
   type            varchar(255) NOT NULL,
+  status          varchar(255) NOT NULL,
   created_at      datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   deactivated_at  datetime(6) NULL
 );

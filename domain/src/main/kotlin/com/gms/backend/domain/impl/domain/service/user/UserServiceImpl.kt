@@ -1,15 +1,14 @@
 package com.gms.backend.domain.impl.domain.service.user
 
-import com.gms.backend.domain.application.mapper.UserMapper
-import com.gms.backend.domain.application.rest.UserController
+import com.gms.backend.domain.application.mapper.user.UserMapper
+import com.gms.backend.domain.application.rest.user.UserController
 import com.gms.backend.domain.domain.model.user.Actor
-import com.gms.backend.domain.domain.model.user.User
 import com.gms.backend.domain.domain.repository.user.UserRepository
 import com.gms.backend.domain.domain.service.user.UserService
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class UserServiceImpl(
@@ -18,21 +17,20 @@ class UserServiceImpl(
 ) : UserService {
 
     @Transactional
-    override fun createUser(body: UserController.UserPostDTO): User {
+    override fun createUser(body: UserController.UserPostDTO) {
         val user = userMapper.userPostDTOToUser(body)
-        val actor = Actor().let { it.type = Actor.ActorType.USER; it }
-        return userRepository.save(user.apply { this.actor = actor })
+        user.actor = Actor().let { it.type = Actor.ActorType.USER; it.status = Actor.ActorStatus.ACTIVE; it }
+        userRepository.save(user)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     override fun getUsers(): List<UserController.UserTableDTO> {
         return userRepository.findAllProjectedBy()
     }
 
-    @Transactional
-    override fun getUserById(id: UUID): UserController.UserTableDTO? {
-        val user = userRepository.findById(id).getOrNull()
-        return user?.let {userMapper.userToUserTableDTO(it)}
+    @Transactional(readOnly = true)
+    override fun getUserById(id: UUID): UserController.UserTableDTO {
+        return userRepository.findById(id).orElseThrow().let(userMapper::userToUserTableDTO)
     }
 
     @Transactional
@@ -43,6 +41,9 @@ class UserServiceImpl(
 
     @Transactional
     override fun deleteUser(id: UUID) {
-        return userRepository.deleteById(id)
+        val user = userRepository.findById(id).orElseThrow()
+        user.actor?.status = Actor.ActorStatus.DELETED
+        user.actor?.deactivatedAt = Instant.now()
+        userRepository.delete(user)
     }
 }

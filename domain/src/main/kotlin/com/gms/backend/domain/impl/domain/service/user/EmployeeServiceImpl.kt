@@ -1,17 +1,16 @@
 package com.gms.backend.domain.impl.domain.service.user
 
-import com.gms.backend.domain.application.mapper.EmployeeMapper
-import com.gms.backend.domain.application.rest.EmployeeController
+import com.gms.backend.domain.application.mapper.user.EmployeeMapper
+import com.gms.backend.domain.application.rest.user.EmployeeController
 import com.gms.backend.domain.domain.model.user.Actor
-import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.EmployeeRepository
 import com.gms.backend.domain.domain.repository.user.UserRepository
 import com.gms.backend.domain.domain.service.Employee.EmployeeService
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class EmployeeServiceImpl(
@@ -21,29 +20,27 @@ class EmployeeServiceImpl(
     private val objectRepository: ObjectStorageRepository
 ) : EmployeeService {
     @Transactional
-    override fun createEmployee(body: EmployeeController.EmployeePostDTO): Employee {
+    override fun createEmployee(body: EmployeeController.EmployeePostDTO) {
         val employee = employeeMapper.employeePostDTOToEmployee(body)
-        employee.actor = Actor().let { it.type = Actor.ActorType.EMPLOYEE; it }
+        employee.actor = Actor().let { it.type = Actor.ActorType.EMPLOYEE; it.status = Actor.ActorStatus.ACTIVE; it }
         body.userId?.let {
             employee.user = userRepository.getReferenceById(it)
         }
         body.profilePictureId?.let {
             employee.profilePicture = objectRepository.getReferenceById(it)
         }
-        return employeeRepository.save(employee)
+        employeeRepository.save(employee)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     override fun getEmployees(): List<EmployeeController.EmployeeTableDTO> {
-        val employees = employeeRepository.findAll()
-        return employeeMapper.employeesToEmployeeTableDTO(employees)
+        return employeeRepository.findAll().let(employeeMapper::employeesToEmployeeTableDTO)
 //        return employeeRepository.findAllProjectedBy()
     }
 
-    @Transactional
-    override fun getEmployeeById(id: UUID): EmployeeController.EmployeeTableDTO? {
-        val employee = employeeRepository.findById(id).getOrNull()
-        return employee?.let {employeeMapper.employeeToEmployeeTableDTO(it)}
+    @Transactional(readOnly = true)
+    override fun getEmployeeById(id: UUID): EmployeeController.EmployeeTableDTO {
+        return employeeRepository.findById(id).orElseThrow().let(employeeMapper::employeeToEmployeeTableDTO)
     }
 
     @Transactional
@@ -64,7 +61,10 @@ class EmployeeServiceImpl(
 
     @Transactional
     override fun deleteEmployee(id: UUID) {
-        return employeeRepository.deleteById(id)
+        val employee = employeeRepository.findById(id).orElseThrow()
+        employee.actor?.status = Actor.ActorStatus.DELETED
+        employee.actor?.deactivatedAt = Instant.now()
+        employeeRepository.delete(employee)
     }
 
 }
