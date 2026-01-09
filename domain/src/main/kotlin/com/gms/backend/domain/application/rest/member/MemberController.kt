@@ -1,9 +1,11 @@
-package com.gms.backend.domain.application.rest.member
+package com.gms.backend.domain.application.rest
 
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.domain.model.member.Member
 import com.gms.backend.domain.impl.domain.service.member.MemberServiceImpl
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,22 +33,35 @@ class MemberController(private val memberService: MemberServiceImpl) {
     )
 
     @GetMapping
+    @Operation(summary = "Get all users")
     fun getAllUsers() = memberService.getMembers().toOkResponse()
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get an employee by id")
     fun getMember(@PathVariable id: UUID) = memberService.getMemberById(id).toOkResponse()
 
+    @Schema(description = "format for posting a member")
     data class MemberPostDTO(
+        @field:Schema(description = "surname of member",
+            required = true)
         val surname: String,
+        @field:Schema(description = "first name",
+            required = true)
         val firstName: String,
+        @field:Schema(description = "middle name",
+            required = true)
         val middleName: String?,
+        @field:Schema(description = "suffix",
+            required = true)
         val suffix: String?, // Might set to enum
+        @field:Schema(description = "status of member")
         val status: Member.MemberStatus,
         val profilePictureId: UUID?,
         val createdById: UUID,
     )
 
     @PostMapping
+    @Operation(summary = "Create a new employee")
     fun createMember(@RequestBody body: MemberPostDTO) =
         memberService.createMember(body).toCreatedResponse("Member Successfully Created!")
 
@@ -61,6 +76,7 @@ class MemberController(private val memberService: MemberServiceImpl) {
     )
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an employee by id")
     fun updateMember(@PathVariable id: UUID, @RequestBody body: MemberPutDTO) =
         memberService.updateMember(id, body).toOkResponse("Member updated")
 
