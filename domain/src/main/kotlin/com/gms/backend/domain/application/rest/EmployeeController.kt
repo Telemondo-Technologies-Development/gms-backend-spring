@@ -4,6 +4,7 @@ import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.impl.domain.service.user.EmployeeServiceImpl
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -26,9 +27,11 @@ class EmployeeController(
     )
 
     @GetMapping
+    @Operation(summary = "Get all employees")
     fun getAllUsers() = employeeService.getEmployees().toOkResponse()
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get an employee by id")
     fun getEmployee(@PathVariable id: UUID) = employeeService.getEmployeeById(id).toOkResponse()
 
     data class EmployeePostDTO(
@@ -43,6 +46,7 @@ class EmployeeController(
     )
 
     @PostMapping
+    @Operation(summary = "Create a new employee")
     fun createEmployee(@RequestBody body: EmployeePostDTO) =
         employeeService.createEmployee(body).toCreatedResponse()
 
@@ -58,10 +62,12 @@ class EmployeeController(
     )
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an employee by id")
     fun updateEmployee(@PathVariable id: UUID, @RequestBody body: EmployeePutDTO) =
         employeeService.updateEmployee(id, body).toOkResponse()
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an employee by id")
     fun deleteEmployee(@PathVariable id: UUID) =
         employeeService.deleteEmployee(id).toOkResponse("Employee Deleted")
 }
