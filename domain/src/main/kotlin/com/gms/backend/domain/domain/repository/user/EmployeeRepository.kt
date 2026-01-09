@@ -9,4 +9,5 @@ interface EmployeeRepository : JpaRepository<Employee, UUID> {
     fun findAllByEmployeeObjectsId(id: UUID): List<Employee>
     // Fix when needed
     fun findAllProjectedBy(): List<EmployeeController.EmployeeTableDTO>
+    fun findAllByUser_IdIn(userIds: Collection<UUID>): List<Employee>
 }

@@ -1,7 +1,7 @@
 package com.gms.backend.domain.domain.service.branch
 
-import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.application.rest.BranchController
+import com.gms.backend.domain.domain.model.branch.BranchPersonnel
 import java.util.*
 
 interface BranchService {
@@ -10,4 +10,8 @@ interface BranchService {
     fun getBranches(): List<BranchController.BranchTableDTO>
     fun getBranchById(id: UUID): BranchController.BranchTableDTO
     fun deleteBranch(id: UUID)
+    fun getBranchEmployees(
+        branchId: UUID,
+        status: BranchPersonnel.BranchPersonnelStatus?
+    ): BranchController.BranchEmployeesDTO
 }

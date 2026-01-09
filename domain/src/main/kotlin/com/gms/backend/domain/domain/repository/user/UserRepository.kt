@@ -8,5 +8,6 @@ import java.util.*
 interface UserRepository : JpaRepository<User, UUID> {
     // Projection function needs to end with By to work properly (JPA Convention)
     fun findAllProjectedBy(): List<UserController.UserTableDTO>
+    fun findAllByActor_IdIn(actorIds: Collection<UUID>): List<User>
 }
 
