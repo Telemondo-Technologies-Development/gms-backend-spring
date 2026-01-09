@@ -64,6 +64,34 @@ data class ApiError(
     val description: String
 )
 
+// Think of a way to categorize error code
+enum class ApiErrorType(val code: String, val description: String) {
+    // 400 Bad Request / Validation Errors
+    INVALID_ID("VAL_001", "The provided ID is not in a valid for or does not exist."),
+    DATATYPE_MISMATCH("VAL_002", "The data type provided does not match the expected format for this field."),
+    MALFORMED_JSON("VAL_003", "The request body contains invalid JSON syntax."),
+
+    // Create
+    NULL_UPDATE("VAL_004", "The updated failed as the data provided does not exist."),
+
+
+    // Delete
+    NO_DELETE("VAL_005", "No entry was sent to be deleted."),
+    NULL_DELETE("VAL_006", "The delete failed as the data provided does not exist."),
+
+    // 404 Not Found Errors
+    RESOURCE_NOT_FOUND("VAL_401", "The requested resource could not be located."),
+    NO_SUCH_ELEMENT("VAL_402", "The specific item you are looking for is missing or has been deleted."),
+
+    // 500 Internal Errors
+    INTERNAL_SERVER_ERROR("VAL_501", "An unexpected error occurred on our end. Please try again later.");
+
+    fun toApiError(override: String? = null) = ApiError(
+        code = this.code,
+        description = override ?: this.description
+    )
+}
+
 data class PageMetadata(
     val pageIndex: Int,       // TanStack uses 0-based index by default
     val pageSize: Int,        // Current size of the request

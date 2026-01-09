@@ -35,12 +35,23 @@ class Role {
     @JoinColumn(name = "created_by", nullable = false)
     var createdBy: Actor? = null
 
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
     var updatedBy: Actor? = null
 
-    @ManyToMany(mappedBy = "rolePermissionRoles")
-    var rolePermissionPermissions = mutableSetOf<Permission>()
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "role_permissions", // The actual table name in DB
+        joinColumns = [JoinColumn(name = "role_id")],
+        inverseJoinColumns = [JoinColumn(name = "permission_id")]
+    )
+    var permissions: MutableSet<Permission> = mutableSetOf()
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

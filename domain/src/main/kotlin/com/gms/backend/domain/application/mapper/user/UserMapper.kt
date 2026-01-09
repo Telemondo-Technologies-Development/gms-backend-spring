@@ -1,6 +1,6 @@
-package com.gms.backend.domain.application.mapper
+package com.gms.backend.domain.application.mapper.user
 
-import com.gms.backend.domain.application.rest.UserController
+import com.gms.backend.domain.application.rest.user.UserController
 import com.gms.backend.domain.domain.model.user.User
 import org.mapstruct.Mapper
 import org.mapstruct.ReportingPolicy

@@ -1,6 +1,6 @@
 package com.gms.backend.domain.application.mapper
 
-import com.gms.backend.domain.application.rest.MemberController
+import com.gms.backend.domain.application.rest.member.MemberController
 import com.gms.backend.domain.domain.model.member.Member
 import org.mapstruct.Mapper
 import org.mapstruct.MappingTarget
