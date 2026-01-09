@@ -1,14 +1,12 @@
 package com.gms.backend.domain.impl.domain.service.member
 
 import com.gms.backend.domain.application.mapper.MemberMapper
-import com.gms.backend.domain.application.response.ApiErrorType
-import com.gms.backend.domain.application.response.DomainException
 import com.gms.backend.domain.application.rest.member.MemberController
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.member.MemberRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
-import com.gms.backend.domain.domain.service.Member.MemberService
+import com.gms.backend.domain.domain.service.member.MemberService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant

@@ -6,7 +6,7 @@ import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.EmployeeRepository
 import com.gms.backend.domain.domain.repository.user.UserRepository
-import com.gms.backend.domain.domain.service.Employee.EmployeeService
+import com.gms.backend.domain.domain.service.user.EmployeeService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant

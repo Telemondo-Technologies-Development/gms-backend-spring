@@ -1,7 +1,6 @@
-package com.gms.backend.domain.domain.service.Employee
+package com.gms.backend.domain.domain.service.user
 
 import com.gms.backend.domain.application.rest.user.EmployeeController
-import com.gms.backend.domain.domain.model.user.Employee
 import java.util.*
 
 interface EmployeeService {

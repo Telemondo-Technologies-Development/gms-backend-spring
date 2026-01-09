@@ -1,4 +1,4 @@
-package com.gms.backend.domain.domain.service.Member
+package com.gms.backend.domain.domain.service.member
 
 import com.gms.backend.domain.application.rest.member.MemberController
 import java.util.*
