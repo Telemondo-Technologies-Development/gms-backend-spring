@@ -26,7 +26,7 @@ class AssetMaintenanceExpense {
     var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
-    var paidAt: Instant? = null
+    lateinit var paidAt: Instant
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -38,19 +38,31 @@ class AssetMaintenanceExpense {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
-    var branch: Branch? = null
+    lateinit var branch: Branch
+
+    @Column(name = "branch_id", insertable = false, updatable = false)
+    var branchId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asset_maintenance_id", nullable = false)
-    var assetMaintenance: AssetMaintenance? = null
+    lateinit var assetMaintenance: AssetMaintenance
+
+    @Column(name = "asset_maintenance_id", insertable = false, updatable = false)
+    var assetMaintenanceId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
+
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

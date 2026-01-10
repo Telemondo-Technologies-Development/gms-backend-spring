@@ -45,13 +45,13 @@ class Invoice {
     var total: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
-    var dueDate: Instant? = null
+    lateinit var dueDate: Instant
 
     @Column(nullable = false)
-    var issuedAt: Instant? = null
+    lateinit var issuedAt: Instant
 
     @Column(nullable = false, columnDefinition = "tinyint", length = 1)
-    var systemGenerated: Boolean? = null
+    var systemGenerated: Boolean = true
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -63,23 +63,32 @@ class Invoice {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "actor_id", nullable = false)
-    var actor: Actor? = null
+    lateinit var actor: Actor
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_availed_id", nullable = false)
-    var subscriptionAvailed: SubscriptionAvailed? = null
+    lateinit var subscriptionAvailed: SubscriptionAvailed
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
-    var branch: Branch? = null
+    lateinit var branch: Branch
+
+    @Column(name = "branch_id", insertable = false, updatable = false)
+    var branchId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
+
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
 
     @OneToMany(mappedBy = "invoice")
     var invoicePayments = mutableSetOf<Payment>()

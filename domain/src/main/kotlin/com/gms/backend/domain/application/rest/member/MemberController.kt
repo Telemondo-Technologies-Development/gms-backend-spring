@@ -18,14 +18,14 @@ class MemberController(private val memberService: MemberServiceImpl) {
     @Schema(description = "Format for Member read")
     data class MemberTableDTO(
         val id: UUID,
-        val actorId: UUID,
+        val actorId: UUID?,
         val surname: String,
         val firstName: String,
         val middleName: String?,
         val suffix: String?,
         val status: Member.MemberStatus,
-        val createdById: UUID,
-        val updatedById: UUID
+        val createdById: UUID?,
+        val updatedById: UUID?
     )
 
     @GetMapping

@@ -20,7 +20,7 @@ class Subscription {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var name: String? = null
+    lateinit var name: String
 
     @Column(nullable = false, precision = 10, scale = 2)
     var amount: BigDecimal = BigDecimal.ZERO
@@ -35,15 +35,24 @@ class Subscription {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle_id", nullable = false)
-    var billingCycle: BillingCycle? = null
+    lateinit var billingCycle: BillingCycle
+
+    @Column(name = "billing_cycle_id", insertable = false, updatable = false)
+    var billingCycleId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
+
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
 
     @OneToMany(mappedBy = "subscription")
     var subscriptionSubscriptionAvailed = mutableSetOf<SubscriptionAvailed>()

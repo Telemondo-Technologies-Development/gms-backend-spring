@@ -16,13 +16,13 @@ class MaintenanceSchedule {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var startDate: Instant? = null
+    lateinit var startDate: Instant
 
     @Column(nullable = false)
-    var intervals: String? = null
+    lateinit var intervals: String
 
     @Column(nullable = false)
-    var intervalCount: Int? = null
+    var intervalCount: Int = 0
 
     @OneToMany(mappedBy = "maintenanceSchedule")
     var maintenanceScheduleAssets = mutableSetOf<Asset>()
