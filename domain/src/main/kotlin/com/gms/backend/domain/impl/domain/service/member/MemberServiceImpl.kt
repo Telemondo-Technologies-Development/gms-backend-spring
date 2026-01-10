@@ -20,15 +20,19 @@ class MemberServiceImpl(
     private val objectRepository: ObjectStorageRepository
 ) : MemberService {
     @Transactional
-    override fun createMember(body: MemberController.MemberPostDTO) {
-        val member = memberMapper.memberPostDTOToMember(body)
-        member.actor = Actor().let { it.type = Actor.ActorType.EMPLOYEE; it.status = Actor.ActorStatus.ACTIVE; it }
-        member.createdBy = actorRepository.getReferenceById(body.createdById)
-        member.updatedBy = actorRepository.getReferenceById(body.createdById)
-        body.profilePictureId?.let {
-            member.profilePicture = objectRepository.getReferenceById(it)
+    override fun createMember(body: MemberController.MemberPostDTO): MemberController.MemberTableDTO {
+        val member = memberMapper.memberPostDTOToMember(body).apply {
+            actor = Actor().apply {
+                type = Actor.ActorType.MEMBER
+                status = Actor.ActorStatus.ACTIVE
+            }
+            createdBy = actorRepository.getReferenceById(body.createdById)
+            updatedBy = actorRepository.getReferenceById(body.createdById)
+            profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
-        memberRepository.save(member)
+
+        val saved = memberRepository.save(member)
+        return memberMapper.memberToMemberTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
@@ -43,21 +47,25 @@ class MemberServiceImpl(
     }
 
     @Transactional
-    override fun updateMember(id: UUID, body: MemberController.MemberPutDTO) {
-        val member = memberRepository.findById(id).orElseThrow()
-        memberMapper.memberPutDTOToMember(body, member)
-        member.id = id
-        member.updatedBy = actorRepository.getReferenceById(body.updatedById)
-        body.profilePictureId?.let {
-            member.profilePicture = objectRepository.getReferenceById(it)
+    override fun updateMember(id: UUID, body: MemberController.MemberPutDTO): MemberController.MemberTableDTO {
+        val member = memberRepository.findById(id).orElseThrow().apply {
+            memberMapper.memberPutDTOToMember(body, this)
+            this.id = id
+            updatedBy = actorRepository.getReferenceById(body.updatedById)
+            profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
+
+        memberRepository.save(member)
+        return memberMapper.memberToMemberTableDTO(member)
     }
 
     @Transactional
     override fun deleteMember(id: UUID) {
-        val member = memberRepository.findById(id).orElseThrow()
-        member.actor?.status = Actor.ActorStatus.DELETED
-        member.actor?.deactivatedAt = Instant.now()
+        val member = memberRepository.findById(id).orElseThrow().apply {
+            actor.status = Actor.ActorStatus.DELETED
+            actor.deactivatedAt = Instant.now()
+        }
+
         memberRepository.delete(member)
     }
 

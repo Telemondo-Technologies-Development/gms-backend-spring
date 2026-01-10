@@ -4,11 +4,11 @@ import com.gms.backend.domain.application.rest.user.RoleController
 import java.util.*
 
 interface RoleService {
-    fun createRole(body: RoleController.RolePostDTO)
+    fun createRole(body: RoleController.RolePostDTO): RoleController.RoleTableDTO
     fun getRoles(): List<RoleController.RoleTableDTO>
     fun getRoleById(id: UUID): RoleController.RolePermissionTableDTO
-    fun updateRole(id: UUID, body: RoleController.RolePutDTO)
+    fun updateRole(id: UUID, body: RoleController.RolePutDTO): RoleController.RoleTableDTO
     fun deleteRole(id: UUID)
-    fun updateRolePermissions(id: UUID, body: RoleController.RolePermissionDTO)
+    fun updateRolePermissions(id: UUID, body: RoleController.RolePermissionDTO): RoleController.RolePermissionTableDTO
     fun deleteRolePermissions(id: UUID, body: RoleController.RolePermissionDTO)
 }

@@ -8,6 +8,7 @@ import org.mapstruct.ReportingPolicy
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface RoleMapper {
+    fun roleToRoleTableDTO(role: Role): RoleController.RoleTableDTO
     fun roleToRolePermissionTableDTO(role: Role): RoleController.RolePermissionTableDTO
     fun rolePostDTOToRole(dto: RoleController.RolePostDTO): Role
     fun rolePutDTOToRole(dto: RoleController.RolePutDTO, @MappingTarget role: Role): Role

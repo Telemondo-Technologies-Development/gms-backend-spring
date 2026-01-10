@@ -16,7 +16,7 @@ class UserController(private val userService: UserServiceImpl) {
     data class UserTableDTO(
         val id: UUID,
         val email: String,
-        val actorId: UUID
+        val actorId: UUID?
     )
 
     @GetMapping

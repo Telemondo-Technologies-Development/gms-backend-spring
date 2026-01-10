@@ -17,10 +17,16 @@ class UserServiceImpl(
 ) : UserService {
 
     @Transactional
-    override fun createUser(body: UserController.UserPostDTO) {
-        val user = userMapper.userPostDTOToUser(body)
-        user.actor = Actor().let { it.type = Actor.ActorType.USER; it.status = Actor.ActorStatus.ACTIVE; it }
-        userRepository.save(user)
+    override fun createUser(body: UserController.UserPostDTO): UserController.UserTableDTO {
+        val user = userMapper.userPostDTOToUser(body).apply {
+            actor = Actor().apply {
+                type = Actor.ActorType.USER
+                status = Actor.ActorStatus.ACTIVE
+            }
+        }
+
+        val saved = userRepository.save(user)
+        return userMapper.userToUserTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
@@ -34,16 +40,22 @@ class UserServiceImpl(
     }
 
     @Transactional
-    override fun updateUser(id: UUID, body: UserController.UserPutDTO) {
-        val user = userRepository.findById(id).orElseThrow()
-        user.email = body.email
+    override fun updateUser(id: UUID, body: UserController.UserPutDTO): UserController.UserTableDTO {
+        val user = userRepository.findById(id).orElseThrow().apply {
+            userMapper.userPutDTOToUser(body, this)
+        }
+
+        userRepository.save(user)
+        return userMapper.userToUserTableDTO(user)
     }
 
     @Transactional
     override fun deleteUser(id: UUID) {
-        val user = userRepository.findById(id).orElseThrow()
-        user.actor?.status = Actor.ActorStatus.DELETED
-        user.actor?.deactivatedAt = Instant.now()
+        val user = userRepository.findById(id).orElseThrow().apply {
+            actor.status = Actor.ActorStatus.DELETED
+            actor.deactivatedAt = Instant.now()
+        }
+
         userRepository.delete(user)
     }
 }
