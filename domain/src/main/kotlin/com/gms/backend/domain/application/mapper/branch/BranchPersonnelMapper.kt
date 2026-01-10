@@ -1,12 +1,12 @@
-package com.gms.backend.domain.application.mapper
+package com.gms.backend.domain.application.mapper.branch
 
-import com.gms.backend.domain.application.rest.BranchPersonnelController
+import com.gms.backend.domain.application.rest.branch.BranchPersonnelController
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
 import org.mapstruct.Mapper
-import org.mapstruct.Mapping
 import org.mapstruct.MappingTarget
+import org.mapstruct.ReportingPolicy
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface BranchPersonnelMapper {
     fun branchPersonnelDTOToBranchPersonnel(dto: BranchPersonnelController.BranchPersonnelPostDTO): BranchPersonnel
     fun branchPersonnelPutDTOToBranchPersonnel(
