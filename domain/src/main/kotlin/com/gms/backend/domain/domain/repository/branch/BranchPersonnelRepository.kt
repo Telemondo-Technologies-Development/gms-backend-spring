@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface BranchPersonnelRepository : JpaRepository<BranchPersonnel, UUID> {
-    fun findAllByBranch_Id(branchId: UUID): List<BranchPersonnel>
-    fun findAllByBranch_IdAndStatus(
+    fun findAllByBranchId(branchId: UUID): List<BranchPersonnel>
+    fun findAllByBranchIdAndStatus(
         branchId: UUID,
         status: BranchPersonnel.BranchPersonnelStatus
     ): List<BranchPersonnel>

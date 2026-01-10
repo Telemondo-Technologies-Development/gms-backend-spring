@@ -1,14 +1,14 @@
 package com.gms.backend.domain.impl.domain.service.branch
 
-import com.gms.backend.domain.application.mapper.BranchPersonnelMapper
-import com.gms.backend.domain.application.rest.BranchPersonnelController
+import com.gms.backend.domain.application.mapper.branch.BranchPersonnelMapper
+import com.gms.backend.domain.application.rest.branch.BranchPersonnelController
 import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
-import java.util.UUID
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 class BranchPersonnelServiceImpl(
@@ -28,15 +28,14 @@ class BranchPersonnelServiceImpl(
         val actionActorRef = actorRepository.getReferenceById(body.createdById)
 
         val branchPersonnel = branchPersonnelMapper.branchPersonnelDTOToBranchPersonnel(body).apply {
-            this.actor = actorRef
-            this.branch = branchRef
-            this.createdBy = actionActorRef
-            this.updatedBy = actionActorRef
+            actor = actorRef
+            branch = branchRef
+            createdBy = actionActorRef
+            updatedBy = actionActorRef
         }
 
-        val saved = branchPersonnelRepository.saveAndFlush(branchPersonnel)
-        val reloaded = branchPersonnelRepository.findById(saved.id).orElseThrow()
-        return branchPersonnelMapper.branchPersonnelToDTO(reloaded)
+        val saved = branchPersonnelRepository.save(branchPersonnel)
+        return branchPersonnelMapper.branchPersonnelToDTO(saved)
     }
 
     @Transactional
@@ -44,22 +43,17 @@ class BranchPersonnelServiceImpl(
         id: UUID,
         body: BranchPersonnelController.BranchPersonnelPutDTO
     ): BranchPersonnelController.BranchPersonnelTableDTO {
-
         val branchPersonnel = branchPersonnelRepository.findById(id).orElseThrow {
             NoSuchElementException("BranchPersonnel not found with ID: $id")
+        }.apply {
+            branchPersonnelMapper.branchPersonnelPutDTOToBranchPersonnel(body, this)
+            actor = actorRepository.getReferenceById(body.actorId)
+            branch = branchRepository.getReferenceById(body.branchId)
+            updatedBy = actorRepository.getReferenceById(body.updatedById)
         }
 
-        branchPersonnelMapper.branchPersonnelPutDTOToBranchPersonnel(body, branchPersonnel)
-
-        branchPersonnel.actor = actorRepository.getReferenceById(body.actorId)
-        branchPersonnel.branch = branchRepository.getReferenceById(body.branchId)
-
-        val updatedByRef = actorRepository.getReferenceById(body.updatedById)
-        branchPersonnel.updatedBy = updatedByRef
-
-        val saved = branchPersonnelRepository.saveAndFlush(branchPersonnel)
-        val reloaded = branchPersonnelRepository.findById(saved.id).orElseThrow()
-        return branchPersonnelMapper.branchPersonnelToDTO(reloaded)
+        branchPersonnelRepository.save(branchPersonnel)
+        return branchPersonnelMapper.branchPersonnelToDTO(branchPersonnel)
     }
 
     @Transactional(readOnly = true)

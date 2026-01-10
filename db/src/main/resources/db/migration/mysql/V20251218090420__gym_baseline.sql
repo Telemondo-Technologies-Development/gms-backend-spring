@@ -376,6 +376,7 @@ CREATE TABLE branch_personnel (
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT uk_actor_branch UNIQUE (actor_id, branch_id),
   CONSTRAINT branch_personnel_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT branch_personnel_ibfk_2 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT branch_personnel_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
