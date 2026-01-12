@@ -19,12 +19,7 @@ import java.time.Instant
 import java.util.*
 
 @Entity
-@Table(
-    name = "branch",
-    uniqueConstraints = [
-        UniqueConstraint(name = "uk_actor_branch", columnNames = ["actor_id", "branch_id"])
-    ]
-)
+@Table(name = "branch")
 class Branch {
 
     enum class BranchStatus {
