@@ -1,25 +1,24 @@
-package com.gms.backend.domain.application.rest
+package com.gms.backend.domain.application.rest.branch
 
-import com.gms.backend.domain.application.mapper.BranchPersonnelMapper
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
-import com.gms.backend.domain.application.rest.BranchController.BranchPostDTO
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
-import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/api/branch/personnel")
+@Tag(name = "Branch Personnel")
 class BranchPersonnelController(
-    private val branchPersonnelService: BranchPersonnelService,
-    private val branchPersonnelMapper: BranchPersonnelMapper
+    private val branchPersonnelService: BranchPersonnelService
 ) {
 
+    @Schema(description = "Format for Branch Personnel read")
     data class BranchPersonnelTableDTO(
         val id: UUID,
         val actorId: UUID,
@@ -31,6 +30,7 @@ class BranchPersonnelController(
         val updatedAt: Instant
     )
 
+    @Schema(description = "Format for Branch Personnel create")
     data class BranchPersonnelPostDTO(
         val actorId: UUID,
         val branchId: UUID,
@@ -38,6 +38,7 @@ class BranchPersonnelController(
         val createdById: UUID,
     )
 
+    @Schema(description = "Format for Branch Personnel update")
     data class BranchPersonnelPutDTO(
         val actorId: UUID,
         val branchId: UUID,
@@ -46,22 +47,27 @@ class BranchPersonnelController(
     )
 
     @PostMapping
+    @Operation(summary = "Create a new Branch Personnel")
     fun createBranchPersonnel(@RequestBody body: BranchPersonnelPostDTO) =
         branchPersonnelService.createBranchPersonnel(body).toCreatedResponse("Branch Personnel Created")
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a Branch Personnel by id")
     fun updateBranchPersonnel(@PathVariable id: UUID, @RequestBody body: BranchPersonnelPutDTO) =
         branchPersonnelService.updateBranchPersonnel(id, body).toOkResponse("Branch Personnel Updated")
 
     @GetMapping
+    @Operation(summary = "Get all Branch Personnel")
     fun getAllBranchPersonnel() =
         branchPersonnelService.getBranchPersonnel().toOkResponse()
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a Branch Personnel by id")
     fun getBranchPersonnel(@PathVariable id: UUID) =
         branchPersonnelService.getBranchPersonnelById(id).toOkResponse()
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a Branch Personnel by id")
     fun deleteBranchPersonnel(@PathVariable id: UUID) =
         branchPersonnelService.deleteBranchPersonnel(id).toOkResponse("Branch Personnel Deleted")
 }

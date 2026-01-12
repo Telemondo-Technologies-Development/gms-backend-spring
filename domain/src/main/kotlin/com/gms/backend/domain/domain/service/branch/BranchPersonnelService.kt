@@ -1,7 +1,6 @@
 package com.gms.backend.domain.domain.service.branch
 
-import com.gms.backend.domain.application.rest.BranchPersonnelController
-import com.gms.backend.domain.domain.model.branch.BranchPersonnel
+import com.gms.backend.domain.application.rest.branch.BranchPersonnelController
 import java.util.UUID
 
 interface BranchPersonnelService {

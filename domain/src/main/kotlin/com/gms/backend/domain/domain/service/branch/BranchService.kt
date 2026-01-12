@@ -1,6 +1,6 @@
 package com.gms.backend.domain.domain.service.branch
 
-import com.gms.backend.domain.application.rest.BranchController
+import com.gms.backend.domain.application.rest.branch.BranchController
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
 import java.util.*
 

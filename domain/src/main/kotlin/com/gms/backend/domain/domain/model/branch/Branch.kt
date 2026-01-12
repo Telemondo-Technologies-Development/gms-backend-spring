@@ -19,7 +19,12 @@ import java.time.Instant
 import java.util.*
 
 @Entity
-@Table(name = "branch")
+@Table(
+    name = "branch",
+    uniqueConstraints = [
+        UniqueConstraint(name = "uk_actor_branch", columnNames = ["actor_id", "branch_id"])
+    ]
+)
 class Branch {
 
     enum class BranchStatus {
@@ -38,13 +43,13 @@ class Branch {
     lateinit var name: String
 
     @Column(nullable = false, columnDefinition = "longtext")
-    var address: String? = null
+    lateinit var address: String
 
     @Column(nullable = false)
-    var longitude: String? = null
+    lateinit var longitude: String
 
     @Column(nullable = false)
-    var latitude: String? = null
+    lateinit var latitude: String
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -64,14 +69,14 @@ class Branch {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
 
     @Column(name = "created_by", insertable = false, updatable = false)
     var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
 
     @Column(name = "updated_by", insertable = false, updatable = false)
     var updatedById: UUID? = null
