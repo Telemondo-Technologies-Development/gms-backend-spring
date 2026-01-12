@@ -35,15 +35,24 @@ class SuppliesLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplies_id", nullable = false)
-    var supplies: Supply? = null
+    lateinit var supplies: Supply
+
+    @Column(name = "supplies_id", insertable = false, updatable = false)
+    var suppliesId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
+
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
 
     @OneToMany(mappedBy = "suppliesLog")
     var suppliesLogSuppliesExpenses = mutableSetOf<SuppliesExpense>()

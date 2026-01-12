@@ -21,28 +21,28 @@ class Ledger {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var entryType: String? = null
+    lateinit var entryType: String
 
     @Column(nullable = false)
-    var subscriptionName: String? = null
+    lateinit var subscriptionName: String
 
     @Column(nullable = false)
-    var branchName: String? = null
+    lateinit var branchName: String
 
     @Column(nullable = false)
-    var intervals: String? = null
+    lateinit var intervals: String
 
     @Column(nullable = false)
-    var intervalCount: Int? = null
+    var intervalCount: Int = 0
 
     @Column(nullable = false)
-    var gracePeriodDays: Int? = null
+    var gracePeriodDays: Int = 0
 
     @Column(nullable = false, precision = 10, scale = 2)
     var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
-    var paymentMethodName: String? = null
+    lateinit var paymentMethodName: String
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -50,25 +50,44 @@ class Ledger {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "actor_id", nullable = false)
-    var actor: Actor? = null
+    lateinit var actor: Actor
+
+    @Column(name = "actor_id", insertable = false, updatable = false)
+    var actorId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_availed_id", nullable = false)
-    var subscriptionAvailed: SubscriptionAvailed? = null
+    lateinit var subscriptionAvailed: SubscriptionAvailed
+
+    @Column(name = "subscription_availed_id", insertable = false, updatable = false)
+    var subscriptionAvailedId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
-    var branch: Branch? = null
+    lateinit var branch: Branch
+
+    @Column(name = "branch_id", insertable = false, updatable = false)
+    var branchId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id", nullable = false)
-    var invoice: Invoice? = null
+    lateinit var invoice: Invoice
+
+    @Column(name = "invoice_id", insertable = false, updatable = false)
+    var invoiceId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id", nullable = false)
-    var payment: Payment? = null
+    lateinit var payment: Payment
+
+    @Column(name = "payment_id", insertable = false, updatable = false)
+    var paymentId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
+
 }

@@ -21,11 +21,14 @@ class RoleServiceImpl(
     private val actorRepository: ActorRepository,
 ) : RoleService {
     @Transactional
-    override fun createRole(body: RoleController.RolePostDTO) {
-        val role = roleMapper.rolePostDTOToRole(body)
-        role.createdBy = actorRepository.getReferenceById(body.createdById)
-        role.updatedBy = actorRepository.getReferenceById(body.createdById)
-        roleRepository.save(role)
+    override fun createRole(body: RoleController.RolePostDTO): RoleController.RoleTableDTO {
+        val role = roleMapper.rolePostDTOToRole(body).apply {
+            createdBy = actorRepository.getReferenceById(body.createdById)
+            updatedBy = actorRepository.getReferenceById(body.createdById)
+        }
+
+        val saved = roleRepository.save(role)
+        return roleMapper.roleToRoleTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
@@ -39,10 +42,14 @@ class RoleServiceImpl(
     }
 
     @Transactional
-    override fun updateRole(id: UUID, body: RoleController.RolePutDTO) {
-        val role = roleRepository.findById(id).orElseThrow()
-        roleMapper.rolePutDTOToRole(body, role)
-        role.updatedBy = actorRepository.getReferenceById(body.updatedById)
+    override fun updateRole(id: UUID, body: RoleController.RolePutDTO): RoleController.RoleTableDTO {
+        val role = roleRepository.findById(id).orElseThrow().apply {
+            roleMapper.rolePutDTOToRole(body, this)
+            updatedBy = actorRepository.getReferenceById(body.updatedById)
+        }
+
+        roleRepository.save(role)
+        return roleMapper.roleToRoleTableDTO(role)
     }
 
     @Transactional
@@ -52,7 +59,7 @@ class RoleServiceImpl(
 
 
     @Transactional
-    override fun updateRolePermissions(id: UUID, body: RoleController.RolePermissionDTO) {
+    override fun updateRolePermissions(id: UUID, body: RoleController.RolePermissionDTO): RoleController.RolePermissionTableDTO {
         val role = roleRepository.findById(id).orElseThrow()
 
         val foundPermissions = permissionRepository.findAllById(body.permissionIds)
@@ -68,6 +75,7 @@ class RoleServiceImpl(
         }
 
         role.permissions.addAll(foundPermissions)
+        return roleMapper.roleToRolePermissionTableDTO(role)
     }
 
     @Transactional

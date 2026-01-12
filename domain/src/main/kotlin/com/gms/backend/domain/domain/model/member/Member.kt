@@ -51,21 +51,21 @@ class Member {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
 
     @Column(name = "created_by", insertable = false, updatable = false)
     var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
 
     @Column(name = "updated_by", insertable = false, updatable = false)
     var updatedById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "actor_id", nullable = false)
-    var actor: Actor? = null
+    lateinit var actor: Actor
 
     @Column(name = "actor_id", insertable = false, updatable = false)
     var actorId: UUID? = null

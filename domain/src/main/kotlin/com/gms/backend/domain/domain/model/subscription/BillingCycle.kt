@@ -19,16 +19,16 @@ class BillingCycle {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var name: String? = null
+    lateinit var name: String
 
     @Column(nullable = false)
-    var intervals: String? = null
+    lateinit var intervals: String
 
     @Column(nullable = false)
-    var intervalCount: Int? = null
+    var intervalCount: Int = 0
 
     @Column(nullable = false)
-    var gracePeriodDays: Int? = null
+    var gracePeriodDays: Int = 0
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -40,11 +40,17 @@ class BillingCycle {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
+
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
 
     @OneToMany(mappedBy = "billingCycle")
     var billingCycleSubscriptions = mutableSetOf<Subscription>()

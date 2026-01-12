@@ -19,19 +19,19 @@ class SubscriptionAvailed {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var name: String? = null
+    lateinit var name: String
 
     @Column(nullable = false, precision = 10, scale = 2)
     var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
-    var intervals: String? = null
+    lateinit var intervals: String
 
     @Column(nullable = false)
-    var intervalCount: Int? = null
+    var intervalCount: Int = 0
 
     @Column(nullable = false)
-    var gracePeriodDays: Int? = null
+    var gracePeriodDays: Int = 0
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id", nullable = false)

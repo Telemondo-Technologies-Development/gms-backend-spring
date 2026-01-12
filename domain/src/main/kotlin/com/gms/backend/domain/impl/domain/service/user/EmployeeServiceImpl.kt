@@ -20,16 +20,18 @@ class EmployeeServiceImpl(
     private val objectRepository: ObjectStorageRepository
 ) : EmployeeService {
     @Transactional
-    override fun createEmployee(body: EmployeeController.EmployeePostDTO) {
-        val employee = employeeMapper.employeePostDTOToEmployee(body)
-        employee.actor = Actor().let { it.type = Actor.ActorType.EMPLOYEE; it.status = Actor.ActorStatus.ACTIVE; it }
-        body.userId?.let {
-            employee.user = userRepository.getReferenceById(it)
+    override fun createEmployee(body: EmployeeController.EmployeePostDTO): EmployeeController.EmployeeTableDTO {
+        val employee = employeeMapper.employeePostDTOToEmployee(body).apply {
+            actor = Actor().apply {
+                type = Actor.ActorType.EMPLOYEE
+                status = Actor.ActorStatus.ACTIVE
+            }
+            user = body.userId?.let { userRepository.getReferenceById(it) }
+            profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
-        body.profilePictureId?.let {
-            employee.profilePicture = objectRepository.getReferenceById(it)
-        }
-        employeeRepository.save(employee)
+
+        val saved = employeeRepository.save(employee)
+        return employeeMapper.employeeToEmployeeTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
@@ -44,26 +46,29 @@ class EmployeeServiceImpl(
     }
 
     @Transactional
-    override fun updateEmployee(id: UUID, body: EmployeeController.EmployeePutDTO) {
+    override fun updateEmployee(
+        id: UUID, body: EmployeeController.EmployeePutDTO
+    ): EmployeeController.EmployeeTableDTO {
         val employee = employeeRepository.findById(id).orElseThrow {
             NoSuchElementException("Employee not found with ID: $id")
+        }.apply {
+            employeeMapper.employeePutDTOToEmployee(body, this)
+            this.id = id // Explicit 'this' helps clarity when parameter name matches property name
+            user = body.userId?.let { userRepository.getReferenceById(it) }
+            profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
-        employeeMapper.employeePutDTOToEmployee(body, employee)
-        employee.id = id
-        // Let the db handle the fk check
-        body.userId?.let {
-            employee.user = userRepository.getReferenceById(it)
-        }
-        body.profilePictureId?.let {
-            employee.profilePicture = objectRepository.getReferenceById(it)
-        }
+
+        employeeRepository.save(employee)
+        return employeeMapper.employeeToEmployeeTableDTO(employee)
     }
 
     @Transactional
     override fun deleteEmployee(id: UUID) {
-        val employee = employeeRepository.findById(id).orElseThrow()
-        employee.actor?.status = Actor.ActorStatus.DELETED
-        employee.actor?.deactivatedAt = Instant.now()
+        val employee = employeeRepository.findById(id).orElseThrow().apply {
+            actor.status = Actor.ActorStatus.DELETED
+            actor.deactivatedAt = Instant.now()
+        }
+
         employeeRepository.delete(employee)
     }
 

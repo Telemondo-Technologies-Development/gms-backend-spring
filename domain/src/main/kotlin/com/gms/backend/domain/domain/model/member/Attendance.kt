@@ -37,9 +37,15 @@ class Attendance {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "actor_id", nullable = false)
-    var actor: Actor? = null
+    lateinit var actor: Actor
+
+    @Column(name = "actor_id", insertable = false, updatable = false)
+    var actorId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
-    var branch: Branch? = null
+    lateinit var branch: Branch
+
+    @Column(name = "branch_id", insertable = false, updatable = false)
+    var branchId: UUID? = null
 }

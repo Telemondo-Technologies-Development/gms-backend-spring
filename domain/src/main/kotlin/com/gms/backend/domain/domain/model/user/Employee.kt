@@ -63,7 +63,7 @@ class Employee {
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "actor_id", nullable = false)
     @JsonIgnore
-    var actor: Actor? = null
+    lateinit var actor: Actor
 
     @Column(name = "actor_id", insertable = false, updatable = false)
     var actorId: UUID? = null

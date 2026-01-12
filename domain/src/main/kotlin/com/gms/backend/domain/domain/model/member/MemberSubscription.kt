@@ -27,7 +27,7 @@ class MemberSubscription {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var startDate: Instant? = null
+    lateinit var startDate: Instant
 
     @Column
     var endDate: Instant? = null
@@ -46,21 +46,36 @@ class MemberSubscription {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "actor_id", nullable = false)
-    var actor: Actor? = null
+    lateinit var actor: Actor
+
+    @Column(name = "actor_id", insertable = false, updatable = false)
+    var actorId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_availed_id", nullable = false)
-    var subscriptionAvailed: SubscriptionAvailed? = null
+    lateinit var subscriptionAvailed: SubscriptionAvailed
+
+    @Column(name = "subscription_availed_id", insertable = false, updatable = false)
+    var subscriptionAvailedId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
-    var branch: Branch? = null
+    lateinit var branch: Branch
+
+    @Column(name = "branch_id", insertable = false, updatable = false)
+    var branchId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
+
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
 }

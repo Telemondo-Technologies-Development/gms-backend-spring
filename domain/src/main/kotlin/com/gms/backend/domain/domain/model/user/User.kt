@@ -36,7 +36,7 @@ class User {
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "actor_id", nullable = false)
     @JsonIgnore
-    var actor: Actor? = null
+    lateinit var actor: Actor
 
     // This creates a read only column
     @Column(name = "actor_id", insertable = false, updatable = false)

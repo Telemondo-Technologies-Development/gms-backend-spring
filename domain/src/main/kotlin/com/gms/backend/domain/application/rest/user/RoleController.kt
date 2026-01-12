@@ -20,8 +20,8 @@ class RoleController(private val roleService: RoleServiceImpl) {
         val id: UUID,
         val name: String,
         val description: String,
-        val createdById: UUID,
-        val updatedById: UUID
+        val createdById: UUID?,
+        val updatedById: UUID?
     )
 
     @GetMapping
@@ -34,8 +34,8 @@ class RoleController(private val roleService: RoleServiceImpl) {
         val name: String,
         val description: String,
         val permissions: List<Permission>,
-        val createdById: UUID,
-        val updatedById: UUID
+        val createdById: UUID?,
+        val updatedById: UUID?
     )
 
     @GetMapping("/{id}")

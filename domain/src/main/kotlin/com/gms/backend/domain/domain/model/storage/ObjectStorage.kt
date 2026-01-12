@@ -27,25 +27,25 @@ class ObjectStorage {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    var bucket: String? = null
+    lateinit var bucket: String
 
     @Column(nullable = false, length = 1024)
-    var fileKey: String? = null
+    lateinit var fileKey: String
 
     @Column(nullable = false)
-    var name: String? = null
+    lateinit var name: String
 
     @Column(nullable = false)
-    var fileSize: String? = null
+    lateinit var fileSize: String
 
     @Column(nullable = false)
-    var mimeType: String? = null
+    lateinit var mimeType: String
 
     @Column(nullable = false)
-    var tags: String? = null
+    lateinit var tags: String
 
     @Column(nullable = false)
-    var status: Int? = null
+    var status: Int = 0
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -57,11 +57,17 @@ class ObjectStorage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: Actor? = null
+    lateinit var createdBy: Actor
+
+    @Column(name = "created_by", insertable = false, updatable = false)
+    var createdById: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", nullable = false)
-    var updatedBy: Actor? = null
+    lateinit var updatedBy: Actor
+
+    @Column(name = "updated_by", insertable = false, updatable = false)
+    var updatedById: UUID? = null
 
     @OneToMany(mappedBy = "profilePicture")
     var profilePictureBranches = mutableSetOf<Branch>()
