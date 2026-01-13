@@ -9,11 +9,13 @@ import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.repository.user.EmployeeRepository
 import com.gms.backend.domain.domain.service.branch.BranchService
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
+@PreAuthorize("denyAll()")
 class BranchServiceImpl(
     private val branchRepository: BranchRepository,
     private val branchPersonnelRepository: BranchPersonnelRepository,
@@ -24,6 +26,7 @@ class BranchServiceImpl(
 ) : BranchService {
 
     @Transactional
+    @PreAuthorize("hasAuthority('branch_create')")
     override fun createBranch(body: BranchController.BranchPostDTO): BranchController.BranchTableDTO {
         val branch = branchMapper.branchDTOToBranch(body).apply {
             createdBy = actorRepository.getReferenceById(body.createdById)
@@ -36,6 +39,7 @@ class BranchServiceImpl(
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('branch_update')")
     override fun updateBranch(id: UUID, body: BranchController.BranchPutDTO): BranchController.BranchTableDTO {
         val branch = branchRepository.findById(id).orElseThrow {
             NoSuchElementException("Branch not found with ID: $id")
@@ -51,12 +55,14 @@ class BranchServiceImpl(
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('branch_read')")
     override fun getBranches(): List<BranchController.BranchTableDTO> {
         val branches = branchRepository.findAll()
         return branchMapper.branchesToDTO(branches)
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('branch_read')")
     override fun getBranchById(id: UUID): BranchController.BranchTableDTO {
         val branch = branchRepository.findById(id).orElseThrow {
             NoSuchElementException("Branch not found with ID: $id")
@@ -65,6 +71,7 @@ class BranchServiceImpl(
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('branch_delete')")
     override fun deleteBranch(id: UUID) {
         val branch = branchRepository.findById(id).orElseThrow {
             NoSuchElementException("Branch not found with ID: $id")
@@ -73,6 +80,7 @@ class BranchServiceImpl(
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('branch_read') and hasAuthority('branchPersonnel_read')")
     override fun getBranchEmployees(
         branchId: UUID,
         status: BranchPersonnel.BranchPersonnelStatus?

@@ -7,12 +7,14 @@ import com.gms.backend.domain.domain.repository.member.MemberRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.member.MemberService
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.util.*
 
 @Service
+@PreAuthorize("denyAll()")
 class MemberServiceImpl(
     private val memberRepository: MemberRepository,
     private val memberMapper: MemberMapper,
@@ -20,6 +22,7 @@ class MemberServiceImpl(
     private val objectRepository: ObjectStorageRepository
 ) : MemberService {
     @Transactional
+    @PreAuthorize("hasAuthority('member_create')")
     override fun createMember(body: MemberController.MemberPostDTO): MemberController.MemberTableDTO {
         val member = memberMapper.memberPostDTOToMember(body).apply {
             actor = Actor().apply {
@@ -36,17 +39,19 @@ class MemberServiceImpl(
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('member_read')")
     override fun getMembers(): List<MemberController.MemberTableDTO> {
         return memberRepository.findAllProjectedBy()
     }
 
-    // Not sure if I should throw instead of a returning null
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('member_read')")
     override fun getMemberById(id: UUID): MemberController.MemberTableDTO {
         return memberRepository.findById(id).orElseThrow().let(memberMapper::memberToMemberTableDTO)
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('member_update')")
     override fun updateMember(id: UUID, body: MemberController.MemberPutDTO): MemberController.MemberTableDTO {
         val member = memberRepository.findById(id).orElseThrow().apply {
             memberMapper.memberPutDTOToMember(body, this)
@@ -60,6 +65,7 @@ class MemberServiceImpl(
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('member_delete')")
     override fun deleteMember(id: UUID) {
         val member = memberRepository.findById(id).orElseThrow().apply {
             actor.status = Actor.ActorStatus.DELETED
