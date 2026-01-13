@@ -9,11 +9,13 @@ import com.gms.backend.domain.domain.repository.user.PermissionRepository
 import com.gms.backend.domain.domain.repository.user.RoleRepository
 import com.gms.backend.domain.domain.service.user.RoleService
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
+@PreAuthorize("denyAll()")
 class RoleServiceImpl(
     private val roleRepository: RoleRepository,
     private val roleMapper: RoleMapper,
@@ -21,6 +23,7 @@ class RoleServiceImpl(
     private val actorRepository: ActorRepository,
 ) : RoleService {
     @Transactional
+    @PreAuthorize("hasAuthority('role_create')")
     override fun createRole(body: RoleController.RolePostDTO): RoleController.RoleTableDTO {
         val role = roleMapper.rolePostDTOToRole(body).apply {
             createdBy = actorRepository.getReferenceById(body.createdById)
@@ -32,16 +35,19 @@ class RoleServiceImpl(
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('role_read')")
     override fun getRoles(): List<RoleController.RoleTableDTO> {
         return roleRepository.findAllProjectedBy()
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('role_read') and hasAuthority('permission_read')")
     override fun getRoleById(id: UUID): RoleController.RolePermissionTableDTO {
         return roleRepository.findById(id).orElseThrow().let(roleMapper::roleToRolePermissionTableDTO)
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('role_update')")
     override fun updateRole(id: UUID, body: RoleController.RolePutDTO): RoleController.RoleTableDTO {
         val role = roleRepository.findById(id).orElseThrow().apply {
             roleMapper.rolePutDTOToRole(body, this)
@@ -53,12 +59,14 @@ class RoleServiceImpl(
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('role_delete')")
     override fun deleteRole(id: UUID) {
         return roleRepository.deleteById(id)
     }
 
 
     @Transactional
+    @PreAuthorize("hasAuthority('rolePermission_update')")
     override fun updateRolePermissions(id: UUID, body: RoleController.RolePermissionDTO): RoleController.RolePermissionTableDTO {
         val role = roleRepository.findById(id).orElseThrow()
 
@@ -79,6 +87,7 @@ class RoleServiceImpl(
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('rolePermission_delete')")
     override fun deleteRolePermissions(id: UUID, body: RoleController.RolePermissionDTO) {
         val role = roleRepository.findById(id).orElseThrow()
         if (body.permissionIds.isEmpty()) throw DomainException(ApiErrorType.NO_DELETE)

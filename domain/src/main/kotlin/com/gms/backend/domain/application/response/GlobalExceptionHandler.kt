@@ -3,6 +3,8 @@ package com.gms.backend.domain.application.response
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authorization.AuthorizationDeniedException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
@@ -38,6 +40,30 @@ class GlobalExceptionHandler {
             message = ex.message ?: "Action failed",
             status = ex.status,
             errors = listOf(ex.error.toApiError(ex.description))
+        )
+    }
+
+    // Handle Unauthenticated (401)
+    // Occurs when user is not logged in or token is missing/invalid
+    @ExceptionHandler(AuthenticationException::class)
+    fun handleAuthenticationException(ex: AuthenticationException): ResponseEntity<ApiResponse<Nothing>> {
+        log.warn("Authentication failed: {}", ex.message)
+        return ApiResponse.error(
+            message = "Authentication required. Please log in.",
+            status = HttpStatus.UNAUTHORIZED,
+            errors = listOf(ApiErrorType.UNAUTHENTICATED.toApiError(ex.message))
+        )
+    }
+
+    // Handle Unauthorized (403)
+    // Occurs when @PreAuthorize check fails
+    @ExceptionHandler(AuthorizationDeniedException::class)
+    fun handleAccessDeniedException(ex: AuthorizationDeniedException): ResponseEntity<ApiResponse<Nothing>> {
+        log.warn("Access denied: {}", ex.message)
+        return ApiResponse.error(
+            message = "You do not have permission to perform this action.",
+            status = HttpStatus.FORBIDDEN,
+            errors = listOf(ApiErrorType.INSUFFICIENT_PERMISSIONS.toApiError(ex.message))
         )
     }
 

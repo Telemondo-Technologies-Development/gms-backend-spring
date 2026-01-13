@@ -50,6 +50,9 @@
 
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <database.rider.version>1.41.0</database.rider.version>
+        <io.swagger.version>2.2.41</io.swagger.version>
+        <org.bouncycastle.version>1.83</org.bouncycastle.version>
+        <com.tngtech.archunit.version>1.2.1</com.tngtech.archunit.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>

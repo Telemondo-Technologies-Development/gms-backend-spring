@@ -7,12 +7,14 @@ import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.EmployeeRepository
 import com.gms.backend.domain.domain.repository.user.UserRepository
 import com.gms.backend.domain.domain.service.user.EmployeeService
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.util.*
 
 @Service
+@PreAuthorize("denyAll()")
 class EmployeeServiceImpl(
     private val employeeRepository: EmployeeRepository,
     private val employeeMapper: EmployeeMapper,
@@ -20,6 +22,7 @@ class EmployeeServiceImpl(
     private val objectRepository: ObjectStorageRepository
 ) : EmployeeService {
     @Transactional
+    @PreAuthorize("hasAuthority('employee_create')")
     override fun createEmployee(body: EmployeeController.EmployeePostDTO): EmployeeController.EmployeeTableDTO {
         val employee = employeeMapper.employeePostDTOToEmployee(body).apply {
             actor = Actor().apply {
@@ -35,17 +38,20 @@ class EmployeeServiceImpl(
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('employee_read')")
     override fun getEmployees(): List<EmployeeController.EmployeeTableDTO> {
         return employeeRepository.findAll().let(employeeMapper::employeesToEmployeeTableDTO)
 //        return employeeRepository.findAllProjectedBy()
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('employee_read') and hasAuthority('user_read')")
     override fun getEmployeeById(id: UUID): EmployeeController.EmployeeTableDTO {
         return employeeRepository.findById(id).orElseThrow().let(employeeMapper::employeeToEmployeeTableDTO)
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('employee_update')")
     override fun updateEmployee(
         id: UUID, body: EmployeeController.EmployeePutDTO
     ): EmployeeController.EmployeeTableDTO {
@@ -63,6 +69,7 @@ class EmployeeServiceImpl(
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('employee_delete')")
     override fun deleteEmployee(id: UUID) {
         val employee = employeeRepository.findById(id).orElseThrow().apply {
             actor.status = Actor.ActorStatus.DELETED

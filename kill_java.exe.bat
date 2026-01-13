@@ -1,0 +1,3 @@
+@echo off
+echo Terminating all java.exe processes...
+TASKKILL /F /IM java.exe || echo No java processes found.

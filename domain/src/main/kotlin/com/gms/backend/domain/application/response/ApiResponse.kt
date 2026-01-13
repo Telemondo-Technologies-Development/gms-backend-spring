@@ -78,6 +78,12 @@ enum class ApiErrorType(val code: String, val description: String) {
     NO_DELETE("VAL_005", "No entry was sent to be deleted."),
     MISSING_DELETE("VAL_006", "The delete failed as some of the data provided does not exist."),
 
+    // 401 Unauthorized (Authentication)
+    UNAUTHENTICATED("SEC_001", "Full authentication is required to access this resource."),
+
+    // 403 Forbidden (Authorization)
+    INSUFFICIENT_PERMISSIONS("SEC_002", "You do not have the required authorities to perform this action."),
+
     // 404 Not Found Errors
     RESOURCE_NOT_FOUND("VAL_401", "The requested resource could not be located."),
     NO_SUCH_ELEMENT("VAL_402", "The specific item you are looking for is missing or has been deleted."),
