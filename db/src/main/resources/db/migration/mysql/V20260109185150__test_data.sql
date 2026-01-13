@@ -8,6 +8,7 @@ INSERT INTO `actors` (`id`, `type`, `status`, `created_at`, `deactivated_at`) VA
 (0x5bd6a420e3ab43eb80a8a4d993fc331b, 'USER', 'ACTIVE', '2026-01-09 10:52:29.297334', NULL),
 (0x75a6a919bfcb427c9ede78e2f49c960d, 'USER', 'ACTIVE', '2026-01-09 10:52:26.936877', NULL),
 (0x7b8bed31a74a4ea5ade4a60b42170062, 'USER', 'ACTIVE', '2026-01-09 11:36:02.568994', NULL),
+(0xf520a8fb382443398bb43732c8a3f617, 'USER', 'ACTIVE', '2026-01-09 11:37:31.568994', NULL),
 (0x8b31746166d1489085a665ae7c6a92d9, 'EMPLOYEE', 'ACTIVE', '2026-01-09 10:53:12.634264', NULL),
 (0xca5e103c8fbd4b9bb9510450195bc03b, 'EMPLOYEE', 'DELETED', '2026-01-09 12:13:34.940285', '2026-01-09 12:15:21.729727'),
 (0xe4ee03de2a3e4a3889ee810ae14831a8, 'EMPLOYEE', 'ACTIVE', '2026-01-09 10:54:53.141638', NULL),
@@ -17,10 +18,11 @@ INSERT INTO `actors` (`id`, `type`, `status`, `created_at`, `deactivated_at`) VA
 (0xd594bb1121f44511a3fb184b9b557410, 'MEMBER', 'ACTIVE', '2026-01-09 10:54:51.687103', NULL);
 
 INSERT INTO `users` (`id`, `actor_id`, `email`, `password`, `created_at`, `updated_at`) VALUES
-(0x019ba262dd9770328a8d7e74a3af3d78, 0x75a6a919bfcb427c9ede78e2f49c960d, 'Bonnie32', 'user123', '2026-01-09 10:52:26.956371', '2026-01-09 10:52:26.956371'),
-(0x019ba262e6f074b7957b10a0fd54d579, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 'Shakira_Jaskolski51', 'user123', '2026-01-09 10:52:29.302007', '2026-01-09 10:52:29.302537'),
-(0x019ba262e99e77e0a3c4fb65c5850d51, 0x4382e175404d4bd797f0b379bd95f64a, 'Sofia_Hahn', 'user123', '2026-01-09 10:52:29.985095', '2026-01-09 10:52:29.985095'),
-(0x019ba28ac6e5727a88fd1b640603d4e6, 0x7b8bed31a74a4ea5ade4a60b42170062, 'Michaela53', 'user123', '2026-01-09 11:36:02.590989', '2026-01-09 11:36:02.590989');
+(0x019ba262dd9770328a8d7e74a3af3d78, 0x75a6a919bfcb427c9ede78e2f49c960d, 'Bonnie32', '$argon2id$v=19$m=16384,t=2,p=1$KB7xzE43pNh5tKU21ms1Sw$neyzU8pin1RjbA2cTXFOQXmz5p8CPQ3QBE/BE/qq1a4', '2026-01-09 10:52:26.956371', '2026-01-09 10:52:26.956371'),
+(0x019ba262e6f074b7957b10a0fd54d579, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 'Shakira_Jaskolski51', '$argon2id$v=19$m=16384,t=2,p=1$ax+ArfDUeFk6dUJSyqd0qg$CH2RGzi4OrAhgDdNFKqwmYRHQM8q9NPJvQZX7Jz48qw', '2026-01-09 10:52:29.302007', '2026-01-09 10:52:29.302537'),
+(0x019ba262e99e77e0a3c4fb65c5850d51, 0x4382e175404d4bd797f0b379bd95f64a, 'Sofia_Hahn', '$argon2id$v=19$m=16384,t=2,p=1$TFpmY6PXLslhJrFcL7kQaw$kykWfF1cXD0/4xcGbglq9rlfmoG7g/1qFAN1MFuJIg0', '2026-01-09 10:52:29.985095', '2026-01-09 10:52:29.985095'),
+(0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0xf520a8fb382443398bb43732c8a3f617, 'admin', '$argon2id$v=19$m=16384,t=2,p=1$lZjfRpq86VBpBX+Xy+7ctg$WRvQvkIVfzSZZm+HWgyUEXRoqdtdnwpYM+/XPhDmGiQ', '2026-01-12 01:47:25.411764', '2026-01-12 01:47:25.411764'),
+(0x019ba28ac6e5727a88fd1b640603d4e6, 0x7b8bed31a74a4ea5ade4a60b42170062, 'Michaela53', '$argon2id$v=19$m=16384,t=2,p=1$JdBo+giX4CINdz+JijRJGQ$WuWZmLKzODyj2x8XgbTWL+ICq+UIo0A7imA5eKerKvk', '2026-01-09 11:36:02.590989', '2026-01-09 11:36:02.590989');
 
 INSERT INTO `employees` (`id`, `user_id`, `actor_id`, `surname`, `first_name`, `middle_name`, `suffix`, `contact_no`, `status`, `profile_picture`, `created_at`, `updated_at`) VALUES
 (0x019ba26390377eeea454fecc6baf5855, 0x019ba262dd9770328a8d7e74a3af3d78, 0x8b31746166d1489085a665ae7c6a92d9, 'Legros', 'Sophie', NULL, NULL, '09154520999', 'IN', NULL, '2026-01-09 10:53:12.637357', '2026-01-09 10:53:12.637357'),
@@ -33,6 +35,9 @@ INSERT INTO `members` (`id`, `actor_id`, `surname`, `first_name`, `middle_name`,
 
 INSERT INTO `roles` (`id`, `name`, `description`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 'ADMIN', 'Full Access', 0x8b31746166d1489085a665ae7c6a92d9, 0x8b31746166d1489085a665ae7c6a92d9, '2026-01-09 10:57:25.942328', '2026-01-09 10:57:25.942328');
+
+INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
+(0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0x019ba2676db67541a1714f0524691e73);
 
 INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba2c04a027259a6a80fd67e3babbf, 'member_create'),
