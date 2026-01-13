@@ -41,18 +41,18 @@ services:
       - mysql
 
   backend:
-    # local build for testing
-    build:
-      context: .
-      dockerfile: Dockerfile
+#    # local build for testing
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
 
     image: ghcr.io/telemondo-technologies-development/gms-backend-spring:dev
 
     restart: unless-stopped
     env_file: ./.env
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
+      DB_HOST: "${DB_HOST}"
+      DB_PORT: "${DB_CONTAINER_PORT}"
 
       SPRING_PROFILES_ACTIVE: dev
 
