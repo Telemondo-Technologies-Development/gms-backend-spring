@@ -26,8 +26,8 @@ class BranchPersonnelController(
         val status: BranchPersonnel.BranchPersonnelStatus,
         val createdById: UUID?,
         val updatedById: UUID?,
-        val createdAt: Instant,
-        val updatedAt: Instant
+//        val createdAt: Instant,
+//        val updatedAt: Instant
     )
 
     @Schema(description = "Format for Branch Personnel create")

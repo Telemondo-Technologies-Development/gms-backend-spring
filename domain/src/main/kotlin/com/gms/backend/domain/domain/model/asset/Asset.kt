@@ -52,7 +52,7 @@ class Asset {
     @JoinColumn(name = "maintenance_schedule_id", nullable = false)
     lateinit var maintenanceSchedule: MaintenanceSchedule
 
-    @Column(name = "branch_id", insertable = false, updatable = false)
+    @Column(name = "maintenance_schedule_id", insertable = false, updatable = false)
     var maintenanceScheduleId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
