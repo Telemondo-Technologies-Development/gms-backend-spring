@@ -12,6 +12,13 @@ import java.util.*
 @Table(name = "billing_cycles")
 class BillingCycle {
 
+    enum class Interval {
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        YEARLY,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -22,7 +29,8 @@ class BillingCycle {
     lateinit var name: String
 
     @Column(nullable = false)
-    lateinit var intervals: String
+    @Enumerated(EnumType.STRING)
+    lateinit var intervals: Interval
 
     @Column(nullable = false)
     var intervalCount: Int = 0
@@ -32,11 +40,11 @@ class BillingCycle {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    lateinit var createdAt: Instant
+    var createdAt: Instant? = null
 
     @UpdateTimestamp
     @Column(nullable = false)
-    lateinit var updatedAt: Instant
+    var updatedAt: Instant? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)

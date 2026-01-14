@@ -23,11 +23,11 @@ class OtherExpenseType {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    lateinit var createdAt: Instant
+    var createdAt: Instant? = null
 
     @UpdateTimestamp
     @Column(nullable = false)
-    lateinit var updatedAt: Instant
+    var updatedAt: Instant? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)

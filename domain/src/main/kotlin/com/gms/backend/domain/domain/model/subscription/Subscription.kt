@@ -22,16 +22,19 @@ class Subscription {
     @Column(nullable = false)
     lateinit var name: String
 
+    @Column(columnDefinition = "TEXT")
+    var description: String? = null
+
     @Column(nullable = false, precision = 10, scale = 2)
     var amount: BigDecimal = BigDecimal.ZERO
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    lateinit var createdAt: Instant
+    var createdAt: Instant? = null
 
     @UpdateTimestamp
     @Column(nullable = false)
-    lateinit var updatedAt: Instant
+    var updatedAt: Instant? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle_id", nullable = false)

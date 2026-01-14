@@ -9,7 +9,7 @@ import java.math.BigDecimal
 import java.util.*
 
 @Entity
-@Table(name = "subscription_availed")
+@Table(name = "subscriptions_availed")
 class SubscriptionAvailed {
 
     @Id
@@ -25,7 +25,8 @@ class SubscriptionAvailed {
     var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
-    lateinit var intervals: String
+    @Enumerated(EnumType.STRING)
+    lateinit var intervals: BillingCycle.Interval
 
     @Column(nullable = false)
     var intervalCount: Int = 0

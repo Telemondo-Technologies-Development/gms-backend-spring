@@ -41,11 +41,11 @@ class MemberProgress {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    lateinit var createdAt: Instant
+    var createdAt: Instant? = null
 
     @UpdateTimestamp
     @Column(nullable = false)
-    lateinit var updatedAt: Instant
+    var updatedAt: Instant? = null
 
     @Column
     var completedAt: Instant? = null
