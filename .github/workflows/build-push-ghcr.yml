@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - dev
-      - main
-      - "*-feat-*"
   workflow_dispatch:
 
 jobs:
@@ -31,13 +29,12 @@ jobs:
 
       - name: Compute tags
         run: |
-          TAGS="${IMAGE}:${GITHUB_SHA}"
-          TAGS="$TAGS,${IMAGE}:${GITHUB_REF_NAME}"
+          TAGS="${IMAGE}:dev,${IMAGE}:${GITHUB_SHA}"
           echo "TAGS=$TAGS" >> $GITHUB_ENV
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          push: ${{ github.ref_name == 'dev' }}
           tags: ${{ env.TAGS }}

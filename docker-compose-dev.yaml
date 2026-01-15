@@ -46,7 +46,6 @@ services:
     #      context: .
     #      dockerfile: Dockerfile
 
-    # Change the tag if you want to pull an image built from a different branch:
     image: ghcr.io/telemondo-technologies-development/gms-backend-spring:dev
 
     restart: unless-stopped
