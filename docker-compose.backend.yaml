@@ -1,0 +1,26 @@
+services:
+  backend:
+    #    # local build for testing
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile
+
+    image: ghcr.io/telemondo-technologies-development/gms-backend-spring:dev
+
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DB_HOST: "${DB_HOST}"
+      DB_PORT: "${DB_CONTAINER_PORT}"
+
+      SPRING_PROFILES_ACTIVE: dev
+
+      NATS_URL: "nats://nats:${NATS_DOCKER_PORT}"
+
+    depends_on:
+      - mysql
+      - nats
+    networks:
+      - mysql
+    ports:
+      - "${BACKEND_PORT}:8080"
