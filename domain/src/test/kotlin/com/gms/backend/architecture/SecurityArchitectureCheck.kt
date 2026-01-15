@@ -1,3 +1,5 @@
+package com.gms.backend.architecture
+
 import com.tngtech.archunit.core.domain.JavaClass
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
