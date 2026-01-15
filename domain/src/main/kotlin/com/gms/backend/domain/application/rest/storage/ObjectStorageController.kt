@@ -1,6 +1,7 @@
 package com.gms.backend.domain.application.rest.storage
 
 import com.gms.backend.domain.domain.model.user.Actor
+import com.gms.backend.domain.application.response.*
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.repository.user.UserRepository
@@ -9,7 +10,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
@@ -20,7 +21,6 @@ import java.util.UUID
 class ObjectStorageController(
     private val storageService: ObjectStorageService,
     private val actorRepository: ActorRepository,
-    private val userRepository: UserRepository,
     @Value("\${minio.bucket.public}") private val publicBucket: String,
     @Value("\${minio.bucket.private}") private val privateBucket: String
 ) {
@@ -34,35 +34,40 @@ class ObjectStorageController(
     )
     @GetMapping("/{id}/url")
     @Operation(summary = "Get a file from the object storage by ID")
-    fun getFileUrl(@PathVariable id: UUID): ResponseEntity<Map<String, String>> {
-        val url = storageService.getDownloadUrl(id)
-        return ResponseEntity.ok(mapOf("url" to url))
+    fun getUrl(@PathVariable id: UUID): ResponseEntity<ApiResponse<String>> {
+        return try {
+            val url = storageService.getDownloadUrl(id)
+            url.toOkResponse("URL generated")
+        } catch (e: Exception) {
+            // Cast the Nothing response to the String response
+            ApiResponse.error(
+                message = "Could not generate download link",
+                status = HttpStatus.NOT_FOUND,
+                errors = listOf(ApiErrorType.RESOURCE_NOT_FOUND.toApiError(e.message))
+            ) as ResponseEntity<ApiResponse<String>>
+        }
     }
-
     // --- 1. PROFILE PICTURES (Public Bucket) ---
 
     @PostMapping("/upload/member/profile")
     @Operation(summary = "Upload a member profile picture into the object storage (public)")
-    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ObjectStorage> {
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, publicBucket, "profiles/members", getCurrentActor())
-        )
+    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, publicBucket, "profiles/members", getCurrentActor())
+            .toCreatedResponse("Member profile picture uploaded successfully")
     }
 
     @PostMapping("/upload/employee/profile")
     @Operation(summary = "Upload an employee profile picture into the object storage (public)")
-    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ObjectStorage> {
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, publicBucket, "profiles/employees", getCurrentActor())
-        )
+    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, publicBucket, "profiles/employees", getCurrentActor())
+            .toCreatedResponse("Employee profile picture uploaded successfully")
     }
 
-    @PostMapping("/upload/branch/logo")
+    @PostMapping("/upload/branch/profile")
     @Operation(summary = "Upload a branch logo into the object storage (public)")
-    fun uploadBranchLogo(@RequestParam("file") file: MultipartFile): ResponseEntity<ObjectStorage> {
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, publicBucket, "profiles/branches", getCurrentActor())
-        )
+    fun uploadBranchLogo(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, publicBucket, "profiles/branches", getCurrentActor())
+            .toCreatedResponse("Branch logo uploaded successfully")
     }
 
     // --- 2. EXPENSES & BILLING (Private Bucket) ---
@@ -71,48 +76,42 @@ class ObjectStorageController(
     @Operation(summary = "(private)")
     fun uploadExpenseReceipt(
         @RequestParam("file") file: MultipartFile,
-        @RequestParam("type") type: String // e.g., "utility", "salary", "supply"
-    ): ResponseEntity<ObjectStorage> {
-        val folder = "expenses/$type"
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, privateBucket, folder, getCurrentActor())
-        )
+        @RequestParam("category") category: String // utility, salary, asset, etc.
+    ): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, privateBucket, "expenses/$category", getCurrentActor())
+            .toCreatedResponse("Receipt for $category uploaded successfully")
     }
 
     @PostMapping("/upload/payment-method/doc")
     @Operation(summary = "(private)")
-    fun uploadPaymentDoc(@RequestParam("file") file: MultipartFile): ResponseEntity<ObjectStorage> {
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, privateBucket, "billing/methods", getCurrentActor())
-        )
+    fun uploadPaymentMethodDoc(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, privateBucket, "billing/payment-methods", getCurrentActor())
+            .toCreatedResponse("Payment method document saved")
     }
 
     // --- 3. ASSETS & MAINTENANCE (Private Bucket) ---
 
     @PostMapping("/upload/asset/document")
     @Operation(summary = "(private)")
-    fun uploadAssetDoc(@RequestParam("file") file: MultipartFile): ResponseEntity<ObjectStorage> {
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, privateBucket, "assets/docs", getCurrentActor())
-        )
+    fun uploadAssetDocument(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, privateBucket, "assets/documents", getCurrentActor())
+            .toCreatedResponse("Asset document uploaded")
     }
 
     @PostMapping("/upload/asset/maintenance")
     @Operation(summary = "(private)")
-    fun uploadMaintenanceRecord(@RequestParam("file") file: MultipartFile): ResponseEntity<ObjectStorage> {
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, privateBucket, "assets/maintenance", getCurrentActor())
-        )
+    fun uploadMaintenanceRecord(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, privateBucket, "assets/maintenance", getCurrentActor())
+            .toCreatedResponse("Maintenance record saved")
     }
 
     // --- 4. REPORTS (Private Bucket) ---
 
     @PostMapping("/upload/report/attachment")
     @Operation(summary = "(private)")
-    fun uploadReportAttachment(@RequestParam("file") file: MultipartFile): ResponseEntity<ObjectStorage> {
-        return ResponseEntity.ok(
-            storageService.uploadFile(file, privateBucket, "reports/attachments", getCurrentActor())
-        )
+    fun uploadReportAttachment(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
+        return storageService.uploadFile(file, privateBucket, "reports/attachments", getCurrentActor())
+            .toCreatedResponse("Report attachment uploaded")
     }
     private fun getCurrentActor(actorId: UUID? = null): Actor {
 
