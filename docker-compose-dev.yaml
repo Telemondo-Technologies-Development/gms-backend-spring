@@ -41,11 +41,6 @@ services:
       - mysql
 
   backend:
-    #    # local build for testing
-    #    build:
-    #      context: .
-    #      dockerfile: Dockerfile
-
     image: ghcr.io/telemondo-technologies-development/gms-backend-spring:dev
 
     restart: unless-stopped
