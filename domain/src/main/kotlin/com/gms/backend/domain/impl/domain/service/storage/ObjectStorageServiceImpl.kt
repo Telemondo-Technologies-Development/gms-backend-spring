@@ -5,6 +5,7 @@ import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import io.minio.*
+import io.minio.http.Method
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -13,18 +14,24 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Service
-@PreAuthorize("denyAll()")
+@PreAuthorize("permitAll()")
 class ObjectStorageServiceImpl (
     private val minioClient: MinioClient,
     private val objectStorageRepository: ObjectStorageRepository
 ) : ObjectStorageService {
     @Transactional
-    @PreAuthorize("hasAuthority('storage_uploadPicture')")
-    override fun uploadPicture(file: MultipartFile, bucket: String, actor: Actor): ObjectStorage  {
-        val fileExtension = file.originalFilename?.substringAfterLast('.', "jpg")
-        val fileKey = "pictures/${UUID.randomUUID()}.$fileExtension"
+    @PreAuthorize("permitAll()")
+    override fun uploadFile(
+        file: MultipartFile,
+        bucket: String,
+        folder: String,
+        actor: Actor
+    ): ObjectStorage {
+        val fileExtension = file.originalFilename?.substringAfterLast('.', "bin")
+        val fileKey = "$folder/${UUID.randomUUID()}.$fileExtension"
 
         try {
             file.inputStream.use { inputStream ->
@@ -33,26 +40,40 @@ class ObjectStorageServiceImpl (
                         .bucket(bucket)
                         .`object`(fileKey)
                         .stream(inputStream, file.size, -1)
-                        .contentType(file.contentType)
+                        .contentType(file.contentType ?: "application/octet-stream")
                         .build()
                 )
             }
+
             val storageRecord = ObjectStorage().apply {
-                this.id = UUID.randomUUID()
                 this.bucket = bucket
                 this.fileKey = fileKey
-                this.name = file.originalFilename ?: "unnamed_file"
+                this.name = file.originalFilename ?: "unnamed"
                 this.fileSize = file.size.toString()
-                this.mimeType = file.contentType ?: "image/jpeg"
-                this.tags = "picture"
-                this.status = 1
+                this.mimeType = file.contentType ?: "application/octet-stream"
+                this.tags = folder // This sets the tag to 'expense', 'profile', etc.
                 this.createdBy = actor
                 this.updatedBy = actor
+                this.status = 1
             }
             return objectStorageRepository.save(storageRecord)
         } catch (e: Exception) {
-            throw RuntimeException("Storage service error: ${e.message}")
+            throw RuntimeException("Storage error: ${e.message}")
         }
+    }
+    @PreAuthorize("permitAll()")
+    override fun getDownloadUrl(id: UUID): String {
+        val metadata = objectStorageRepository.findById(id)
+            .orElseThrow { RuntimeException("File record not found in database for ID: $id") }
+
+        return minioClient.getPresignedObjectUrl(
+            GetPresignedObjectUrlArgs.builder()
+                .method(Method.GET)
+                .bucket(metadata.bucket)
+                .`object`(metadata.fileKey)
+                .expiry(7, TimeUnit.DAYS) // can set this from 1 minute to 7 days
+                .build()
+        )
     }
     @Configuration
     class MinioConfig {
