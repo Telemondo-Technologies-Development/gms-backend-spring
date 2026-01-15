@@ -12,5 +12,6 @@ interface ObjectStorageService  {
         folder: String, // Added this
         actor: Actor
     ): ObjectStorage
-        fun getDownloadUrl(id: UUID): String
+    fun getDownloadUrl(id: UUID): String
+    fun deleteFile(id: UUID)
 }

@@ -4,7 +4,6 @@ import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.application.response.*
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.repository.user.ActorRepository
-import com.gms.backend.domain.domain.repository.user.UserRepository
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -112,6 +111,22 @@ class ObjectStorageController(
     fun uploadReportAttachment(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
         return storageService.uploadFile(file, privateBucket, "reports/attachments", getCurrentActor())
             .toCreatedResponse("Report attachment uploaded")
+    }
+    // DELETE
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "delete a file from object storage and database")
+    fun deleteFile(@PathVariable id: UUID): ResponseEntity<ApiResponse<Unit>> {
+        return try {
+            storageService.deleteFile(id)
+            ApiResponse.ok(Unit, "File deleted successfully")
+        } catch (e: Exception) {
+            ApiResponse.error(
+                message = "Failed to delete file",
+                status = HttpStatus.INTERNAL_SERVER_ERROR,
+                errors = listOf(ApiErrorType.INTERNAL_SERVER_ERROR.toApiError(e.message))
+            ) as ResponseEntity<ApiResponse<Unit>>
+        }
     }
     private fun getCurrentActor(actorId: UUID? = null): Actor {
 

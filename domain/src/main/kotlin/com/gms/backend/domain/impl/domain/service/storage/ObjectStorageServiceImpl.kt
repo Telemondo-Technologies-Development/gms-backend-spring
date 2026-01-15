@@ -75,6 +75,22 @@ class ObjectStorageServiceImpl (
                 .build()
         )
     }
+    @PreAuthorize("permitAll()")
+    override fun deleteFile(id: UUID) {
+        val storage = objectStorageRepository.findById(id)
+            .orElseThrow { RuntimeException("File not found") }
+
+        // 1. Remove from MinIO
+        minioClient.removeObject(
+            RemoveObjectArgs.builder()
+                .bucket(storage.bucket)
+                .`object`(storage.fileKey)
+                .build()
+        )
+
+        // 2. Remove from Database
+        objectStorageRepository.delete(storage)
+    }
     @Configuration
     class MinioConfig {
 
