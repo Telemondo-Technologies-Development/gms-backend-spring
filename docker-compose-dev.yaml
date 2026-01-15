@@ -40,18 +40,26 @@ services:
     networks:
       - mysql
 
-  minio:
-    image: minio/minio
-    container_name: minio_server
-    ports:
-      - "9000:9000"    # API port
-      - "9001:9001"    # Console UI port
+  backend:
+    image: ghcr.io/telemondo-technologies-development/gms-backend-spring:dev
+
+    restart: unless-stopped
+    env_file: ./.env
     environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: password123
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
+      DB_HOST: "${DB_HOST}"
+      DB_PORT: "${DB_CONTAINER_PORT}"
+
+      SPRING_PROFILES_ACTIVE: dev
+
+      NATS_URL: "nats://nats:${NATS_DOCKER_PORT}"
+
+    depends_on:
+      - mysql
+      - nats
+    networks:
+      - mysql
+    ports:
+      - "${BACKEND_PORT}:8080"
 
 networks:
   mysql:
@@ -60,4 +68,3 @@ networks:
 
 volumes:
   db:
-  minio_data:
