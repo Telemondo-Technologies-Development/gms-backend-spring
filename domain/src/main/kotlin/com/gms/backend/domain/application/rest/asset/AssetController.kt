@@ -2,9 +2,7 @@ package com.gms.backend.domain.application.rest.asset
 
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
-import com.gms.backend.domain.application.rest.branch.BranchController.BranchPostDTO
-import com.gms.backend.domain.application.rest.branch.BranchController.BranchPutDTO
-import com.gms.backend.domain.domain.model.branch.Branch
+import com.gms.backend.domain.domain.model.asset.MaintenanceSchedule
 import com.gms.backend.domain.domain.service.asset.AssetService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
@@ -30,7 +28,7 @@ class AssetController (
     data class AssetTableDTO(
         val id: UUID,
         val branchId: UUID,
-        val maintenanceScheduleId: UUID,
+        val maintenanceSchedule: MaintenanceScheduleTableDTO,
         val assetCategoryId: UUID,
         val name: String,
         val manufacturedDate: Instant?,
@@ -45,7 +43,7 @@ class AssetController (
     @Schema(description = "Format for Asset create")
     data class AssetPostDTO(
         val branchId: UUID,
-        val maintenanceScheduleId: UUID,
+        val maintenanceSchedule: MaintenanceSchedulePostDTO,
         val assetCategoryId: UUID,
         val name: String,
         val manufacturedDate: Instant?,
@@ -68,8 +66,22 @@ class AssetController (
         val updatedById: UUID
     )
 
+    data class MaintenanceScheduleTableDTO(
+        val id: UUID,
+        val startDate: Instant,
+        val intervals: MaintenanceSchedule.MaintenanceScheduleIntervalUnit,
+        val intervalCount: Int
+    )
+
+    @Schema(description = "Format for Maintenance Schedule create")
+    data class MaintenanceSchedulePostDTO(
+        val startDate: Instant,
+        val intervals: MaintenanceSchedule.MaintenanceScheduleIntervalUnit,
+        val intervalCount: Int
+    )
+
     @PostMapping
-    @Operation(summary = "Create a new Asset")
+    @Operation(summary = "Create a new Asset and its related Maintenance Schedule")
     fun createAsset(@RequestBody body: AssetPostDTO) =
         assetService.createAsset(body).toCreatedResponse("Asset Created")
 
@@ -79,17 +91,17 @@ class AssetController (
         assetService.updateAsset(id, body).toOkResponse("Asset Updated")
 
     @GetMapping
-    @Operation(summary = "Get all Assets")
+    @Operation(summary = "Get all Assets with their related Maintenance Schedule")
     fun getAllAssets() =
         assetService.getAssets().toOkResponse()
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a Asset by id")
+    @Operation(summary = "Get a Asset with its related Maintenance Schedule by Asset id")
     fun getAsset(@PathVariable id: UUID) =
         assetService.getAssetById(id).toOkResponse()
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a Asset by id")
+    @Operation(summary = "Delete a Asset and its related Maintenance Schedule by Asset id")
     fun deleteAsset(@PathVariable id: UUID) =
         assetService.deleteAsset(id).toOkResponse("Asset Deleted")
 

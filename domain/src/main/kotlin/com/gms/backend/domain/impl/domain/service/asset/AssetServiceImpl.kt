@@ -3,6 +3,7 @@ package com.gms.backend.domain.impl.domain.service.asset
 import com.gms.backend.domain.application.mapper.asset.AssetMapper
 import com.gms.backend.domain.application.rest.asset.AssetController
 import com.gms.backend.domain.application.rest.branch.BranchController
+import com.gms.backend.domain.domain.model.asset.MaintenanceSchedule
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
@@ -27,17 +28,22 @@ class AssetServiceImpl(
     private val maintenanceScheduleRepository: MaintenanceScheduleRepository,
     private val assetCategoryRepository: AssetCategoryRepository
 ): AssetService {
+
+    // this creates both asset and maintenance_schedule
     @Transactional
     @PreAuthorize("hasAuthority('asset_create')")
     override fun createAsset(body: AssetController.AssetPostDTO): AssetController.AssetTableDTO {
         val branchRef = branchRepository.getReferenceById(body.branchId)
-        val maintenanceScheduleRef = maintenanceScheduleRepository.getReferenceById(body.maintenanceScheduleId)
         val assetCategoryRef = assetCategoryRepository.getReferenceById(body.assetCategoryId)
 
         val asset = assetMapper.assetDTOToAsset(body).apply {
             branch = branchRef
-            maintenanceSchedule = maintenanceScheduleRef
             assetCategory = assetCategoryRef
+            maintenanceSchedule = MaintenanceSchedule().apply {
+                startDate = body.maintenanceSchedule.startDate
+                intervals = body.maintenanceSchedule.intervals
+                intervalCount = body.maintenanceSchedule.intervalCount
+            }
             createdBy = actorRepository.getReferenceById(body.createdById)
             updatedBy = actorRepository.getReferenceById(body.createdById)
             assetObjects = body.objectIds
@@ -45,10 +51,11 @@ class AssetServiceImpl(
                 .toMutableSet()
         }
 
-        val saved = assetRepository.save(asset)
+        val saved = assetRepository.saveAndFlush(asset)
         return assetMapper.assetToDTO(saved)
     }
 
+    // this is just to update asset details
     @Transactional
     @PreAuthorize("hasAuthority('asset_update')")
     override fun updateAsset(id: UUID, body: AssetController.AssetPutDTO): AssetController.AssetTableDTO {
@@ -56,7 +63,6 @@ class AssetServiceImpl(
             NoSuchElementException("Asset not found with ID: $id")
         }.apply {
             assetMapper.assetPutDTOToAsset(body, this)
-            this.id = id
             updatedBy = actorRepository.getReferenceById(body.updatedById)
             assetObjects.clear()
             assetObjects.addAll(
@@ -65,34 +71,35 @@ class AssetServiceImpl(
             )
         }
 
-        assetRepository.save(asset)
+        assetRepository.saveAndFlush(asset)
         return assetMapper.assetToDTO(asset)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('asset_read')")
     override fun getAssets(): List<AssetController.AssetTableDTO> {
-        val assets = assetRepository.findAll()
+        val assets = assetRepository.findAllBy()
         return assetMapper.assetsToDTO(assets)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('asset_read')")
     override fun getAssetById(id: UUID): AssetController.AssetTableDTO {
-        val branch = assetRepository.findById(id).orElseThrow {
+        val asset = assetRepository.findWithMaintenanceScheduleById(id).orElseThrow {
             NoSuchElementException("Asset not found with ID: $id")
         }
-        return assetMapper.assetToDTO(branch)
+        return assetMapper.assetToDTO(asset)
     }
 
+    // this deletes both asset and its maintenance_schedule
     @Transactional
     @PreAuthorize("hasAuthority('asset_delete')")
     override fun deleteAsset(id: UUID) {
-        val branch = assetRepository.findById(id).orElseThrow {
+        val asset = assetRepository.findById(id).orElseThrow {
             NoSuchElementException("Asset not found with ID: $id")
         }
-        assetRepository.delete(branch)
+        val schedule = asset.maintenanceSchedule
+        assetRepository.delete(asset)
+        maintenanceScheduleRepository.delete(schedule)
     }
-
-
 }

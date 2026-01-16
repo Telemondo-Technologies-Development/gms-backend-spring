@@ -48,7 +48,7 @@ class Asset {
     @Column(name = "branch_id", insertable = false, updatable = false)
     var branchId: UUID? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "maintenance_schedule_id", nullable = false)
     lateinit var maintenanceSchedule: MaintenanceSchedule
 
