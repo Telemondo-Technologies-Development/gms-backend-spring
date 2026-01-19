@@ -52,6 +52,10 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba3ba5e87747ebe3d6310ab9d34ac, 'branchPersonnel_delete'),
 (0x019ba3ba5e88747b836acfaa7633d68c, 'branchPersonnel_read'),
 (0x019ba3ba5e87747ebe3d631170d2aa2c, 'branchPersonnel_update'),
+(0x019bd458aafa7f34bf419ca0dfa1bddd, 'objectStorage_delete'),
+(0x019bd460624e79238c67993a76d64e78, 'objectStorage_read'),
+(0x019bd458aaf0749e8723c6e9ace4c91c, 'objectStorage_update'),
+(0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_upload'),
 (0x019ba3ba5e897479850a65bfed2e0453, 'employee_create'),
 (0x019ba3ba5e87747ebe3d630f9c04b5f2, 'employee_delete'),
 (0x019ba3ba5e88747b836acfacb4481e30, 'employee_read'),
@@ -84,6 +88,10 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e87747ebe3d6310ab9d34ac), -- branchPersonnel_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e88747b836acfaa7633d68c), -- branchPersonnel_read
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e87747ebe3d631170d2aa2c), -- branchPersonnel_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bd460624e79238c67993a76d64e78), -- objectStorage_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bd458aafa7f34bf419ca0dfa1bddd), -- objectStorage_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bd458aaf0749e8723c6e9ace4c91c), -- objectStorage_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bd458aafa7f34bf419ca0a74ebb71), -- objectStorage_upload
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e897479850a65bfed2e0453), -- employee_create
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e87747ebe3d630f9c04b5f2), -- employee_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e88747b836acfacb4481e30), -- employee_read

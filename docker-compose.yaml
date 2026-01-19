@@ -40,6 +40,19 @@ services:
     networks:
       - mysql
 
+  minio:
+    image: minio/minio
+    container_name: minio_server
+    ports:
+      - "9000:9000"    # API port
+      - "9001:9001"    # Console UI port
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
 networks:
   mysql:
     name: mysql
@@ -47,3 +60,4 @@ networks:
 
 volumes:
   db:
+  minio_data:

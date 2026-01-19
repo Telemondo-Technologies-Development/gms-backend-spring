@@ -2,18 +2,25 @@ package com.gms.backend.domain.application.rest.member
 
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.rest.storage.ObjectStorageController
 import com.gms.backend.domain.domain.model.member.Member
+import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import com.gms.backend.domain.impl.domain.service.member.MemberServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
 @RequestMapping("/api/member")
 @Tag(name = "Member")
-class MemberController(private val memberService: MemberServiceImpl) {
+class MemberController(
+    private val memberService: MemberServiceImpl,
+    private val storageService: ObjectStorageService,
+    private val bucketConfig: ObjectStorageController.MinioBucketConfig
+) {
 
     @Schema(description = "Format for Member read")
     data class MemberTableDTO(
@@ -51,6 +58,11 @@ class MemberController(private val memberService: MemberServiceImpl) {
     @Operation(summary = "Create a new Member")
     fun createMember(@RequestBody body: MemberPostDTO) =
         memberService.createMember(body).toCreatedResponse("Member Successfully Created!")
+
+    @PostMapping("/picture")
+    @Operation(summary = "Upload a member profile picture into the object storage (public)")
+    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile) =
+        storageService.uploadFile(file, bucketConfig.public, "profiles/members", storageService.getCurrentActor()).toCreatedResponse("Member profile picture uploaded successfully")
 
     @Schema(description = "Format for Member update")
     data class MemberPutDTO(
