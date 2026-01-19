@@ -30,7 +30,7 @@ data class ApiResponse<T>(
 
         // This method maps Spring's Page object to our ApiResponse
         // Unverified
-        fun <T: Any> paginated(page: Page<T>, message: String): ResponseEntity<ApiResponse<List<T>>> {
+        fun <T: Any> paginated(page: Page<T>, message: String? = "Success"): ResponseEntity<ApiResponse<List<T>>> {
             val metadata = PageMetadata(
                 pageIndex = page.number,
                 pageSize = page.size,
@@ -59,9 +59,14 @@ fun <T> T.toCreatedResponse(message: String? = "Created"): ResponseEntity<ApiRes
     return ApiResponse.created(this, message)
 }
 
+fun <T: Any> Page<T>.toPaginatedResponse(message: String? = "Ok"): ResponseEntity<ApiResponse<List<T>>> {
+    return ApiResponse.paginated(this, message)
+}
+
 data class ApiError(
     val code: String,
-    val description: String
+    val description: String,
+    val field: String? = null
 )
 
 // Think of a way to categorize error code
@@ -70,6 +75,7 @@ enum class ApiErrorType(val code: String, val description: String) {
     INVALID_ID("VAL_001", "The provided ID is not in a valid for or does not exist."),
     DATATYPE_MISMATCH("VAL_002", "The data type provided does not match the expected format for this field."),
     MALFORMED_JSON("VAL_003", "The request body contains invalid JSON syntax."),
+    INVALID_CASE("VAL_007", "The data provided does not meet validation requirements"),
 
     // Create
     MISSING_UPDATE("VAL_004", "The updated failed as some of the data provided do not exist."),
@@ -91,9 +97,10 @@ enum class ApiErrorType(val code: String, val description: String) {
     // 500 Internal Errors
     INTERNAL_SERVER_ERROR("VAL_501", "An unexpected error occurred on our end. Please try again later.");
 
-    fun toApiError(override: String? = null) = ApiError(
+    fun toApiError(description: String? = null, field: String? = null) = ApiError(
         code = this.code,
-        description = override ?: this.description
+        description = description ?: this.description,
+        field = field
     )
 }
 

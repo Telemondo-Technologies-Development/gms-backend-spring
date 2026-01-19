@@ -2,10 +2,16 @@ package com.gms.backend.domain.application.rest.user
 
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.impl.domain.service.user.UserServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.Size
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import java.time.Instant
 import java.util.*
 
 @RestController
@@ -16,31 +22,44 @@ class UserController(private val userService: UserServiceImpl) {
     data class UserTableDTO(
         val id: UUID,
         val email: String,
+        val createdAt: Instant,
+        val updatedAt: Instant,
         val actorId: UUID?
+    )
+
+    data class UserPostDTO(
+        @field:Email(message = "Email should be valid")
+        val email: String,
+        @field:Size(min = 8, max = 64)
+        val password: String
+    )
+
+    data class UserPutDTO(
+        @field:Email(message = "Email should be valid")
+        val email: String
     )
 
     @GetMapping
     @Operation(summary = "Get all Users")
-    fun getAllUsers() = userService.getUsers().toOkResponse()
+    fun getAllUsers(pageable: Pageable) = userService.getUsers(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a User by id")
     fun getUser(@PathVariable id: UUID) =
         userService.getUserById(id).toOkResponse()
 
-    data class UserPostDTO(val email: String, val password: String)
-
     @PostMapping
-    @Operation(summary = "Create a new User",
-        description = "Creates a new user record in the database")
-    fun createUser(@RequestBody body: UserPostDTO) =
+    @Operation(
+        summary = "Create a new User",
+        description = "Creates a new user record in the database"
+    )
+    fun createUser(@Valid @RequestBody body: UserPostDTO) =
         userService.createUser(body).toCreatedResponse()
 
-    data class UserPutDTO(val email: String)
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a User by id")
-    fun updateUser(@PathVariable id: UUID, @RequestBody body: UserPutDTO) =
+    fun updateUser(@PathVariable id: UUID, @Valid @RequestBody body: UserPutDTO) =
         userService.updateUser(id, body).toOkResponse()
 
     @DeleteMapping("/{id}")

@@ -1,4 +1,4 @@
-package com.gms.backend.domain.application.mapper
+package com.gms.backend.domain.application.mapper.member
 
 import com.gms.backend.domain.application.rest.member.MemberController
 import com.gms.backend.domain.domain.model.member.Member

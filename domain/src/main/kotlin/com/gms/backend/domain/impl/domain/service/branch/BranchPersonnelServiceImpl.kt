@@ -6,6 +6,8 @@ import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -37,7 +39,7 @@ class BranchPersonnelServiceImpl(
             updatedBy = actionActorRef
         }
 
-        val saved = branchPersonnelRepository.save(branchPersonnel)
+        val saved = branchPersonnelRepository.saveAndFlush(branchPersonnel)
         return branchPersonnelMapper.branchPersonnelToDTO(saved)
     }
 
@@ -56,15 +58,15 @@ class BranchPersonnelServiceImpl(
             updatedBy = actorRepository.getReferenceById(body.updatedById)
         }
 
-        branchPersonnelRepository.save(branchPersonnel)
+        branchPersonnelRepository.saveAndFlush(branchPersonnel)
         return branchPersonnelMapper.branchPersonnelToDTO(branchPersonnel)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('branchPersonnel_read')")
-    override fun getBranchPersonnel(): List<BranchPersonnelController.BranchPersonnelTableDTO> {
-        val rows = branchPersonnelRepository.findAll()
-        return branchPersonnelMapper.branchPersonnelsToDTO(rows)
+    override fun getBranchPersonnel(pageable: Pageable): Page<BranchPersonnelController.BranchPersonnelTableDTO> {
+        return branchPersonnelRepository.findAll(pageable)
+            .map { branch -> branchPersonnelMapper.branchPersonnelToDTO(branch) }
     }
 
     @Transactional(readOnly = true)

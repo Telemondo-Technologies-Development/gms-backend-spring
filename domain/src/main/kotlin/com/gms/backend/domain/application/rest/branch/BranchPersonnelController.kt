@@ -3,6 +3,7 @@ package com.gms.backend.domain.application.rest.branch
 import com.gms.backend.domain.application.response.ApiResponse
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.application.rest.storage.ObjectStorageController
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
@@ -11,6 +12,7 @@ import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -71,8 +73,8 @@ class BranchPersonnelController(
 
     @GetMapping
     @Operation(summary = "Get all Branch Personnel")
-    fun getAllBranchPersonnel() =
-        branchPersonnelService.getBranchPersonnel().toOkResponse()
+    fun getAllBranchPersonnel(pageable: Pageable) =
+        branchPersonnelService.getBranchPersonnel(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Branch Personnel by id")
