@@ -7,6 +7,8 @@ import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.EmployeeRepository
 import com.gms.backend.domain.domain.repository.user.UserRepository
 import com.gms.backend.domain.domain.service.user.EmployeeService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -33,15 +35,14 @@ class EmployeeServiceImpl(
             profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
 
-        val saved = employeeRepository.save(employee)
+        val saved = employeeRepository.saveAndFlush(employee)
         return employeeMapper.employeeToEmployeeTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('employee_read')")
-    override fun getEmployees(): List<EmployeeController.EmployeeTableDTO> {
-        return employeeRepository.findAll().let(employeeMapper::employeesToEmployeeTableDTO)
-//        return employeeRepository.findAllProjectedBy()
+    override fun getEmployees(pageable: Pageable): Page<EmployeeController.EmployeeTableDTO> {
+        return employeeRepository.findAll(pageable).map {branch -> employeeMapper.employeeToEmployeeTableDTO(branch)}
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +65,7 @@ class EmployeeServiceImpl(
             profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
 
-        employeeRepository.save(employee)
+        employeeRepository.saveAndFlush(employee)
         return employeeMapper.employeeToEmployeeTableDTO(employee)
     }
 

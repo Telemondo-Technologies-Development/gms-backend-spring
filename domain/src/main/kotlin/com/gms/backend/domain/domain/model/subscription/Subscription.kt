@@ -2,6 +2,8 @@ package com.gms.backend.domain.domain.model.subscription
 
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Positive
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -20,9 +22,15 @@ class Subscription {
     lateinit var id: UUID
 
     @Column(nullable = false)
+    @NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
+    @Column(columnDefinition = "TEXT")
+    @NotBlank(message = "Description must not be empty")
+    var description: String? = null
+
     @Column(nullable = false, precision = 10, scale = 2)
+    @Positive(message = "Amount must be positive")
     var amount: BigDecimal = BigDecimal.ZERO
 
     @CreationTimestamp

@@ -2,6 +2,8 @@ package com.gms.backend.domain.domain.model.user
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -19,9 +21,11 @@ class User {
     lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
+    @Email(message = "Email should be valid")
     lateinit var email: String
 
     @Column(nullable = false)
+    @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
     @JsonIgnore
     lateinit var password: String
 

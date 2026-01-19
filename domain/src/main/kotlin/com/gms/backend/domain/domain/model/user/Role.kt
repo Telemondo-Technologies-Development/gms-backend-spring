@@ -1,6 +1,7 @@
 package com.gms.backend.domain.domain.model.user
 
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -18,9 +19,11 @@ class Role {
     lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
+    @NotBlank
     lateinit var name: String
 
     @Column(nullable = true, name = "description")
+    @NotBlank
     var description: String? = null
 
     @CreationTimestamp

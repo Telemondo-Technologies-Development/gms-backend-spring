@@ -3,6 +3,8 @@ package com.gms.backend.domain.domain.model.user
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -26,18 +28,23 @@ class Employee {
     lateinit var id: UUID
 
     @Column(nullable = false)
+    @NotBlank(message = "Surname must not be empty")
     lateinit var surname: String
 
     @Column(nullable = false)
+    @NotBlank(message = "First Name must not be empty")
     lateinit var firstName: String
 
     @Column
+    @Size(min = 1, message = "Middle name cannot be blank if provided")
     var middleName: String? = null
 
     @Column(length = 10)
+    @Size(min = 1, message = "Suffix cannot be blank if provided")
     var suffix: String? = null
 
     @Column(length = 13)
+    @Size(min = 11, max = 25, message = "Must be a valid contact no.")
     var contactNo: String? = null
 
     @Column(nullable = false)

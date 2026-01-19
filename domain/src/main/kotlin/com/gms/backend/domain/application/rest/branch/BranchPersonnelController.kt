@@ -2,11 +2,13 @@ package com.gms.backend.domain.application.rest.branch
 
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import java.util.*
@@ -58,8 +60,8 @@ class BranchPersonnelController(
 
     @GetMapping
     @Operation(summary = "Get all Branch Personnel")
-    fun getAllBranchPersonnel() =
-        branchPersonnelService.getBranchPersonnel().toOkResponse()
+    fun getAllBranchPersonnel(pageable: Pageable) =
+        branchPersonnelService.getBranchPersonnel(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Branch Personnel by id")

@@ -15,9 +15,9 @@ import java.util.*
 class MemberSubscription {
 
     enum class MemberSubscriptionStatus {
-        IN,
-        OUT,
-        UNDECIDED,
+        ACTIVE,
+        CANCELED,
+        DONE,
     }
 
     @Id

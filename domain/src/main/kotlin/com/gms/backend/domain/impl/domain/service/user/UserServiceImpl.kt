@@ -5,6 +5,8 @@ import com.gms.backend.domain.application.rest.user.UserController
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.user.UserRepository
 import com.gms.backend.domain.domain.service.user.UserService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -31,14 +33,14 @@ class UserServiceImpl(
             }
         }
 
-        val saved = userRepository.save(user)
+        val saved = userRepository.saveAndFlush(user)
         return userMapper.userToUserTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('user_read')")
-    override fun getUsers(): List<UserController.UserTableDTO> {
-        return userRepository.findAllProjectedBy()
+    override fun getUsers(pageable: Pageable): Page<UserController.UserTableDTO> {
+        return userRepository.findAllProjectedBy(pageable)
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +56,7 @@ class UserServiceImpl(
             userMapper.userPutDTOToUser(body, this)
         }
 
-        userRepository.save(user)
+        userRepository.saveAndFlush(user)
         return userMapper.userToUserTableDTO(user)
     }
 

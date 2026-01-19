@@ -3,11 +3,16 @@ package com.gms.backend.domain.application.rest.user
 import com.gms.backend.domain.application.mapper.user.EmployeeMapper
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.impl.domain.service.user.EmployeeServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -31,45 +36,56 @@ class EmployeeController(
         val status: Employee.EmployeeStatus,
     )
 
+    @Schema(description = "Format for Employee create")
+    data class EmployeePostDTO(
+        val userId: UUID?,
+        @field:NotBlank(message = "Surname must not be empty")
+        val surname: String,
+        @field:NotBlank(message = "First Name must not be empty")
+        val firstName: String,
+        @Size(min = 1, message = "Middle name cannot be blank if provided")
+        val middleName: String?,
+        @Size(min = 1, message = "Middle name cannot be blank if provided")
+        val suffix: String?,
+        @field:Size(min = 11, max = 25, message = "Must be a valid contact no.")
+        val contactNo: String,
+        val status: Employee.EmployeeStatus,
+        val profilePictureId: UUID?
+    )
+
+    @Schema(description = "Format for Employee update")
+    data class EmployeePutDTO(
+        val userId: UUID?,
+        @field:NotBlank(message = "Surname must not be empty")
+        val surname: String,
+        @field:NotBlank(message = "Surname must not be empty")
+        val firstName: String,
+        @Size(min = 1, message = "Middle name cannot be blank if provided")
+        val middleName: String?,
+        @Size(min = 1, message = "Suffix cannot be blank if provided")
+        val suffix: String?,
+        @field:Size(min = 11, max = 25, message = "Must be a valid contact no.")
+        val contactNo: String,
+        val status: Employee.EmployeeStatus,
+        val profilePictureId: UUID?
+    )
+
     @GetMapping
     @Operation(summary = "Get all Employees")
-    fun getAllUsers() = employeeService.getEmployees().toOkResponse()
+    fun getAllEmployees(pageable: Pageable) = employeeService.getEmployees(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get an Employee by id")
     fun getEmployee(@PathVariable id: UUID) = employeeService.getEmployeeById(id).toOkResponse()
 
-    @Schema(description = "Format for Employee create")
-    data class EmployeePostDTO(
-        val userId: UUID?,
-        val surname: String,
-        val firstName: String,
-        val middleName: String?,
-        val suffix: String?, // Might set to enum
-        val contactNo: String,
-        val status: Employee.EmployeeStatus,
-        val profilePictureId: UUID?
-    )
-
     @PostMapping
     @Operation(summary = "Create a new Employee")
-    fun createEmployee(@RequestBody body: EmployeePostDTO) = employeeService.createEmployee(body).toCreatedResponse()
-
-    @Schema(description = "Format for Employee update")
-    data class EmployeePutDTO(
-        val userId: UUID?,
-        val surname: String,
-        val firstName: String,
-        val middleName: String?,
-        val suffix: String?, // Might set to enum
-        val contactNo: String,
-        val status: Employee.EmployeeStatus,
-        val profilePictureId: UUID?
-    )
+    fun createEmployee(@Valid @RequestBody body: EmployeePostDTO) =
+        employeeService.createEmployee(body).toCreatedResponse()
 
     @PutMapping("/{id}")
     @Operation(summary = "Update an Employee by id")
-    fun updateEmployee(@PathVariable id: UUID, @RequestBody body: EmployeePutDTO) =
+    fun updateEmployee(@PathVariable id: UUID, @Valid @RequestBody body: EmployeePutDTO) =
         employeeService.updateEmployee(id, body).toOkResponse()
 
     @DeleteMapping("/{id}")

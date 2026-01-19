@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Pageable
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
@@ -30,8 +31,9 @@ class UserServiceImplTest
 
     @Test
     fun testReadUsers() {
+        // Given
         // When
-        val users = userServiceImpl.getUsers()
+        val users = userServiceImpl.getUsers(Pageable.unpaged())
         // Then
         assertEquals(5, users.size)
     }

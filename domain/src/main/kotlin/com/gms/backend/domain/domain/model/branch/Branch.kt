@@ -12,6 +12,8 @@ import com.gms.backend.domain.domain.model.member.report.Report
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -35,15 +37,27 @@ class Branch {
     lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
+    @NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
     @Column(nullable = false, columnDefinition = "longtext")
+    @NotBlank(message = "Address must not be empty")
     lateinit var address: String
 
     @Column(nullable = false)
+    @Pattern(
+        // Validates: Optional negative sign, 1-3 digits, a dot, and 6 to 15 decimal places
+        regexp = "^-?\\d{1,3}\\.\\d{6,15}$",
+        message = "Longitude must be in decimal format with at least 6 decimal places (e.g., 125.123456)"
+    )
     lateinit var longitude: String
 
     @Column(nullable = false)
+    @Pattern(
+        // Validates: Optional negative sign, 1-3 digits, a dot, and 6 to 15 decimal places
+        regexp = "^-?\\d{1,3}\\.\\d{6,15}$",
+        message = "Latitude must be in decimal format with at least 6 decimal places (e.g., 125.123456)"
+    )
     lateinit var latitude: String
 
     @Column(nullable = false)
