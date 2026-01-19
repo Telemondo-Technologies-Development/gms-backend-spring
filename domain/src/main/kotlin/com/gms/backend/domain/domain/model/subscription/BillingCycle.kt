@@ -2,6 +2,9 @@ package com.gms.backend.domain.domain.model.subscription
 
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.PositiveOrZero
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -12,6 +15,13 @@ import java.util.*
 @Table(name = "billing_cycles")
 class BillingCycle {
 
+    enum class Interval {
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        YEARLY,
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -19,15 +29,19 @@ class BillingCycle {
     lateinit var id: UUID
 
     @Column(nullable = false)
+    @NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
     @Column(nullable = false)
-    lateinit var intervals: String
+    @Enumerated(EnumType.STRING)
+    lateinit var intervals: Interval
 
     @Column(nullable = false)
+    @Positive
     var intervalCount: Int = 0
 
     @Column(nullable = false)
+    @PositiveOrZero
     var gracePeriodDays: Int = 0
 
     @CreationTimestamp
