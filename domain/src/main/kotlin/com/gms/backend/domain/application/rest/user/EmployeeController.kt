@@ -62,15 +62,6 @@ class EmployeeController(
         val profilePictureId: UUID?
     )
 
-    @PostMapping
-    @Operation(summary = "Create a new Employee")
-    fun createEmployee(@RequestBody body: EmployeePostDTO) = employeeService.createEmployee(body).toCreatedResponse()
-
-    @PostMapping("/picture")
-    @Operation(summary = "Upload an employee profile picture into the object storage (public)")
-    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
-        storageService.uploadFile(file, bucketConfig.public, "profiles/employees", storageService.getCurrentActor()).toCreatedResponse("Employee profile picture uploaded successfully")
-
     @Schema(description = "Format for Employee update")
     data class EmployeePutDTO(
         val userId: UUID?,
@@ -105,6 +96,11 @@ class EmployeeController(
     @Operation(summary = "Update an Employee by id")
     fun updateEmployee(@PathVariable id: UUID, @Valid @RequestBody body: EmployeePutDTO) =
         employeeService.updateEmployee(id, body).toOkResponse()
+
+    @PostMapping("/picture")
+    @Operation(summary = "Upload an employee profile picture into the object storage (public)")
+    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, bucketConfig.public, "profiles/employees", storageService.getCurrentActor()).toCreatedResponse("Employee profile picture uploaded successfully")
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an Employee by id")

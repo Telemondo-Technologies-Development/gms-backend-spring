@@ -77,10 +77,10 @@ class RoleServiceImpl(
             val foundIds = foundPermissions.map { it.id }.toSet()
             val missingIds = body.permissionIds.filter { it !in foundIds }
             throw DomainException(
-                ApiErrorType.MISSING_UPDATE,
-                "Some permissions do not exist: $missingIds",
-                "Role Permission Update Failed",
-                HttpStatus.NOT_FOUND
+                error = ApiErrorType.MISSING_UPDATE,
+                description = "Some permissions do not exist: $missingIds",
+                message = "Role Permission Update Failed",
+                status = HttpStatus.NOT_FOUND
             )
         }
 
@@ -100,10 +100,10 @@ class RoleServiceImpl(
             val foundIds = foundPermissions.map { it.id }.toSet()
             val missingIds = body.permissionIds.filter { it !in foundIds }
             throw DomainException(
-                ApiErrorType.MISSING_DELETE,
-                "Some permissions do not exist: $missingIds",
-                "Role Permission Delete Failed",
-                HttpStatus.NOT_FOUND
+                error = ApiErrorType.MISSING_DELETE,
+                description = "Some permissions do not exist: $missingIds",
+                message = "Role Permission Delete Failed",
+                status = HttpStatus.NOT_FOUND
             )
         }
 

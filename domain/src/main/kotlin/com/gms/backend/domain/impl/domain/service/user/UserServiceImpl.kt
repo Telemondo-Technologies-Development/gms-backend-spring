@@ -1,6 +1,8 @@
 package com.gms.backend.domain.impl.domain.service.user
 
 import com.gms.backend.domain.application.mapper.user.UserMapper
+import com.gms.backend.domain.application.response.ApiErrorType
+import com.gms.backend.domain.application.response.DomainException
 import com.gms.backend.domain.application.rest.user.UserController
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.user.UserRepository
@@ -25,6 +27,13 @@ class UserServiceImpl(
     @Transactional
     @PreAuthorize("hasAuthority('user_create')")
     override fun createUser(body: UserController.UserPostDTO): UserController.UserTableDTO {
+        if (body.password.length !in 8..64) {
+            throw DomainException(
+                error = ApiErrorType.INVALID_CASE,
+                description = "Password must be between 8 and 64 characters",
+                field = "password"
+            )
+        }
         val user = userMapper.userPostDTOToUser(body).apply {
             password = passwordEncoder.encode(body.password)!!
             actor = Actor().apply {

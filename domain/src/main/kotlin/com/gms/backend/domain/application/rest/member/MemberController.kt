@@ -55,16 +55,6 @@ class MemberController(
         val createdById: UUID,
     )
 
-    @PostMapping
-    @Operation(summary = "Create a new Member")
-    fun createMember(@RequestBody body: MemberPostDTO) =
-        memberService.createMember(body).toCreatedResponse("Member Successfully Created!")
-
-    @PostMapping("/picture")
-    @Operation(summary = "Upload a member profile picture into the object storage (public)")
-    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile) =
-        storageService.uploadFile(file, bucketConfig.public, "profiles/members", storageService.getCurrentActor()).toCreatedResponse("Member profile picture uploaded successfully")
-
     @Schema(description = "Format for Member update")
     data class MemberPutDTO(
         @field:NotBlank(message = "Surname must not be empty")
@@ -97,6 +87,12 @@ class MemberController(
     @Operation(summary = "Update a Member by id")
     fun updateMember(@PathVariable id: UUID, @Valid @RequestBody body: MemberPutDTO) =
         memberService.updateMember(id, body).toOkResponse("Member updated")
+
+    @PostMapping("/picture")
+    @Operation(summary = "Upload a member profile picture into the object storage (public)")
+    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile) =
+        storageService.uploadFile(file, bucketConfig.public, "profiles/members", storageService.getCurrentActor()).toCreatedResponse("Member profile picture uploaded successfully")
+
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a Member by id")
