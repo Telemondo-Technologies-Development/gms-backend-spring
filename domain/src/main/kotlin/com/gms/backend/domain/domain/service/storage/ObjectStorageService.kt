@@ -14,4 +14,5 @@ interface ObjectStorageService  {
     ): ObjectStorage
     fun getDownloadUrl(id: UUID): String
     fun deleteFile(id: UUID)
+    fun getCurrentActor(actorId: UUID? = null): Actor
 }
