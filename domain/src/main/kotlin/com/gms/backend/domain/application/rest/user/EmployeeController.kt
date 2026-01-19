@@ -1,10 +1,14 @@
 package com.gms.backend.domain.application.rest.user
 
 import com.gms.backend.domain.application.mapper.user.EmployeeMapper
+import com.gms.backend.domain.application.response.ApiResponse
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
+import com.gms.backend.domain.application.rest.storage.ObjectStorageController
+import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Employee
+import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import com.gms.backend.domain.impl.domain.service.user.EmployeeServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
@@ -13,14 +17,19 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.springframework.data.domain.Pageable
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
 @RequestMapping("/api/employee")
 @Tag(name = "Employee")
 class EmployeeController(
-    private val employeeService: EmployeeServiceImpl, private val employeeMapper: EmployeeMapper
+    private val employeeService: EmployeeServiceImpl,
+    private val employeeMapper: EmployeeMapper,
+    private val storageService: ObjectStorageService,
+    private val bucketConfig: ObjectStorageController.MinioBucketConfig
 ) {
 
     @Schema(description = "Format for Employee read")
@@ -52,6 +61,15 @@ class EmployeeController(
         val status: Employee.EmployeeStatus,
         val profilePictureId: UUID?
     )
+
+    @PostMapping
+    @Operation(summary = "Create a new Employee")
+    fun createEmployee(@RequestBody body: EmployeePostDTO) = employeeService.createEmployee(body).toCreatedResponse()
+
+    @PostMapping("/picture")
+    @Operation(summary = "Upload an employee profile picture into the object storage (public)")
+    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, bucketConfig.public, "profiles/employees", storageService.getCurrentActor()).toCreatedResponse("Employee profile picture uploaded successfully")
 
     @Schema(description = "Format for Employee update")
     data class EmployeePutDTO(
