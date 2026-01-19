@@ -40,10 +40,10 @@ INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0x019ba2676db67541a1714f0524691e73);
 
 INSERT INTO `permissions` (`id`, `name`) VALUES
-(0x019ba2c04a027259a6a80fd67e3babbf, 'member_create'),
-(0x019ba2c04a027259a6a80fd6e82d35a6, 'member_delete'),
-(0x019ba2c04a0179cf901764ca8478a14e, 'member_read'),
-(0x019ba2c04a027259a6a80fd7e28a01f1, 'member_update'),
+(0x019bb559885f7175ba1eabb10ef4290f, 'billingCycle_create'),
+(0x019bb559885e7175a417424ac0ae00f8, 'billingCycle_delete'),
+(0x019bb559885f7175ba1eabb10d35fbf3, 'billingCycle_read'),
+(0x019bb559885e7175a417424d1386f4d4, 'billingCycle_update'),
 (0x019ba3ba5e897479850a65be7bf02846, 'branch_create'),
 (0x019ba3ba5e88747b836acfaf68b063cd, 'branch_delete'),
 (0x019ba3ba5e897479850a65be0f2a082c, 'branch_read'),
@@ -56,6 +56,14 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba3ba5e87747ebe3d630f9c04b5f2, 'employee_delete'),
 (0x019ba3ba5e88747b836acfacb4481e30, 'employee_read'),
 (0x019ba3ba5e87747ebe3d630ff80d8021, 'employee_update'),
+(0x019ba2c04a027259a6a80fd67e3babbf, 'member_create'),
+(0x019ba2c04a027259a6a80fd6e82d35a6, 'member_delete'),
+(0x019ba2c04a0179cf901764ca8478a14e, 'member_read'),
+(0x019ba2c04a027259a6a80fd7e28a01f1, 'member_update'),
+(0x019bbcda0fe373488f9675fac0fa30ca, 'memberSubscription_create'),
+(0x019bbcda0fe373488f9675faf01731f4, 'memberSubscription_delete'),
+(0x019bbcda0fda771e87dcc1b0bfa69f06, 'memberSubscription_read'),
+(0x019bbcda0fe373488f9675f9d50d9d60, 'memberSubscription_update'),
 (0x019ba3ba5e87747ebe3d630ec3f6d518, 'permission_create'),
 (0x019ba3ba5e897479850a65be77b00a39, 'permission_delete'),
 (0x019ba3ba5e88747b836acfabdf25808c, 'permission_read'),
@@ -66,12 +74,37 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba3ba5e88747b836acfae829189d2, 'role_update'),
 (0x019ba3ba5e88747b836acfafa53be9ef, 'rolePermission_delete'),
 (0x019ba3ba5e88747b836acfadee8a938f, 'rolePermission_update'),
+(0x019bb559885f7175ba1eabb0b997e030, 'subscription_create'),
+(0x019bb559885e7175a417424acca5fcb2, 'subscription_delete'),
+(0x019bb559885f7175ba1eabb1938f33b6, 'subscription_read'),
+(0x019bb559885f7175ba1eabb254390e8f, 'subscription_update'),
+(0x019bb5598846778a88d5a3c3a11ad6a9, 'subscriptionAvailed_create'),
+(0x019bb559885e7175a417424c8bacb0e3, 'subscriptionAvailed_delete'),
+(0x019bb559885e7175a417424a8d6b5f97, 'subscriptionAvailed_read'),
+(0x019bb559885e7175a417424ba1dc0b6e, 'subscriptionAvailed_update'),
 (0x019ba3ba5e897479850a65bc67eedbac, 'user_create'),
 (0x019ba3ba5e757aa1afdbdcb4efe4654d, 'user_delete'),
 (0x019ba3ba5e897479850a65bd7a7ce73a, 'user_read'),
 (0x019ba3ba5e87747ebe3d630d6635fa0e, 'user_update');
 
+
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885f7175ba1eabb10ef4290f), -- billingCycle_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885e7175a417424ac0ae00f8), -- billingCycle_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885f7175ba1eabb10d35fbf3), -- billingCycle_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885e7175a417424d1386f4d4), -- billingCycle_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885f7175ba1eabb0b997e030), -- subscription_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885e7175a417424acca5fcb2), -- subscription_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885f7175ba1eabb1938f33b6), -- subscription_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885f7175ba1eabb254390e8f), -- subscription_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bb5598846778a88d5a3c3a11ad6a9), -- subscriptionAvailed_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885e7175a417424c8bacb0e3), -- subscriptionAvailed_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885e7175a417424a8d6b5f97), -- subscriptionAvailed_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bb559885e7175a417424ba1dc0b6e), -- subscriptionAvailed_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bbcda0fe373488f9675fac0fa30ca), -- memberSubscription_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bbcda0fe373488f9675faf01731f4), -- memberSubscription_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bbcda0fda771e87dcc1b0bfa69f06), -- memberSubscription_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bbcda0fe373488f9675f9d50d9d60), -- memberSubscription_update
 (0x019ba2676db67541a1714f0524691e73, 0x019ba2c04a027259a6a80fd67e3babbf), -- member_create
 (0x019ba2676db67541a1714f0524691e73, 0x019ba2c04a027259a6a80fd6e82d35a6), -- member_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019ba2c04a0179cf901764ca8478a14e), -- member_read
@@ -111,4 +144,18 @@ INSERT INTO `branch` (`id`, `name`, `address`, `longitude`, `latitude`, `status`
 INSERT INTO `branch_personnel` (`id`, `actor_id`, `branch_id`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba2b8df68779199d6d4181d6c2950, 0x8b31746166d1489085a665ae7c6a92d9, 0x019ba279a6e67271893cffab220040a2, 'IN', 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:26:23.464473', '2026-01-09 12:28:13.213085'),
 (0x019ba2bcf8cc74199f9d50c3e2ee9c3d, 0x4489e6a55bc74126884233613e7bcfe0, 0x019ba279a6e67271893cffab220040a2, 'IN', 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:30:52.108775', '2026-01-09 12:30:52.108775');
+
+INSERT INTO `billing_cycles` (`id`, `name`, `intervals`, `interval_count`, `grace_period_days`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019bd4716bcc799c89953f5e7b76cabf, 'Bi-weekly', 'WEEKLY', 2, 7, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:09:21.621513', '2026-01-19 04:09:21.621513'),
+(0x019bd4719cd07d638f0f6305426f29a1, 'Monthly', 'MONTHLY', 1, 7, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:09:34.161889', '2026-01-19 04:09:34.161889');
+
+INSERT INTO `subscriptions` (`id`, `billing_cycle_id`, `name`, `description`, `amount`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019bd4733fd77ffe8f6b4b5216aecc62, 0x019bd4719cd07d638f0f6305426f29a1, 'Silver', 'Basic Monthly plan for casual members with service to most equipment', 1299.99, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:11:21.432568', '2026-01-19 04:11:21.432568');
+
+INSERT INTO `subscriptions_availed` (`id`, `subscription_id`, `name`, `amount`, `intervals`, `interval_count`, `grace_period_days`) VALUES
+(0x019bd47aea9279f584c8224f9cca1972, 0x019bd4733fd77ffe8f6b4b5216aecc62, 'Silver', 1299.99, 'MONTHLY', 1, 7);
+
+INSERT INTO `member_subscriptions` (`id`, `actor_id`, `subscription_availed_id`, `branch_id`, `start_date`, `end_date`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019bd47aeacd7d4789afe3f9285da33a, 0x8140f50da33f4569b76a20c348b77222, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, '2026-01-19 04:19:44.000000', NULL, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-01-19 04:19:43.951676', '2026-01-19 04:19:43.951676');
+
 COMMIT;
