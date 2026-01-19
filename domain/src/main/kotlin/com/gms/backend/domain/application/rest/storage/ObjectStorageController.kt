@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
@@ -20,8 +19,8 @@ import java.util.UUID
 class ObjectStorageController(
     private val storageService: ObjectStorageService,
     private val actorRepository: ActorRepository,
-    @Value("\${minio.bucket.public}") private val publicBucket: String,
-    @Value("\${minio.bucket.private}") private val privateBucket: String
+    @Value($$"${minio.bucket.public}") private val publicBucket: String,
+    @Value($$"${minio.bucket.private}") private val privateBucket: String
 ) {
     data class ObjectStorageDTO(
         val id: UUID,
@@ -33,41 +32,27 @@ class ObjectStorageController(
     )
     @GetMapping("/{id}/url")
     @Operation(summary = "Get a file from the object storage by ID")
-    fun getUrl(@PathVariable id: UUID): ResponseEntity<ApiResponse<String>> {
-        return try {
-            val url = storageService.getDownloadUrl(id)
-            url.toOkResponse("URL generated")
-        } catch (e: Exception) {
-            // Cast the Nothing response to the String response
-            ApiResponse.error(
-                message = "Could not generate download link",
-                status = HttpStatus.NOT_FOUND,
-                errors = listOf(ApiErrorType.RESOURCE_NOT_FOUND.toApiError(e.message))
-            ) as ResponseEntity<ApiResponse<String>>
-        }
-    }
+    fun getUrl(@PathVariable id: UUID): ResponseEntity<ApiResponse<String>> =
+            storageService.getDownloadUrl(id).toOkResponse("URL generated")
+
     // --- 1. PROFILE PICTURES (Public Bucket) ---
 
     @PostMapping("/upload/member/profile")
     @Operation(summary = "Upload a member profile picture into the object storage (public)")
-    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, publicBucket, "profiles/members", getCurrentActor())
-            .toCreatedResponse("Member profile picture uploaded successfully")
-    }
+    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, publicBucket, "profiles/members", getCurrentActor()).toCreatedResponse("Member profile picture uploaded successfully")
+
 
     @PostMapping("/upload/employee/profile")
     @Operation(summary = "Upload an employee profile picture into the object storage (public)")
-    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, publicBucket, "profiles/employees", getCurrentActor())
-            .toCreatedResponse("Employee profile picture uploaded successfully")
-    }
+    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, publicBucket, "profiles/employees", getCurrentActor()).toCreatedResponse("Employee profile picture uploaded successfully")
 
     @PostMapping("/upload/branch/profile")
     @Operation(summary = "Upload a branch logo into the object storage (public)")
-    fun uploadBranchLogo(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, publicBucket, "profiles/branches", getCurrentActor())
-            .toCreatedResponse("Branch logo uploaded successfully")
-    }
+    fun uploadBranchLogo(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, publicBucket, "profiles/branches", getCurrentActor()).toCreatedResponse("Branch logo uploaded successfully")
+
 
     // --- 2. EXPENSES & BILLING (Private Bucket) ---
 
@@ -76,58 +61,40 @@ class ObjectStorageController(
     fun uploadExpenseReceipt(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("category") category: String // utility, salary, asset, etc.
-    ): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, privateBucket, "expenses/$category", getCurrentActor())
-            .toCreatedResponse("Receipt for $category uploaded successfully")
-    }
+    ): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, privateBucket, "expenses/$category", getCurrentActor()).toCreatedResponse("Receipt for $category uploaded successfully")
 
     @PostMapping("/upload/payment-method/doc")
     @Operation(summary = "(private)")
-    fun uploadPaymentMethodDoc(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, privateBucket, "billing/payment-methods", getCurrentActor())
-            .toCreatedResponse("Payment method document saved")
-    }
+    fun uploadPaymentMethodDoc(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, privateBucket, "billing/payment-methods", getCurrentActor()).toCreatedResponse("Payment method document saved")
 
     // --- 3. ASSETS & MAINTENANCE (Private Bucket) ---
 
     @PostMapping("/upload/asset/document")
     @Operation(summary = "(private)")
-    fun uploadAssetDocument(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, privateBucket, "assets/documents", getCurrentActor())
-            .toCreatedResponse("Asset document uploaded")
-    }
+    fun uploadAssetDocument(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, privateBucket, "assets/documents", getCurrentActor()).toCreatedResponse("Asset document uploaded")
 
     @PostMapping("/upload/asset/maintenance")
     @Operation(summary = "(private)")
-    fun uploadMaintenanceRecord(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, privateBucket, "assets/maintenance", getCurrentActor())
-            .toCreatedResponse("Maintenance record saved")
-    }
+    fun uploadMaintenanceRecord(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, privateBucket, "assets/maintenance", getCurrentActor()).toCreatedResponse("Maintenance record saved")
 
     // --- 4. REPORTS (Private Bucket) ---
 
     @PostMapping("/upload/report/attachment")
     @Operation(summary = "(private)")
-    fun uploadReportAttachment(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        return storageService.uploadFile(file, privateBucket, "reports/attachments", getCurrentActor())
-            .toCreatedResponse("Report attachment uploaded")
-    }
+    fun uploadReportAttachment(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, privateBucket, "reports/attachments", getCurrentActor()).toCreatedResponse("Report attachment uploaded")
+
     // DELETE
 
     @DeleteMapping("/{id}")
     @Operation(summary = "delete a file from object storage and database")
-    fun deleteFile(@PathVariable id: UUID): ResponseEntity<ApiResponse<Unit>> {
-        return try {
-            storageService.deleteFile(id)
-            ApiResponse.ok(Unit, "File deleted successfully")
-        } catch (e: Exception) {
-            ApiResponse.error(
-                message = "Failed to delete file",
-                status = HttpStatus.INTERNAL_SERVER_ERROR,
-                errors = listOf(ApiErrorType.INTERNAL_SERVER_ERROR.toApiError(e.message))
-            ) as ResponseEntity<ApiResponse<Unit>>
-        }
-    }
+    fun deleteFile(@PathVariable id: UUID): ResponseEntity<ApiResponse<Unit>> =
+            storageService.deleteFile(id).toOkResponse("file deleted from database and object storage")
+
     private fun getCurrentActor(actorId: UUID? = null): Actor {
 
         // 1. If an ID was provided manually, use it
