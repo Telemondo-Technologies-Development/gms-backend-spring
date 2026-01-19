@@ -3,6 +3,7 @@ package com.gms.backend.domain.application.rest.security
 import com.gms.backend.domain.impl.domain.service.user.CustomUserDetailService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.web.config.EnableSpringDataWebSupport
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer
@@ -20,6 +21,7 @@ import org.springframework.security.web.context.SecurityContextRepository
 
 
 @Configuration
+//@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 @EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     private val customUserDetailsService: CustomUserDetailService,
@@ -46,7 +48,7 @@ class SecurityConfig(
             .build()
     }
 
-    val publicEndpoints = arrayOf("/auth/login")
+    val publicEndpoints = arrayOf("/auth/login", "/v3/api-docs")
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {

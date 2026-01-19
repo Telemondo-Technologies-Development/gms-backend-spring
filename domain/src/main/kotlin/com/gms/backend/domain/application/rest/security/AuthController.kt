@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/auth")
@@ -28,16 +29,17 @@ class AuthController(
     )
 ) {
 
-    data class LogInDTO(var email: String, var password: String)
+    data class LogInDTO(var username: String, var password: String)
+    data class LogInResponse(var email: String, var actorId: UUID)
 
     @PostMapping("/login")
     fun login(
         @RequestBody body: LogInDTO,
         request: HttpServletRequest,
         response: HttpServletResponse
-    ): ResponseEntity<String> {
+    ): ResponseEntity<LogInResponse> {
         // 1. Create the authentication token from request data
-        val authToken = UsernamePasswordAuthenticationToken.unauthenticated(body.email, body.password)
+        val authToken = UsernamePasswordAuthenticationToken.unauthenticated(body.username, body.password)
 
         // 2. Authenticate the user
         val authentication = authenticationManager.authenticate(authToken)
@@ -58,6 +60,8 @@ class AuthController(
             responseBuilder.header("X-CSRF-TOKEN", it.token)
         }
 
-        return responseBuilder.body("Logged in successfully")
+        val principal = authentication.principal as CustomUserDetails
+        val response = LogInResponse(principal.email, principal.actorId)
+        return responseBuilder.body(response)
     }
 }
