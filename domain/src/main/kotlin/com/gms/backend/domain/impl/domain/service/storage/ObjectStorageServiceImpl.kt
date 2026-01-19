@@ -3,13 +3,11 @@ package com.gms.backend.domain.impl.domain.service.storage
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
+import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import io.minio.*
 import io.minio.http.Method
 import jakarta.transaction.Transactional
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -17,13 +15,14 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Service
-@PreAuthorize("permitAll()")
+@PreAuthorize("denyAll()")
 class ObjectStorageServiceImpl (
     private val minioClient: MinioClient,
-    private val objectStorageRepository: ObjectStorageRepository
+    private val objectStorageRepository: ObjectStorageRepository,
+    private val actorRepository: ActorRepository
 ) : ObjectStorageService {
     @Transactional
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('objectStorage_upload')")
     override fun uploadFile(
         file: MultipartFile,
         bucket: String,
@@ -61,7 +60,7 @@ class ObjectStorageServiceImpl (
             throw RuntimeException("Storage error: ${e.message}")
         }
     }
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('objectStorage_read')")
     override fun getDownloadUrl(id: UUID): String {
         val metadata = objectStorageRepository.findById(id)
             .orElseThrow { RuntimeException("File record not found in database for ID: $id") }
@@ -75,7 +74,7 @@ class ObjectStorageServiceImpl (
                 .build()
         )
     }
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('objectStorage_delete')")
     override fun deleteFile(id: UUID) {
         val storage = objectStorageRepository.findById(id)
             .orElseThrow { RuntimeException("File not found") }
@@ -91,49 +90,18 @@ class ObjectStorageServiceImpl (
         // 2. Remove from Database
         objectStorageRepository.delete(storage)
     }
-    @Configuration
-    class MinioConfig {
+    @PreAuthorize("hasAuthority('objectStorage_read')")
+    override fun getCurrentActor(actorId: UUID?): Actor {
 
-        @Value("\${minio.url}")
-        private lateinit var url: String
-
-        @Value("\${minio.accessKey}")
-        private lateinit var accessKey: String
-
-        @Value("\${minio.secretKey}")
-        private lateinit var secretKey: String
-
-        @Value("\${minio.bucket.public}")
-        private lateinit var publicBucket: String
-
-        @Value("\${minio.bucket.private}")
-        private lateinit var privateBucket: String
-
-        @Bean
-        fun minioClient(): MinioClient {
-            // Create the client
-            val client = MinioClient.builder()
-                .endpoint(url)
-                .credentials(accessKey, secretKey)
-                .build()
-
-            // Ensure buckets exist on startup
-            ensureBucketExists(client, publicBucket)
-            ensureBucketExists(client, privateBucket)
-
-            return client
-        }
-
-        private fun ensureBucketExists(client: MinioClient, bucketName: String) {
-            val exists = client.bucketExists(
-                BucketExistsArgs.builder().bucket(bucketName).build()
-            )
-            if (!exists) {
-                client.makeBucket(
-                    MakeBucketArgs.builder().bucket(bucketName).build()
-                )
-                println("MinIO: Created missing bucket: $bucketName")
+        // 1. If an ID was provided manually, use it
+        if (actorId != null) {
+            return actorRepository.findById(actorId).orElseThrow {
+                RuntimeException("Provided Actor ID $actorId not found.")
             }
         }
+
+        // 2. Fallback: If no ID is provided, just pick the first one (for testing only)
+        return actorRepository.findAll().firstOrNull()
+            ?: throw RuntimeException("No Actors found in database.")
     }
 }
