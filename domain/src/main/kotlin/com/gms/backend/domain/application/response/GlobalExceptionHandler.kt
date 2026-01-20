@@ -41,7 +41,7 @@ class GlobalExceptionHandler {
         return ApiResponse.error(
             message = ex.message ?: "Action failed",
             status = ex.status,
-            errors = listOf(ex.error.toApiError(ex.description))
+            errors = listOf(ex.error.toApiError(ex.description, ex.field))
         )
     }
 
@@ -182,5 +182,6 @@ class DomainException(
     val error: ApiErrorType,
     val description: String? = null,
     message: String? = null,
+    val field: String? = null,
     val status: HttpStatus = HttpStatus.BAD_REQUEST
 ) : RuntimeException(message)

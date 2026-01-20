@@ -25,7 +25,7 @@ class User {
     lateinit var email: String
 
     @Column(nullable = false)
-    @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
+    // Can't set size validation as all passwords are hashed
     @JsonIgnore
     lateinit var password: String
 
