@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.model.subscription
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.gms.backend.domain.domain.model.billing.Invoice
 import com.gms.backend.domain.domain.model.billing.Ledger
 import com.gms.backend.domain.domain.model.member.MemberSubscription
@@ -9,7 +10,7 @@ import java.math.BigDecimal
 import java.util.*
 
 @Entity
-@Table(name = "subscription_availed")
+@Table(name = "subscriptions_availed")
 class SubscriptionAvailed {
 
     @Id
@@ -25,7 +26,8 @@ class SubscriptionAvailed {
     var amount: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
-    lateinit var intervals: String
+    @Enumerated(EnumType.STRING)
+    lateinit var intervals: BillingCycle.Interval
 
     @Column(nullable = false)
     var intervalCount: Int = 0
@@ -35,14 +37,21 @@ class SubscriptionAvailed {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id", nullable = false)
-    var subscription: Subscription? = null
+    @JsonIgnore
+    lateinit var subscription: Subscription
+
+    @Column(name = "subscription_id", insertable = false, updatable = false)
+    var subscriptionId: UUID? = null
 
     @OneToMany(mappedBy = "subscriptionAvailed")
+    @JsonIgnore
     var subscriptionAvailedMemberSubscriptions = mutableSetOf<MemberSubscription>()
 
     @OneToMany(mappedBy = "subscriptionAvailed")
+    @JsonIgnore
     var subscriptionAvailedInvoices = mutableSetOf<Invoice>()
 
     @OneToMany(mappedBy = "subscriptionAvailed")
+    @JsonIgnore
     var subscriptionAvailedLedgers = mutableSetOf<Ledger>()
 }

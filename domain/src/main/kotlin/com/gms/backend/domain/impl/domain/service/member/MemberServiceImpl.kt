@@ -1,12 +1,14 @@
 package com.gms.backend.domain.impl.domain.service.member
 
-import com.gms.backend.domain.application.mapper.MemberMapper
+import com.gms.backend.domain.application.mapper.member.MemberMapper
 import com.gms.backend.domain.application.rest.member.MemberController
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.member.MemberRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.member.MemberService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,14 +36,14 @@ class MemberServiceImpl(
             profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
 
-        val saved = memberRepository.save(member)
+        val saved = memberRepository.saveAndFlush(member)
         return memberMapper.memberToMemberTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('member_read')")
-    override fun getMembers(): List<MemberController.MemberTableDTO> {
-        return memberRepository.findAllProjectedBy()
+    override fun getMembers(pageable: Pageable): Page<MemberController.MemberTableDTO> {
+        return memberRepository.findAllProjectedBy(pageable)
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +62,7 @@ class MemberServiceImpl(
             profilePicture = body.profilePictureId?.let { objectRepository.getReferenceById(it) }
         }
 
-        memberRepository.save(member)
+        memberRepository.saveAndFlush(member)
         return memberMapper.memberToMemberTableDTO(member)
     }
 

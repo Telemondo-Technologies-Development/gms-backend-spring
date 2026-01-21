@@ -8,6 +8,8 @@ import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.repository.user.PermissionRepository
 import com.gms.backend.domain.domain.repository.user.RoleRepository
 import com.gms.backend.domain.domain.service.user.RoleService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
@@ -30,14 +32,14 @@ class RoleServiceImpl(
             updatedBy = actorRepository.getReferenceById(body.createdById)
         }
 
-        val saved = roleRepository.save(role)
+        val saved = roleRepository.saveAndFlush(role)
         return roleMapper.roleToRoleTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('role_read')")
-    override fun getRoles(): List<RoleController.RoleTableDTO> {
-        return roleRepository.findAllProjectedBy()
+    override fun getRoles(pageable: Pageable): Page<RoleController.RoleTableDTO> {
+        return roleRepository.findAllProjectedBy(pageable)
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +56,7 @@ class RoleServiceImpl(
             updatedBy = actorRepository.getReferenceById(body.updatedById)
         }
 
-        roleRepository.save(role)
+        roleRepository.saveAndFlush(role)
         return roleMapper.roleToRoleTableDTO(role)
     }
 
@@ -75,10 +77,10 @@ class RoleServiceImpl(
             val foundIds = foundPermissions.map { it.id }.toSet()
             val missingIds = body.permissionIds.filter { it !in foundIds }
             throw DomainException(
-                ApiErrorType.MISSING_UPDATE,
-                "Some permissions do not exist: $missingIds",
-                "Role Permission Update Failed",
-                HttpStatus.NOT_FOUND
+                error = ApiErrorType.MISSING_UPDATE,
+                description = "Some permissions do not exist: $missingIds",
+                message = "Role Permission Update Failed",
+                status = HttpStatus.NOT_FOUND
             )
         }
 
@@ -98,10 +100,10 @@ class RoleServiceImpl(
             val foundIds = foundPermissions.map { it.id }.toSet()
             val missingIds = body.permissionIds.filter { it !in foundIds }
             throw DomainException(
-                ApiErrorType.MISSING_DELETE,
-                "Some permissions do not exist: $missingIds",
-                "Role Permission Delete Failed",
-                HttpStatus.NOT_FOUND
+                error = ApiErrorType.MISSING_DELETE,
+                description = "Some permissions do not exist: $missingIds",
+                message = "Role Permission Delete Failed",
+                status = HttpStatus.NOT_FOUND
             )
         }
 

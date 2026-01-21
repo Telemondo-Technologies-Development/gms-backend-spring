@@ -9,6 +9,8 @@ import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.repository.user.EmployeeRepository
 import com.gms.backend.domain.domain.service.branch.BranchService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,7 +36,7 @@ class BranchServiceImpl(
             profilePicture = body.profilePictureId?.let { objectStorageRepository.getReferenceById(it) }
         }
 
-        val saved = branchRepository.save(branch)
+        val saved = branchRepository.saveAndFlush(branch)
         return branchMapper.branchToDTO(saved)
     }
 
@@ -50,15 +52,14 @@ class BranchServiceImpl(
             profilePicture = body.profilePictureId?.let { objectStorageRepository.getReferenceById(it) }
         }
 
-        branchRepository.save(branch)
+        branchRepository.saveAndFlush(branch)
         return branchMapper.branchToDTO(branch)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('branch_read')")
-    override fun getBranches(): List<BranchController.BranchTableDTO> {
-        val branches = branchRepository.findAll()
-        return branchMapper.branchesToDTO(branches)
+    override fun getBranches(pageable: Pageable): Page<BranchController.BranchTableDTO> {
+        return branchRepository.findAll(pageable).map { branch -> branchMapper.branchToDTO(branch) }
     }
 
     @Transactional(readOnly = true)

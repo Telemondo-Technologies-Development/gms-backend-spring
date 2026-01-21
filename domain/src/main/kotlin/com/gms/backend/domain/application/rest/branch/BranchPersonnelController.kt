@@ -1,13 +1,21 @@
 package com.gms.backend.domain.application.rest.branch
 
+import com.gms.backend.domain.application.response.ApiResponse
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.response.toPaginatedResponse
+import com.gms.backend.domain.application.rest.storage.ObjectStorageController
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
+import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
+import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.time.Instant
 import java.util.*
 
@@ -15,7 +23,9 @@ import java.util.*
 @RequestMapping("/api/branch/personnel")
 @Tag(name = "Branch Personnel")
 class BranchPersonnelController(
-    private val branchPersonnelService: BranchPersonnelService
+    private val branchPersonnelService: BranchPersonnelService,
+    private val storageService: ObjectStorageService,
+    private val bucketConfig: ObjectStorageController.MinioBucketConfig
 ) {
 
     @Schema(description = "Format for Branch Personnel read")
@@ -51,6 +61,11 @@ class BranchPersonnelController(
     fun createBranchPersonnel(@RequestBody body: BranchPersonnelPostDTO) =
         branchPersonnelService.createBranchPersonnel(body).toCreatedResponse("Branch Personnel Created")
 
+    @PostMapping("/picture")
+    @Operation(summary = "Upload a branch logo into the object storage (public)")
+    fun uploadBranchLogo(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
+        storageService.uploadFile(file, bucketConfig.public, "profiles/branches", storageService.getCurrentActor()).toCreatedResponse("Branch logo uploaded successfully")
+
     @PutMapping("/{id}")
     @Operation(summary = "Update a Branch Personnel by id")
     fun updateBranchPersonnel(@PathVariable id: UUID, @RequestBody body: BranchPersonnelPutDTO) =
@@ -58,8 +73,8 @@ class BranchPersonnelController(
 
     @GetMapping
     @Operation(summary = "Get all Branch Personnel")
-    fun getAllBranchPersonnel() =
-        branchPersonnelService.getBranchPersonnel().toOkResponse()
+    fun getAllBranchPersonnel(pageable: Pageable) =
+        branchPersonnelService.getBranchPersonnel(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Branch Personnel by id")

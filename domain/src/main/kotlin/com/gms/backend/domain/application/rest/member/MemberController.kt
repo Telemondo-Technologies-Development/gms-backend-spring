@@ -2,18 +2,30 @@ package com.gms.backend.domain.application.rest.member
 
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
+import com.gms.backend.domain.application.response.toPaginatedResponse
+import com.gms.backend.domain.application.rest.storage.ObjectStorageController
 import com.gms.backend.domain.domain.model.member.Member
+import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import com.gms.backend.domain.impl.domain.service.member.MemberServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
 @RequestMapping("/api/member")
 @Tag(name = "Member")
-class MemberController(private val memberService: MemberServiceImpl) {
+class MemberController(
+    private val memberService: MemberServiceImpl,
+    private val storageService: ObjectStorageService,
+    private val bucketConfig: ObjectStorageController.MinioBucketConfig
+) {
 
     @Schema(description = "Format for Member read")
     data class MemberTableDTO(
@@ -28,45 +40,58 @@ class MemberController(private val memberService: MemberServiceImpl) {
         val updatedById: UUID?
     )
 
-    @GetMapping
-    @Operation(summary = "Get all Members")
-    fun getAllUsers() = memberService.getMembers().toOkResponse()
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a Member by id")
-    fun getMember(@PathVariable id: UUID) = memberService.getMemberById(id).toOkResponse()
-
     @Schema(description = "Format for Member create")
     data class MemberPostDTO(
+        @field:NotBlank(message = "Surname must not be empty")
         val surname: String,
+        @field:NotBlank(message = "First Name must not be empty")
         val firstName: String,
+        @field:Size(min = 1, message = "Middle name cannot be blank if provided")
         val middleName: String?,
-        val suffix: String?, // Might set to enum
+        @field:Size(min = 1, message = "Suffix cannot be blank if provided")
+        val suffix: String?,
         val status: Member.MemberStatus,
         val profilePictureId: UUID?,
         val createdById: UUID,
     )
 
-    @PostMapping
-    @Operation(summary = "Create a new Member")
-    fun createMember(@RequestBody body: MemberPostDTO) =
-        memberService.createMember(body).toCreatedResponse("Member Successfully Created!")
-
     @Schema(description = "Format for Member update")
     data class MemberPutDTO(
+        @field:NotBlank(message = "Surname must not be empty")
         val surname: String,
+        @field:NotBlank(message = "First Name must not be empty")
         val firstName: String,
+        @field:Size(min = 1, message = "Middle name cannot be blank if provided")
         val middleName: String?,
-        val suffix: String?, // Might set to enum
+        @field:Size(min = 1, message = "Suffix  cannot be blank if provided")
+        val suffix: String?,
         val status: Member.MemberStatus,
         val profilePictureId: UUID?,
         val updatedById: UUID,
     )
 
+    @GetMapping
+    @Operation(summary = "Get all Members")
+    fun getAllMembers(pageable: Pageable) = memberService.getMembers(pageable).toPaginatedResponse()
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a Member by id")
+    fun getMember(@PathVariable id: UUID) = memberService.getMemberById(id).toOkResponse()
+
+    @PostMapping
+    @Operation(summary = "Create a new Member")
+    fun createMember(@Valid @RequestBody body: MemberPostDTO) =
+        memberService.createMember(body).toCreatedResponse("Member Successfully Created!")
+
     @PutMapping("/{id}")
     @Operation(summary = "Update a Member by id")
-    fun updateMember(@PathVariable id: UUID, @RequestBody body: MemberPutDTO) =
+    fun updateMember(@PathVariable id: UUID, @Valid @RequestBody body: MemberPutDTO) =
         memberService.updateMember(id, body).toOkResponse("Member updated")
+
+    @PostMapping("/picture")
+    @Operation(summary = "Upload a member profile picture into the object storage (public)")
+    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile) =
+        storageService.uploadFile(file, bucketConfig.public, "profiles/members", storageService.getCurrentActor()).toCreatedResponse("Member profile picture uploaded successfully")
 
 
     @DeleteMapping("/{id}")

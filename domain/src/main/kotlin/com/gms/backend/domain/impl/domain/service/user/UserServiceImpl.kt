@@ -1,10 +1,14 @@
 package com.gms.backend.domain.impl.domain.service.user
 
 import com.gms.backend.domain.application.mapper.user.UserMapper
+import com.gms.backend.domain.application.response.ApiErrorType
+import com.gms.backend.domain.application.response.DomainException
 import com.gms.backend.domain.application.rest.user.UserController
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.user.UserRepository
 import com.gms.backend.domain.domain.service.user.UserService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -23,6 +27,13 @@ class UserServiceImpl(
     @Transactional
     @PreAuthorize("hasAuthority('user_create')")
     override fun createUser(body: UserController.UserPostDTO): UserController.UserTableDTO {
+        if (body.password.length !in 8..64) {
+            throw DomainException(
+                error = ApiErrorType.INVALID_CASE,
+                description = "Password must be between 8 and 64 characters",
+                field = "password"
+            )
+        }
         val user = userMapper.userPostDTOToUser(body).apply {
             password = passwordEncoder.encode(body.password)!!
             actor = Actor().apply {
@@ -31,14 +42,14 @@ class UserServiceImpl(
             }
         }
 
-        val saved = userRepository.save(user)
+        val saved = userRepository.saveAndFlush(user)
         return userMapper.userToUserTableDTO(saved)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('user_read')")
-    override fun getUsers(): List<UserController.UserTableDTO> {
-        return userRepository.findAllProjectedBy()
+    override fun getUsers(pageable: Pageable): Page<UserController.UserTableDTO> {
+        return userRepository.findAllProjectedBy(pageable)
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +65,7 @@ class UserServiceImpl(
             userMapper.userPutDTOToUser(body, this)
         }
 
-        userRepository.save(user)
+        userRepository.saveAndFlush(user)
         return userMapper.userToUserTableDTO(user)
     }
 
