@@ -15,7 +15,8 @@ INSERT INTO `actors` (`id`, `type`, `status`, `created_at`, `deactivated_at`) VA
 (0xe79d09242c4c49ddb2dfbbfad0fae629, 'EMPLOYEE', 'ACTIVE', '2026-01-09 10:54:51.687103', NULL),
 (0x8140f50da33f4569b76a20c348b77222, 'MEMBER', 'ACTIVE', '2026-01-09 10:54:51.687103', NULL),
 (0xcd950aff5baa4eeab5de2cd1365e5657, 'MEMBER', 'ACTIVE', '2026-01-09 10:54:51.687103', NULL),
-(0xd594bb1121f44511a3fb184b9b557410, 'MEMBER', 'ACTIVE', '2026-01-09 10:54:51.687103', NULL);
+(0xd594bb1121f44511a3fb184b9b557410, 'MEMBER', 'ACTIVE', '2026-01-09 10:54:51.687103', NULL),
+(0x019484b9913a795694628f1d8c1c4912, 'SYSTEM', 'ACTIVE', '2026-01-21 11:32:11.125224', NULL);
 
 INSERT INTO `users` (`id`, `actor_id`, `email`, `password`, `created_at`, `updated_at`) VALUES
 (0x019ba262dd9770328a8d7e74a3af3d78, 0x75a6a919bfcb427c9ede78e2f49c960d, 'Bonnie32', '$argon2id$v=19$m=16384,t=2,p=1$KB7xzE43pNh5tKU21ms1Sw$neyzU8pin1RjbA2cTXFOQXmz5p8CPQ3QBE/BE/qq1a4', '2026-01-09 10:52:26.956371', '2026-01-09 10:52:26.956371'),
@@ -89,7 +90,21 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba3ba5e897479850a65bc67eedbac, 'user_create'),
 (0x019ba3ba5e757aa1afdbdcb4efe4654d, 'user_delete'),
 (0x019ba3ba5e897479850a65bd7a7ce73a, 'user_read'),
-(0x019ba3ba5e87747ebe3d630d6635fa0e, 'user_update');
+(0x019ba3ba5e87747ebe3d630d6635fa0e, 'user_update'),
+(0x019bd58eff7473009e875069c52f54be, 'asset_create'),
+(0x019bd58eff637c2b87b654e7a15ea030, 'asset_delete'),
+(0x019bd58eff7473009e87506608bff869, 'asset_read'),
+(0x019bd58eff7473009e875066f42d80fd, 'asset_update'),
+(0x019bd58eff7473009e875067d60e0bbb, 'assetCategory_create'),
+(0x019bd58eff7473009e875068df8c0ad0, 'assetCategory_delete'),
+(0x019bd58eff7473009e875067619b5653, 'assetCategory_read'),
+(0x019bd58eff7473009e875068320448af, 'assetCategory_update'),
+(0x019bdf23e77d7bd786924eda392f2ee0, 'maintenanceSchedule_create'),
+(0x019bdf23e77d7bd786924edaa8eba0cc, 'maintenanceSchedule_delete'),
+(0x019bdf23e77479c7a970d2b75fcb3092, 'maintenanceSchedule_read'),
+(0x019bdf23e77d7bd786924edaa62a87ab, 'maintenanceSchedule_update'),
+(0x019be4458174715e9ad763f4040e7013, 'assetMaintenance_read'),
+(0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update');
 
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
@@ -142,7 +157,21 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e897479850a65bc67eedbac), -- user_create
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e757aa1afdbdcb4efe4654d), -- user_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e897479850a65bd7a7ce73a), -- user_read
-(0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e87747ebe3d630d6635fa0e); -- user_update
+(0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e87747ebe3d630d6635fa0e), -- user_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875069c52f54be), -- asset_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff637c2b87b654e7a15ea030), -- asset_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e87506608bff869), -- asset_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875066f42d80fd), -- asset_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875067d60e0bbb), -- assetCategory_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875068df8c0ad0), -- assetCategory_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875067619b5653), -- assetCategory_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875068320448af), -- assetCategory_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77479c7a970d2b75fcb3092), -- maintenanceSchedule_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924eda392f2ee0), -- maintenanceSchedule_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa62a87ab), -- maintenanceSchedule_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa8eba0cc), -- maintenanceSchedule_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019be4458174715e9ad763f4040e7013), -- assetMaintenance_read
+(0x019ba2676db67541a1714f0524691e73, 0x019be479605678fbb10f3f64f56ae528); -- assetMaintenance_update
 
 INSERT INTO `branch` (`id`, `name`, `address`, `longitude`, `latitude`, `status`, `profile_picture`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba279a6e67271893cffab220040a2, 'Matina', 'Bangkal', '125.55602001850568', '7.060337505872085', 'IN', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 11:17:20.268658', '2026-01-09 11:17:20.268658'),
@@ -165,5 +194,19 @@ INSERT INTO `subscriptions_availed` (`id`, `subscription_id`, `name`, `amount`, 
 
 INSERT INTO `member_subscriptions` (`id`, `actor_id`, `subscription_availed_id`, `branch_id`, `start_date`, `end_date`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019bd47aeacd7d4789afe3f9285da33a, 0x8140f50da33f4569b76a20c348b77222, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, '2026-01-19 04:19:44.000000', NULL, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-01-19 04:19:43.951676', '2026-01-19 04:19:43.951676');
+
+INSERT INTO `asset_categories` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019ba2f1a6e67271893cffab220040a1, 'Cardio Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244'),
+(0x019ba2f1a6e67271893cffab220040a2, 'Strength Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244');
+
+INSERT INTO `assets` (`id`, `branch_id`, `asset_category_id`, `name`, `manufactured_date`, `end_of_life`, `remarks`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019ba2f5b6e67271893cffab220055b1, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Treadmill', '2025-06-01 00:00:00.000000', NULL, 'Located near the window section.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
+(0x019ba2f5b6e67271893cffab220055b2, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a2, 'Leg Press Machine', '2025-08-15 00:00:00.000000', NULL, 'Located near the entrance.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837');
+
+INSERT INTO `maintenance_schedules` (`id`, `asset_id`, `name`, `start_date`, `interval_unit`, `interval_value`, `lead_time_hours`, `time_to_complete_hours`, `week_rank`, `day_of_week`, `month_of_year`, `is_active`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019ba2f9c6e67271893cffab220066c1, 0x019ba2f5b6e67271893cffab220055b1, 'Weekly Maintenance', NOW(), 'WEEK', 1, 24, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:14:15.670191', '2026-01-20 07:14:15.670191'),
+(0x019ba32b5e897479850a65c0598000aa, 0x019ba2f5b6e67271893cffab220055b2, 'Daily Maintenance', NOW(), 'DAY', 1, 2, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:18:29.462595', '2026-01-20 07:18:29.462595'),
+(0x3917b8aff5ed11f0bd300242ac140002, 0x019ba2f5b6e67271893cffab220055b1, 'Hourly Maintenance', NOW(), 'HOUR', 1, 0, 0, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 10:46:06.000000', '2026-01-20 10:46:06.000000');
+
 
 COMMIT;

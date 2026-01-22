@@ -1,7 +1,6 @@
 package com.gms.backend.domain.application.mapper.asset
 
 import com.gms.backend.domain.application.rest.asset.AssetCategoryController
-import com.gms.backend.domain.domain.model.asset.Asset
 import com.gms.backend.domain.domain.model.asset.AssetCategory
 import org.mapstruct.Mapper
 import org.mapstruct.MappingTarget

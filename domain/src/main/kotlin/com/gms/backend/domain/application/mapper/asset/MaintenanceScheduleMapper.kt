@@ -8,10 +8,7 @@ import org.mapstruct.ReportingPolicy
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface MaintenanceScheduleMapper {
-    fun maintenanceSchedulePutDTOToMaintenanceSchedule(
-        dto: MaintenanceScheduleController.MaintenanceSchedulePutDTO,
-        @MappingTarget ms: MaintenanceSchedule
-    ): MaintenanceSchedule
-
-    fun maintenanceScheduleToDTO(ms: MaintenanceSchedule): MaintenanceScheduleController.MaintenanceScheduleTableDTO
+    fun schedulePostDTOToSchedule(dto: MaintenanceScheduleController.SchedulePostDTO): MaintenanceSchedule
+    fun schedulePutDTOToSchedule(dto: MaintenanceScheduleController.SchedulePutDTO, @MappingTarget schedule: MaintenanceSchedule): MaintenanceSchedule
+    fun scheduleToDTO(schedule: MaintenanceSchedule): MaintenanceScheduleController.ScheduleTableDTO
 }

@@ -1,10 +1,11 @@
 package com.gms.backend.domain.domain.model.asset
 
 import com.gms.backend.domain.domain.model.branch.Branch
-import com.gms.backend.domain.domain.model.expense.AssetExpense
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.AssertTrue
+import jakarta.validation.constraints.NotBlank
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -22,6 +23,7 @@ class Asset {
     lateinit var id: UUID
 
     @Column(nullable = false)
+    @field: NotBlank(message = "Asset name must not be empty")
     lateinit var name: String
 
     @Column
@@ -30,7 +32,14 @@ class Asset {
     @Column
     var endOfLife: Instant? = null
 
-    @Column
+    @get:AssertTrue(message = "End of Life date must be after the Manufactured date")
+    val isEndOfLifeValid: Boolean
+        get() {
+            if (manufacturedDate == null || endOfLife == null) return true
+            return endOfLife!!.isAfter(manufacturedDate)
+        }
+
+    @Column(columnDefinition = "text")
     var remarks: String? = null
 
     @CreationTimestamp
@@ -48,19 +57,12 @@ class Asset {
     @Column(name = "branch_id", insertable = false, updatable = false)
     var branchId: UUID? = null
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
-    @JoinColumn(name = "maintenance_schedule_id", nullable = false)
-    lateinit var maintenanceSchedule: MaintenanceSchedule
-
-    @Column(name = "maintenance_schedule_id", insertable = false, updatable = false)
-    var maintenanceScheduleId: UUID? = null
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asset_category_id", nullable = false)
     lateinit var assetCategory: AssetCategory
 
     @Column(name = "asset_category_id", insertable = false, updatable = false)
-    var assetCategoryId: UUID ? = null
+    var assetCategoryId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
@@ -84,9 +86,9 @@ class Asset {
     )
     var assetObjects = mutableSetOf<ObjectStorage>()
 
-    @OneToMany(mappedBy = "asset")
-    var assetAssetMaintenances = mutableSetOf<AssetMaintenance>()
+    @OneToMany(mappedBy = "asset", cascade = [CascadeType.ALL])
+    var maintenanceSchedules = mutableSetOf<MaintenanceSchedule>()
 
     @OneToMany(mappedBy = "asset")
-    var assetAssetExpenses = mutableSetOf<AssetExpense>()
+    var maintenanceLogs = mutableSetOf<AssetMaintenance>()
 }
