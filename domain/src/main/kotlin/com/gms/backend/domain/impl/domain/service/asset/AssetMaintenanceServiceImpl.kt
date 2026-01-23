@@ -4,6 +4,7 @@ import com.gms.backend.domain.application.mapper.asset.AssetMaintenanceMapper
 import com.gms.backend.domain.application.rest.asset.AssetMaintenanceController
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
+import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.asset.AssetMaintenanceService
 import org.springframework.data.domain.Page
@@ -18,7 +19,8 @@ import java.util.*
 class AssetMaintenanceServiceImpl(
     private val maintenanceRepository: AssetMaintenanceRepository,
     private val maintenanceMapper: AssetMaintenanceMapper,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val objectStorageRepository: ObjectStorageRepository
 ) : AssetMaintenanceService {
 
     @Transactional(readOnly = true)
@@ -52,21 +54,14 @@ class AssetMaintenanceServiceImpl(
         maintenance.description = request.description
         maintenance.completionDate = request.completionDate
         maintenance.updatedBy = actorRepository.getReferenceById(request.updatedById)
-        maintenance.updatedById = request.updatedById
+
+        maintenance.assetMaintenanceObjects.clear()
+        if (request.objectIds.isNotEmpty()) {
+            val objects = objectStorageRepository.findAllById(request.objectIds)
+            maintenance.assetMaintenanceObjects.addAll(objects)
+        }
 
         val saved = maintenanceRepository.saveAndFlush(maintenance)
-
         return maintenanceMapper.assetMaintenanceToDTO(saved)
-    }
-
-    @Transactional
-    @PreAuthorize("hasAuthority('assetMaintenance_update')")
-    override fun linkObjectToMaintenance(id: UUID, objectStorage: ObjectStorage) {
-        val maintenanceLog = maintenanceRepository.findById(id)
-            .orElseThrow { NoSuchElementException("Maintenance log not found with id: $id") }
-
-        maintenanceLog.assetMaintenanceObjects.add(objectStorage)
-
-        maintenanceRepository.save(maintenanceLog)
     }
 }

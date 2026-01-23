@@ -114,4 +114,10 @@ class MaintenanceSchedule {
 
     @Column(name = "updated_by", insertable = false, updatable = false)
     var updatedById: UUID? = null
+
+    @PrePersist
+    @PreUpdate
+    fun normalizeStartDate() {
+        this.startDate = this.startDate.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
+    }
 }

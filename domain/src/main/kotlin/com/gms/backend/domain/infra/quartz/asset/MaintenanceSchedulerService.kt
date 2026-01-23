@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @Service
 @PreAuthorize("denyAll()")
@@ -24,8 +25,7 @@ class MaintenanceSchedulerService(
     @Transactional
     @PreAuthorize("permitAll()")
     fun processSchedules() {
-        val now = Instant.now()
-        println("DEBUG: Current Time (Now): $now")
+        val now = Instant.now().truncatedTo(ChronoUnit.MINUTES) // Truncate now too
         val systemActor = actorRepository.findByType(Actor.ActorType.SYSTEM)
             .orElseThrow { IllegalStateException("System Actor not found in database") }
         val schedules = scheduleRepository.findAllByIsActiveTrue()
@@ -37,9 +37,14 @@ class MaintenanceSchedulerService(
             while (true) {
                 val generationThreshold = nextTargetDate.minus(Duration.ofHours(schedule.leadTimeHours.toLong()))
                 if (now.isBefore(generationThreshold)) break
-                val alreadyExists = maintenanceRepository.existsByMaintenanceScheduleAndMaintenanceDate(schedule, nextTargetDate)
 
                 // If current time is within the lead-time window, and record has not existed, create asset maintenance
+                val alreadyExists = maintenanceRepository.existsByMaintenanceScheduleAndMaintenanceDateBetween(
+                    schedule,
+                    nextTargetDate.minusSeconds(30),
+                    nextTargetDate.plusSeconds(30)
+                )
+
                 if (!alreadyExists) {
                     println("DEBUG: CREATE MAINTENANCE for Date: $nextTargetDate")
                     val maintenance = AssetMaintenance().apply {
@@ -53,7 +58,6 @@ class MaintenanceSchedulerService(
                     }
                     maintenanceRepository.save(maintenance)
                 }
-
                 nextTargetDate = calculateNextOccurrence(nextTargetDate, schedule)
                 if (schedule.intervalValue <= 0) break
             }
@@ -63,7 +67,7 @@ class MaintenanceSchedulerService(
     // Finds the starting point (either the original startdate or the latest asset mainteanance's date)
     private fun findNextDateAfterLastMaintenance(schedule: MaintenanceSchedule): Instant {
         val lastMaintenance = maintenanceRepository.findFirstByMaintenanceScheduleOrderByMaintenanceDateDesc(schedule)
-        if (lastMaintenance == null) return schedule.startDate
+        if (lastMaintenance == null) return schedule.startDate.truncatedTo(ChronoUnit.MINUTES)
         return calculateNextOccurrence(lastMaintenance.maintenanceDate, schedule)
     }
 
@@ -80,7 +84,7 @@ class MaintenanceSchedulerService(
             MaintenanceSchedule.IntervalUnit.MONTH  -> zonedDateTime.plusMonths(value)
             MaintenanceSchedule.IntervalUnit.YEAR   -> zonedDateTime.plusYears(value)
         }
-        return next.toInstant()
+        return next.toInstant().truncatedTo(ChronoUnit.MINUTES)
     }
 
     // update status from pending to overdue when it's already over the due date

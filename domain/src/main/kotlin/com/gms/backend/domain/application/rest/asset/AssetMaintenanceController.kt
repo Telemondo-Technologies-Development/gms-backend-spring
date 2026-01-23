@@ -24,8 +24,6 @@ import java.util.*
 @Tag(name = "Asset Maintenance")
 class AssetMaintenanceController(
     private val maintenanceService: AssetMaintenanceService,
-    private val storageService: ObjectStorageService,
-    private val bucketConfig: ObjectStorageController.MinioBucketConfig
 ) {
 
     @Schema(description = "Format for Asset Maintenance Log read")
@@ -34,9 +32,11 @@ class AssetMaintenanceController(
         val assetId: UUID?,
         val maintenanceScheduleId: UUID?,
         val maintenanceDate: Instant,
+        val completionDate: Instant?,
         val dueDate: Instant,
         val status: String,
         val description: String?,
+        val objectIds: List<UUID> = emptyList(),
         val createdById: UUID?,
         val updatedById: UUID?
     )
@@ -45,6 +45,7 @@ class AssetMaintenanceController(
         val status: AssetMaintenance.AssetMaintenanceStatus,
         val description: String?,
         val completionDate: Instant?,
+        val objectIds: List<UUID> = emptyList(),
         val updatedById: UUID
     )
 
@@ -59,20 +60,9 @@ class AssetMaintenanceController(
         maintenanceService.getMaintenanceLogById(id).toOkResponse()
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Update maintenance status, description, and completion date")
+    @Operation(summary = "Update maintenance status, description, files, and completion date")
     fun updateMaintenanceStatus(
         @PathVariable id: UUID,
         @RequestBody request: AssetMaintenancePatchDTO
     ) = maintenanceService.updateMaintenanceStatus(id, request).toOkResponse()
-
-    @PostMapping("/{id}/file")
-    @Operation(summary = "Upload maintenance evidence (photos, receipts) into the object storage (public)")
-    fun uploadMaintenanceEvidence(@PathVariable id: UUID, @RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        val savedObject = storageService.uploadFile(file, bucketConfig.public, "maintenance/logs/$id", storageService.getCurrentActor())
-
-        // this links the file to the maintenance log
-        maintenanceService.linkObjectToMaintenance(id, savedObject)
-
-        return savedObject.toCreatedResponse("Maintenance evidence uploaded successfully")
-    }
 }

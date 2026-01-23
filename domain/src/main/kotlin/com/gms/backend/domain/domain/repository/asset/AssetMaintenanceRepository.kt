@@ -9,9 +9,10 @@ import java.util.*
 interface AssetMaintenanceRepository : JpaRepository<AssetMaintenance, UUID> {
 
     // Prevents duplicate records for the same schedule during catch-up (when server is down)
-    fun existsByMaintenanceScheduleAndMaintenanceDate(
+    fun existsByMaintenanceScheduleAndMaintenanceDateBetween(
         maintenanceSchedule: MaintenanceSchedule,
-        maintenanceDate: Instant
+        start: Instant,
+        end: Instant
     ): Boolean
 
     // Find tasks by status (to be updated to OVERDUE)

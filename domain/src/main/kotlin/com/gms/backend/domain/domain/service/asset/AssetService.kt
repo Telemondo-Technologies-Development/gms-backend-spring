@@ -12,5 +12,4 @@ interface AssetService {
     fun getAssets(pageable: Pageable): Page<AssetController.AssetTableDTO>
     fun getAssetById(id: UUID): AssetController.AssetTableDTO
     fun deleteAsset(id: UUID)
-    fun linkObjectToAsset(assetId: UUID, objectStorage: ObjectStorage)
 }

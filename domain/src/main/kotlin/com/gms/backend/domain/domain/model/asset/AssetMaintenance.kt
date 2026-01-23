@@ -85,4 +85,12 @@ class AssetMaintenance {
         inverseJoinColumns = [JoinColumn(name = "object_id")],
     )
     var assetMaintenanceObjects = mutableSetOf<ObjectStorage>()
+
+    @PrePersist
+    @PreUpdate
+    fun normalizeDates() {
+        this.maintenanceDate = this.maintenanceDate.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
+        this.dueDate = this.dueDate.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
+        this.completionDate = this.completionDate?.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
+    }
 }

@@ -204,9 +204,8 @@ INSERT INTO `assets` (`id`, `branch_id`, `asset_category_id`, `name`, `manufactu
 (0x019ba2f5b6e67271893cffab220055b2, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a2, 'Leg Press Machine', '2025-08-15 00:00:00.000000', NULL, 'Located near the entrance.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837');
 
 INSERT INTO `maintenance_schedules` (`id`, `asset_id`, `name`, `start_date`, `interval_unit`, `interval_value`, `lead_time_hours`, `time_to_complete_hours`, `week_rank`, `day_of_week`, `month_of_year`, `is_active`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019ba2f9c6e67271893cffab220066c1, 0x019ba2f5b6e67271893cffab220055b1, 'Weekly Maintenance', NOW(), 'WEEK', 1, 24, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:14:15.670191', '2026-01-20 07:14:15.670191'),
-(0x019ba32b5e897479850a65c0598000aa, 0x019ba2f5b6e67271893cffab220055b2, 'Daily Maintenance', NOW(), 'DAY', 1, 2, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:18:29.462595', '2026-01-20 07:18:29.462595'),
-(0x3917b8aff5ed11f0bd300242ac140002, 0x019ba2f5b6e67271893cffab220055b1, 'Hourly Maintenance', NOW(), 'HOUR', 1, 0, 0, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 10:46:06.000000', '2026-01-20 10:46:06.000000');
-
+(0x019ba2f9c6e67271893cffab220066c1, 0x019ba2f5b6e67271893cffab220055b1, 'Weekly Maintenance', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), 'WEEK', 1, 24, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:14:15.670191', '2026-01-20 07:14:15.670191'),
+(0x019ba32b5e897479850a65c0598000aa, 0x019ba2f5b6e67271893cffab220055b2, 'Daily Maintenance', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), 'DAY', 1, 2, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:18:29.462595', '2026-01-20 07:18:29.462595'),
+(0x3917b8aff5ed11f0bd300242ac140002, 0x019ba2f5b6e67271893cffab220055b1, 'Hourly Maintenance', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), 'HOUR', 1, 0, 0, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 10:46:06.000000', '2026-01-20 10:46:06.000000');
 
 COMMIT;

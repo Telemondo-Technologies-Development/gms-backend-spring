@@ -33,8 +33,6 @@ import java.util.UUID
 @Tag(name = "Asset")
 class AssetController(
     private val assetService: AssetService,
-    private val storageService: ObjectStorageService,
-    private val bucketConfig: ObjectStorageController.MinioBucketConfig
 ) {
 
     data class AssetTableDTO(
@@ -45,6 +43,7 @@ class AssetController(
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
         val remarks: String?,
+        val objectIds: List<UUID> = emptyList(),
         val createdById: UUID?,
         val updatedById: UUID?
     )
@@ -57,6 +56,7 @@ class AssetController(
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
         val remarks: String?,
+        val objectIds: List<UUID> = emptyList(),
         val createdById: UUID
     ){
         @get:AssertTrue(message = "End of Life date must be after the Manufactured date")
@@ -73,7 +73,8 @@ class AssetController(
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
         val remarks: String?,
-        val updatedById: UUID
+        val objectIds: List<UUID> = emptyList(),
+        val updatedById: UUID,
     ){
         @get:AssertTrue(message = "End of Life date must be after the Manufactured date")
         val isDateRangeValid: Boolean
@@ -105,12 +106,4 @@ class AssetController(
     @Operation(summary = "Delete an asset by ID")
     fun deleteAsset(@PathVariable id: UUID) =
         assetService.deleteAsset(id).toOkResponse("Asset Deleted")
-
-    @PostMapping("/{id}/file")
-    @Operation(summary = "Upload asset documents (warranty, manuals, etc.) into the object storage (private)")
-    fun uploadAssetFile(@PathVariable id: UUID, @RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> {
-        val savedObject = storageService.uploadFile(file, bucketConfig.private, "assets/$id", storageService.getCurrentActor())
-        assetService.linkObjectToAsset(id, savedObject)
-        return savedObject.toCreatedResponse("Asset file uploaded successfully")
-    }
 }

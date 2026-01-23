@@ -6,6 +6,7 @@ import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
+import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.asset.AssetService
 import org.springframework.data.domain.Page
@@ -23,6 +24,7 @@ class AssetServiceImpl(
     private val actorRepository: ActorRepository,
     private val branchRepository: BranchRepository,
     private val categoryRepository: AssetCategoryRepository,
+    private val objectStorageRepository: ObjectStorageRepository,
     private val assetMapper: AssetMapper
 ) : AssetService {
 
@@ -34,6 +36,11 @@ class AssetServiceImpl(
             assetCategory = categoryRepository.getReferenceById(body.assetCategoryId)
             createdBy = actorRepository.getReferenceById(body.createdById)
             updatedBy = actorRepository.getReferenceById(body.createdById)
+
+            if (body.objectIds.isNotEmpty()) {
+                val objects = objectStorageRepository.findAllById(body.objectIds)
+                assetObjects.addAll(objects)
+            }
         }
         return assetMapper.assetToDTO(assetRepository.saveAndFlush(asset))
     }
@@ -43,10 +50,18 @@ class AssetServiceImpl(
     override fun updateAsset(id: UUID, body: AssetController.AssetPutDTO): AssetController.AssetTableDTO {
         val asset = assetRepository.findById(id).orElseThrow { NoSuchElementException("Asset not found") }
         assetMapper.assetPutDTOToAsset(body, asset)
+
         asset.apply {
             branch = branchRepository.getReferenceById(body.branchId)
             assetCategory = categoryRepository.getReferenceById(body.assetCategoryId)
             updatedBy = actorRepository.getReferenceById(body.updatedById)
+
+            // Clear existing files and add the new files
+            assetObjects.clear()
+            if (body.objectIds.isNotEmpty()) {
+                val objects = objectStorageRepository.findAllById(body.objectIds)
+                assetObjects.addAll(objects)
+            }
         }
         return assetMapper.assetToDTO(assetRepository.saveAndFlush(asset))
     }
@@ -70,12 +85,4 @@ class AssetServiceImpl(
         }
         assetRepository.delete(asset)
     }
-    @Transactional
-    @PreAuthorize("hasAuthority('asset_create')")
-    override fun linkObjectToAsset(assetId: UUID, objectStorage: ObjectStorage) {
-        val asset = assetRepository.findById(assetId).orElseThrow { Exception("Asset not found") }
-        asset.assetObjects.add(objectStorage)
-        assetRepository.save(asset)
-    }
-
 }

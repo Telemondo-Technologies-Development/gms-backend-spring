@@ -10,5 +10,4 @@ interface AssetMaintenanceService {
     fun getMaintenanceLogById(id: UUID): AssetMaintenanceController.AssetMaintenanceTableDTO
     fun getMaintenanceLogs(pageable: Pageable): Page<AssetMaintenanceController.AssetMaintenanceTableDTO>
     fun updateMaintenanceStatus(id: UUID, request: AssetMaintenanceController.AssetMaintenancePatchDTO): AssetMaintenanceController.AssetMaintenanceTableDTO
-    fun linkObjectToMaintenance(id: UUID, objectStorage: ObjectStorage)
 }
