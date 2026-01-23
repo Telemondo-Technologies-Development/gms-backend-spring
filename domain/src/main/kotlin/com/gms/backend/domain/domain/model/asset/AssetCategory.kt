@@ -2,6 +2,7 @@ package com.gms.backend.domain.domain.model.asset
 
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -19,6 +20,7 @@ class AssetCategory {
     lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
+    @field: NotBlank(message = "Category name is required")
     lateinit var name: String
 
     @CreationTimestamp

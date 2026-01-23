@@ -396,17 +396,9 @@ CREATE TABLE asset_categories (
   CONSTRAINT asset_categories_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-CREATE TABLE maintenance_schedules (
-  id 			binary(16) PRIMARY KEY,
-  start_date 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  intervals 	varchar(255) NOT NULL,
-  interval_count int NOT NULL
-);
-
 CREATE TABLE assets (
   id 						binary(16) PRIMARY KEY,
   branch_id 				binary(16) NOT NULL,
-  maintenance_schedule_id 	binary(16) NOT NULL,
   asset_category_id 		binary(16) NOT NULL,
   name 						varchar(255) NOT NULL,
   manufactured_date 		datetime(6) NULL,
@@ -418,10 +410,32 @@ CREATE TABLE assets (
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at			 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   CONSTRAINT assets_ibfk_1 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_2 FOREIGN KEY (maintenance_schedule_id) REFERENCES maintenance_schedules (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_3 FOREIGN KEY (asset_category_id) REFERENCES asset_categories (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_4 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_5 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT assets_ibfk_2 FOREIGN KEY (asset_category_id) REFERENCES asset_categories (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT assets_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT assets_ibfk_4 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE maintenance_schedules (
+  id 			            binary(16) PRIMARY KEY,
+  asset_id                  binary(16) NOT NULL,
+  name                      varchar(255) NOT NULL,
+  start_date 	            datetime(6) NOT NULL,
+  interval_unit             varchar(255) NOT NULL,
+  interval_value            int NOT NULL,
+  lead_time_hours           int NOT NULL DEFAULT 0,
+  time_to_complete_hours    int NOT NULL DEFAULT 0,
+  week_rank                 int NULL,
+  day_of_week               int NULL,
+  month_of_year             int NULL,
+  is_active                 boolean NOT NULL DEFAULT true,
+  created_by 				binary(16) NOT NULL,
+  updated_by 				binary(16) NOT NULL,
+  created_at                datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at                datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT maintenance_schedules_ibfk_1 FOREIGN KEY (asset_id) REFERENCES assets (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT maintenance_schedules_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT maintenance_schedules_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+
 );
 
 CREATE TABLE asset_objects (
@@ -433,17 +447,23 @@ CREATE TABLE asset_objects (
 );
 
 CREATE TABLE asset_maintenance (
-  id 			binary(16) PRIMARY KEY,
-  asset_id 		binary(16) NOT NULL,
-  status 		varchar(255) NOT NULL,
-  description 	text NULL,
-  created_by 	binary(16) NOT NULL,
-  updated_by 	binary(16) NOT NULL,
-  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  id 			            binary(16) PRIMARY KEY,
+  asset_id 		            binary(16) NOT NULL,
+  maintenance_schedule_id  binary(16) NOT NULL,
+  maintenance_date          datetime(6) NOT NULL,
+  due_date                  datetime(6) NOT NULL,
+  completion_date           datetime(6) NULL,
+  status 		            varchar(255) NOT NULL,
+  description 	            text NULL,
+  created_by 	            binary(16) NOT NULL,
+  updated_by 	            binary(16) NOT NULL,
+  created_at 	            datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	            datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT uk_asset_maintenance UNIQUE (asset_id, maintenance_schedule_id, maintenance_date),
   CONSTRAINT asset_maintenance_ibfk_1 FOREIGN KEY (asset_id) REFERENCES assets (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT asset_maintenance_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT asset_maintenance_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT asset_maintenance_ibfk_2 FOREIGN KEY (maintenance_schedule_id) REFERENCES maintenance_schedules (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT asset_maintenance_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT asset_maintenance_ibfk_4 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE asset_maintenance_objects (

@@ -4,4 +4,6 @@ import com.gms.backend.domain.domain.model.asset.MaintenanceSchedule
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
-interface MaintenanceScheduleRepository : JpaRepository<MaintenanceSchedule, UUID>
+interface MaintenanceScheduleRepository : JpaRepository<MaintenanceSchedule, UUID>{
+    fun findAllByIsActiveTrue(): List<MaintenanceSchedule>
+}
