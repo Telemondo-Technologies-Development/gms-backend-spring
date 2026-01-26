@@ -9,4 +9,5 @@ import java.util.*
 
 interface SubscriptionRepository : JpaRepository<Subscription, UUID> {
     fun findAllProjectedBy(pageable: Pageable): Page<SubscriptionController.SubscriptionTableDTO>
+    fun findSubscriptionById(id: UUID): Optional<SubscriptionController.SubscriptionTableDTO>
 }

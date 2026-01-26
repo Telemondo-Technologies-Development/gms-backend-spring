@@ -250,6 +250,7 @@ CREATE TABLE subscriptions_availed (
   intervals 		varchar(255) NOT NULL,
   interval_count 	int NOT NULL,
   grace_period_days int NOT NULL,
+  CONSTRAINT uk_subscription_availed UNIQUE (subscription_id, name, amount, intervals, interval_count, grace_period_days),
   CONSTRAINT subscriptions_availed_ibfk_1 FOREIGN KEY (subscription_id) REFERENCES subscriptions (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
@@ -266,6 +267,8 @@ CREATE TABLE member_subscriptions (
   updated_by 				binary(16) NOT NULL,
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX start_date (start_date),
+  INDEX end_date (end_date),
   CONSTRAINT member_subscriptions_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT member_subscriptions_ibfk_2 FOREIGN KEY (subscription_availed_id) REFERENCES subscriptions_availed (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT member_subscriptions_ibfk_3 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
@@ -280,6 +283,7 @@ CREATE TABLE invoices (
   actor_id 					binary(16) NOT NULL,
   subscription_availed_id 	binary(16) NOT NULL,
   branch_id 				binary(16) NOT NULL,
+  member_subscription_id 	binary(16) NOT NULL,
   -- Not yet sure what to put
   status 					varchar(255) NOT NULL,
   subtotal 					decimal(10,2) NOT NULL,
@@ -287,17 +291,21 @@ CREATE TABLE invoices (
   convenience_fee 			decimal(10,2) NULL,
   total 					decimal(10,2) NOT NULL,
   due_date 					datetime(6) NOT NULL,
+  grace_period_date 		datetime(6) NOT NULL,
   issued_at					datetime(6) NOT NULL,
   system_generated 			BOOLEAN NOT NULL DEFAULT TRUE,
   created_by 				binary(16) NOT NULL,
   updated_by 				binary(16) NOT NULL,
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX due_date (due_date),
+  INDEX grace_period_date (grace_period_date),
   CONSTRAINT invoices_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT invoices_ibfk_2 FOREIGN KEY (subscription_availed_id) REFERENCES subscriptions_availed (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT invoices_ibfk_3 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT invoices_ibfk_4 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT invoices_ibfk_5 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT invoices_ibfk_4 FOREIGN KEY (member_subscription_id) REFERENCES member_subscriptions (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT invoices_ibfk_5 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT invoices_ibfk_6 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE payment_methods (

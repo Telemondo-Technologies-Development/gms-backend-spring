@@ -23,7 +23,7 @@ class MaintenanceSchedulerService(
 ) {
 
     @Transactional
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('maintenanceSchedule_update')")
     fun processSchedules() {
         val now = Instant.now().truncatedTo(ChronoUnit.MINUTES) // Truncate now too
         val systemActor = actorRepository.findByType(Actor.ActorType.SYSTEM)
@@ -89,7 +89,7 @@ class MaintenanceSchedulerService(
 
     // update status from pending to overdue when it's already over the due date
     @Transactional
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('maintenanceSchedule_update')")
     fun updateOverdueStatuses() {
         val now = Instant.now()
         maintenanceRepository.findAllByStatus(AssetMaintenance.AssetMaintenanceStatus.PENDING)
