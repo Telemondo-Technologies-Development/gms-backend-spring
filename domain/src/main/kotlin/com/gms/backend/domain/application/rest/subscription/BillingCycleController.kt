@@ -28,11 +28,11 @@ class BillingCycleController(private val billingCycleService: BillingCycleServic
         val name: String,
         val intervals: BillingCycle.Interval,
         val intervalCount: Int,
-        val gracePeriodDays: Int,
-        val createdAt: Instant,
-        val updatedAt: Instant,
-        val createdById: UUID?,
-        val updatedById: UUID?
+        val gracePeriodDays: Int
+//        val createdAt: Instant,
+//        val updatedAt: Instant,
+//        val createdById: UUID?,
+//        val updatedById: UUID?
     )
 
     @Schema(description = "Format for Billing Cycle create")

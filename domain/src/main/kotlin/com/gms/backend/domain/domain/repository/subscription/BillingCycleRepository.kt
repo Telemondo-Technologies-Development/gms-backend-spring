@@ -9,4 +9,5 @@ import java.util.*
 
 interface BillingCycleRepository : JpaRepository<BillingCycle, UUID> {
     fun findAllProjectedBy(pageable: Pageable): Page<BillingCycleController.BillingCycleTableDTO>
+    fun findBillingCycleById(id: UUID): Optional<BillingCycleController.BillingCycleTableDTO>
 }
