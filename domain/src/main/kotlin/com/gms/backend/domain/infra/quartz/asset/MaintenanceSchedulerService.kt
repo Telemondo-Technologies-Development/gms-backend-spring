@@ -13,70 +13,137 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 @Service
 @PreAuthorize("denyAll()")
 class MaintenanceSchedulerService(
     private val scheduleRepository: MaintenanceScheduleRepository,
     private val maintenanceRepository: AssetMaintenanceRepository,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val scheduler: org.quartz.Scheduler
 ) {
-
+    // logic for the main job (runs every 12 AM)
     @Transactional
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('maintenanceSchedule_update')")
     fun processSchedules() {
-        val now = Instant.now().truncatedTo(ChronoUnit.MINUTES) // Truncate now too
-        val systemActor = actorRepository.findByType(Actor.ActorType.SYSTEM)
-            .orElseThrow { IllegalStateException("System Actor not found in database") }
-        val schedules = scheduleRepository.findAllByIsActiveTrue()
+        val now = Instant.now()
+        val planningHorizon = now.plus(Duration.ofHours(24))
+        val scheds = scheduleRepository.findAllWithLatestMaintenance()// a list of all active schedules and their latest asset maintenance
 
-        schedules.forEach { schedule ->
-            var nextTargetDate = findNextDateAfterLastMaintenance(schedule)
+        scheds.forEach { sched -> // loops for each maintenance schedule
+            // find whether the maintenance schedule has an asset maintenance or not
+            // if yes, nextTargetDate = calculateNextOccurence, if not, nextTargetDate = startDate
+            var nextTargetDate = if (sched.latestMaintenanceDate == null) {
+                sched.startDate.truncatedTo(ChronoUnit.MINUTES)
+            } else {
+                calculateNextOccurrence(sched.latestMaintenanceDate, sched.intervalValue, sched.intervalUnit)
+            }
 
-            // Generate records only if we are within the lead-time window
-            while (true) {
-                val generationThreshold = nextTargetDate.minus(Duration.ofHours(schedule.leadTimeHours.toLong()))
-                if (now.isBefore(generationThreshold)) break
+            // Fill the calendar for the next 24 hours
+            while (nextTargetDate.isBefore(planningHorizon)) {
 
-                // If current time is within the lead-time window, and record has not existed, create asset maintenance
-                val alreadyExists = maintenanceRepository.existsByMaintenanceScheduleAndMaintenanceDateBetween(
-                    schedule,
-                    nextTargetDate.minusSeconds(30),
-                    nextTargetDate.plusSeconds(30)
-                )
+                // Define creation and overdue
+                val creationTime = nextTargetDate.minus(Duration.ofHours(sched.leadTimeHours.toLong()))
+                val dueDate = nextTargetDate.plus(Duration.ofHours(sched.timeToCompleteHours.toLong()))
+                val overdueRunTime = dueDate.plus(Duration.ofMinutes(1)) // adds 1 minute for status to be updated to overdue (this is to prevent errors)
 
-                if (!alreadyExists) {
-                    println("DEBUG: CREATE MAINTENANCE for Date: $nextTargetDate")
+                // Logic for "creation" schedule (worker that creates asset maintenance)
+                // If the next target date is right now or in the past, spawn a worker that triggers now
+                if (nextTargetDate <= now) {
+                    val exists = maintenanceRepository.existsByMaintenanceScheduleIdAndMaintenanceDate(
+                        sched.scheduleId,
+                        nextTargetDate
+                    )
+
+                    if (!exists) spawnWorker(sched.scheduleId, now, nextTargetDate, "CREATE")
+                } else {
+                    // if the next target date is in the future, then spawn the worker that triggerts at nextTargetDate
+                    val runAt = if (creationTime > now) creationTime else now
+                    spawnWorker(sched.scheduleId, runAt, nextTargetDate, "CREATE")
+                }
+
+                // Logic for "overdue" schedule (worker that updates asset maintenance's status to overdue)
+                if (overdueRunTime <= now) {
+                    spawnWorker(sched.scheduleId, now, nextTargetDate, "OVERDUE")
+                } else {
+                    spawnWorker(sched.scheduleId, overdueRunTime, nextTargetDate, "OVERDUE")
+                }
+
+                // Move to the next occurrence and loop again
+                nextTargetDate = calculateNextOccurrence(nextTargetDate, sched.intervalValue, sched.intervalUnit)
+                if (sched.intervalValue <= 0) break
+            }
+        }
+    }
+
+    // executes worker task
+    @Transactional
+    @PreAuthorize("hasAuthority('maintenanceSchedule_update')")
+    fun executeWorkerTask(scheduleId: UUID, targetDate: Instant, action: String) {
+        val systemActor = actorRepository.findByType(Actor.ActorType.SYSTEM).get()
+
+        when (action) {
+            "CREATE" -> {
+                val schedule = scheduleRepository.findById(scheduleId).orElse(null) ?: return
+                if (!schedule.isActive) return
+                if (!maintenanceRepository.existsByMaintenanceScheduleIdAndMaintenanceDate(scheduleId, targetDate)) {
                     val maintenance = AssetMaintenance().apply {
                         this.asset = schedule.asset
                         this.maintenanceSchedule = schedule
-                        this.maintenanceDate = nextTargetDate
-                        this.dueDate = nextTargetDate.plus(Duration.ofHours(schedule.timeToCompleteHours.toLong()))
+                        this.maintenanceDate = targetDate
+                        this.dueDate = targetDate.plus(Duration.ofHours(schedule.timeToCompleteHours.toLong()))
                         this.status = AssetMaintenance.AssetMaintenanceStatus.PENDING
                         this.createdBy = systemActor
                         this.updatedBy = systemActor
                     }
                     maintenanceRepository.save(maintenance)
                 }
-                nextTargetDate = calculateNextOccurrence(nextTargetDate, schedule)
-                if (schedule.intervalValue <= 0) break
+            }
+            "OVERDUE" -> {
+                maintenanceRepository.updateStatusToOverdue(
+                    scheduleId = scheduleId,
+                    targetDate = targetDate,
+                    systemActor = systemActor,
+                    now = Instant.now()
+                )
             }
         }
     }
 
-    // Finds the starting point (either the original startdate or the latest asset mainteanance's date)
-    private fun findNextDateAfterLastMaintenance(schedule: MaintenanceSchedule): Instant {
-        val lastMaintenance = maintenanceRepository.findFirstByMaintenanceScheduleOrderByMaintenanceDateDesc(schedule)
-        if (lastMaintenance == null) return schedule.startDate.truncatedTo(ChronoUnit.MINUTES)
-        return calculateNextOccurrence(lastMaintenance.maintenanceDate, schedule)
+    // spawns worker
+    private fun spawnWorker(scheduleId: UUID, runAt: Instant, targetDate: Instant, action: String) {
+        val jobKey = org.quartz.JobKey("$action-$scheduleId-${targetDate.toEpochMilli()}", "maintenance-workers")
+
+        if (scheduler.checkExists(jobKey)) {
+            return
+        }
+
+        val jobDetail = org.quartz.JobBuilder.newJob(MaintenanceWorkerJob::class.java)
+            .withIdentity("$action-$scheduleId-${targetDate.toEpochMilli()}", "maintenance-workers")
+            .usingJobData("scheduleId", scheduleId.toString())
+            .usingJobData("targetDate", targetDate.toEpochMilli())
+            .usingJobData("action", action)
+            .build()
+
+        val trigger = org.quartz.TriggerBuilder.newTrigger()
+            .startAt(java.util.Date.from(runAt))
+            .build()
+
+        scheduler.scheduleJob(jobDetail, trigger)
     }
 
-    // Projects the next occurence
-    private fun calculateNextOccurrence(current: Instant, schedule: MaintenanceSchedule): Instant {
+    // calculate the next nextTargetDate
+    private fun calculateNextOccurrence(
+        current: Instant,
+        intervalValue: Int,
+        intervalUnit: MaintenanceSchedule.IntervalUnit
+    ): Instant {
         val zonedDateTime = current.atZone(ZoneId.of("UTC"))
-        val value = schedule.intervalValue.toLong()
+        val value = intervalValue.toLong()
 
-        val next = when (schedule.intervalUnit) {
+        //add current time to intervalValue and intervalUnit
+        val next = when (intervalUnit) {
             MaintenanceSchedule.IntervalUnit.MINUTE -> zonedDateTime.plusMinutes(value)
             MaintenanceSchedule.IntervalUnit.HOUR   -> zonedDateTime.plusHours(value)
             MaintenanceSchedule.IntervalUnit.DAY    -> zonedDateTime.plusDays(value)
@@ -85,18 +152,5 @@ class MaintenanceSchedulerService(
             MaintenanceSchedule.IntervalUnit.YEAR   -> zonedDateTime.plusYears(value)
         }
         return next.toInstant().truncatedTo(ChronoUnit.MINUTES)
-    }
-
-    // update status from pending to overdue when it's already over the due date
-    @Transactional
-    @PreAuthorize("permitAll()")
-    fun updateOverdueStatuses() {
-        val now = Instant.now()
-        maintenanceRepository.findAllByStatus(AssetMaintenance.AssetMaintenanceStatus.PENDING)
-            .filter { it.dueDate.isBefore(now) }
-            .forEach { maintenance ->
-                maintenance.status = AssetMaintenance.AssetMaintenanceStatus.OVERDUE
-                maintenanceRepository.save(maintenance)
-            }
     }
 }
