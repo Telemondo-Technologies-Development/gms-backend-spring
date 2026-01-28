@@ -23,7 +23,8 @@ class MemberSubscriptionController(private val memberService: MemberSubscription
     data class MemberSubscriptionTableDTO(
         val id: UUID,
         val actorId: UUID,
-        val subscriptionAvailed: SubscriptionAvailed?,
+//         val subscriptionAvailed: SubscriptionAvailed?,
+        val subscriptionAvailedId: UUID?,
         val branchId: UUID,
         val startDate: Instant,
         val endDate: Instant?,
@@ -32,13 +33,10 @@ class MemberSubscriptionController(private val memberService: MemberSubscription
         val updatedById: UUID?
     )
 
-    @GetMapping
-    @Operation(summary = "Get all MemberSubscriptions")
-    fun getAllMemberSubscriptions(pageable: Pageable) = memberService.getMemberSubscriptions(pageable).toPaginatedResponse()
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a MemberSubscription by id")
-    fun getMemberSubscription(@PathVariable id: UUID) = memberService.getMemberSubscriptionById(id).toOkResponse()
+    data class MemberSubscriptionIdsDTO(
+        val id: UUID,
+        val subscriptionId: UUID
+    )
 
     @Schema(description = "Format for MemberSubscription create")
     data class MemberSubscriptionPostDTO(
@@ -51,28 +49,36 @@ class MemberSubscriptionController(private val memberService: MemberSubscription
         val createdById: UUID
     )
 
-    @PostMapping
-    @Operation(summary = "Create a new MemberSubscription")
-    fun createMemberSubscription(@RequestBody body: MemberSubscriptionPostDTO) =
-        memberService.createMemberSubscription(body).toCreatedResponse("MemberSubscription Successfully Created!")
-
     @Schema(description = "Format for MemberSubscription update")
     data class MemberSubscriptionPutDTO(
         val actorId: UUID,
         val updateCurrentSubscription: Boolean = false,
         val subscriptionId: UUID,
         val branchId: UUID,
-        val startDate: Instant,
+        // Null = don't change
+        val startDate: Instant?,
         val endDate: Instant?,
         val status: MemberSubscription.MemberSubscriptionStatus,
         val updatedById: UUID
     )
 
+    @GetMapping
+    @Operation(summary = "Get all MemberSubscriptions")
+    fun getAllMemberSubscriptions(pageable: Pageable) = memberService.getMemberSubscriptions(pageable).toPaginatedResponse()
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a MemberSubscription by id")
+    fun getMemberSubscription(@PathVariable id: UUID) = memberService.getMemberSubscriptionById(id).toOkResponse()
+
+    @PostMapping
+    @Operation(summary = "Create a new MemberSubscription")
+    fun createMemberSubscription(@RequestBody body: MemberSubscriptionPostDTO) =
+        memberService.createMemberSubscription(body).toCreatedResponse("MemberSubscription Successfully Created!")
+
     @PutMapping("/{id}")
     @Operation(summary = "Update a MemberSubscription by id")
     fun updateMemberSubscription(@PathVariable id: UUID, @RequestBody body: MemberSubscriptionPutDTO) =
         memberService.updateMemberSubscription(id, body).toOkResponse("MemberSubscription updated")
-
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a MemberSubscription by id")

@@ -41,6 +41,14 @@ INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0x019ba2676db67541a1714f0524691e73);
 
 INSERT INTO `permissions` (`id`, `name`) VALUES
+(0x019bdedaf07975009778b92857da58b4, 'attendance_create'),
+(0x019bdedaf07975009778b9293fdfc819, 'attendance_delete'),
+(0x019bdedaf0787c83832caeaa986c720d, 'attendance_read'),
+(0x019bdedaf07975009778b927276aed54, 'attendance_update'),
+(0x019bdedaf07975009778b928222f3c0f, 'attendanceType_create'),
+(0x019bdedaf0787c83832caeaac7c42a46, 'attendanceType_delete'),
+(0x019bdedaf0787c83832caeab8a8299dc, 'attendanceType_read'),
+(0x019bdedaf07975009778b927f1fc399a, 'attendanceType_update'),
 (0x019bb559885f7175ba1eabb10ef4290f, 'billingCycle_create'),
 (0x019bb559885e7175a417424ac0ae00f8, 'billingCycle_delete'),
 (0x019bb559885f7175ba1eabb10d35fbf3, 'billingCycle_read'),
@@ -53,26 +61,54 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba3ba5e87747ebe3d6310ab9d34ac, 'branchPersonnel_delete'),
 (0x019ba3ba5e88747b836acfaa7633d68c, 'branchPersonnel_read'),
 (0x019ba3ba5e87747ebe3d631170d2aa2c, 'branchPersonnel_update'),
-(0x019bd458aafa7f34bf419ca0dfa1bddd, 'objectStorage_delete'),
-(0x019bd460624e79238c67993a76d64e78, 'objectStorage_read'),
-(0x019bd458aaf0749e8723c6e9ace4c91c, 'objectStorage_update'),
-(0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_upload'),
 (0x019ba3ba5e897479850a65bfed2e0453, 'employee_create'),
 (0x019ba3ba5e87747ebe3d630f9c04b5f2, 'employee_delete'),
 (0x019ba3ba5e88747b836acfacb4481e30, 'employee_read'),
 (0x019ba3ba5e87747ebe3d630ff80d8021, 'employee_update'),
+(0x019bded9eaf77bf2a490bbc1b6327a8d, 'invoice_create'),
+(0x019bded9eaf870739e96d9f9125cd9ee, 'invoice_delete'),
+(0x019bded9eaf870739e96d9f81fb0543a, 'invoice_read'),
+(0x019bded9eaf57bbc83180396611b953e, 'invoice_update'),
+(0x019bded9eaf67bbda6fad79ae9f87125, 'ledger_create'),
+(0x019bded9eaf67bbda6fad79b18d2bbb5, 'ledger_delete'),
+(0x019bded9eaf67bbda6fad79b5ea8178c, 'ledger_read'),
+(0x019bded9eaf67bbda6fad79b178b51c6, 'ledger_update'),
 (0x019ba2c04a027259a6a80fd67e3babbf, 'member_create'),
 (0x019ba2c04a027259a6a80fd6e82d35a6, 'member_delete'),
 (0x019ba2c04a0179cf901764ca8478a14e, 'member_read'),
 (0x019ba2c04a027259a6a80fd7e28a01f1, 'member_update'),
+(0x019bdedaa168715c81b1bbe34db38ec2, 'memberProgress_create'),
+(0x019bdedaa168715c81b1bbe2c13637cb, 'memberProgress_delete'),
+(0x019bdedaa16879e5bdcdebfb7d037450, 'memberProgress_read'),
+(0x019bdedaa16972889d6c55db67e98ca1, 'memberProgress_update'),
 (0x019bbcda0fe373488f9675fac0fa30ca, 'memberSubscription_create'),
 (0x019bbcda0fe373488f9675faf01731f4, 'memberSubscription_delete'),
 (0x019bbcda0fda771e87dcc1b0bfa69f06, 'memberSubscription_read'),
 (0x019bbcda0fe373488f9675f9d50d9d60, 'memberSubscription_update'),
+(0x019bd458aafa7f34bf419ca0dfa1bddd, 'objectStorage_delete'),
+(0x019bd460624e79238c67993a76d64e78, 'objectStorage_read'),
+(0x019bd458aaf0749e8723c6e9ace4c91c, 'objectStorage_update'),
+(0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_upload'),
+(0x019bded9eaec78ef9f56a9072ea88ce2, 'payment_create'),
+(0x019bded9eaf57bbc831803963ba6537d, 'payment_delete'),
+(0x019bded9eaf870739e96d9f9f5108f78, 'payment_read'),
+(0x019bded9eaf77bf2a490bbc2a6f3f0ed, 'payment_update'),
+(0x019bdfbc47de7a11924a32491a16332d, 'paymentMethod_create'),
+(0x019bdfbc48037322b63a40f6f3cddcd5, 'paymentMethod_delete'),
+(0x019bdfbc48037322b63a40f72fcc68c7, 'paymentMethod_read'),
+(0x019bdfbc48037322b63a40f7f128dbd9, 'paymentMethod_update'),
 (0x019ba3ba5e87747ebe3d630ec3f6d518, 'permission_create'),
 (0x019ba3ba5e897479850a65be77b00a39, 'permission_delete'),
 (0x019ba3ba5e88747b836acfabdf25808c, 'permission_read'),
 (0x019ba3ba5e897479850a65c05980003a, 'permission_update'),
+(0x019bdedaa16972889d6c55d9e6f09595, 'progress_create'),
+(0x019bdedaa16879e5bdcdebf93342c00c, 'progress_delete'),
+(0x019bdedaa16879e5bdcdebfaf6b299c5, 'progress_read'),
+(0x019bdedaa16972889d6c55daa57c37d2, 'progress_update'),
+(0x019bdedaa168715c81b1bbe2e018c43b, 'progressOption_create'),
+(0x019bdedaa16879e5bdcdebfa0c113edf, 'progressOption_delete'),
+(0x019bdedaa16778f1b5be9d03f8c576cb, 'progressOption_read'),
+(0x019bdedaa16972889d6c55db6ab375db, 'progressOption_update'),
 (0x019ba3ba5e88747b836acfad3358623a, 'role_create'),
 (0x019ba3ba5e897479850a65bd3e46013e, 'role_delete'),
 (0x019ba3ba5e897479850a65bf0827d3b9, 'role_read'),
@@ -108,6 +144,34 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf77bf2a490bbc1b6327a8d), -- invoice_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf870739e96d9f9125cd9ee), -- invoice_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf870739e96d9f81fb0543a), -- invoice_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf57bbc83180396611b953e), -- invoice_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf67bbda6fad79ae9f87125), -- ledger_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf67bbda6fad79b18d2bbb5), -- ledger_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf67bbda6fad79b5ea8178c), -- ledger_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf67bbda6fad79b178b51c6), -- ledger_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa168715c81b1bbe34db38ec2), -- memberProgress_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa168715c81b1bbe2c13637cb), -- memberProgress_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16879e5bdcdebfb7d037450), -- memberProgress_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16972889d6c55db67e98ca1), -- memberProgress_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaec78ef9f56a9072ea88ce2), -- payment_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf57bbc831803963ba6537d), -- payment_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf870739e96d9f9f5108f78), -- payment_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf77bf2a490bbc2a6f3f0ed), -- payment_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bdfbc47de7a11924a32491a16332d), -- paymentMethod_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bdfbc48037322b63a40f6f3cddcd5), -- paymentMethod_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bdfbc48037322b63a40f72fcc68c7), -- paymentMethod_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bdfbc48037322b63a40f7f128dbd9), -- paymentMethod_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16972889d6c55d9e6f09595), -- progress_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16879e5bdcdebf93342c00c), -- progress_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16879e5bdcdebfaf6b299c5), -- progress_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16972889d6c55daa57c37d2), -- progress_update
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa168715c81b1bbe2e018c43b), -- progressOption_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16879e5bdcdebfa0c113edf), -- progressOption_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16778f1b5be9d03f8c576cb), -- progressOption_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaa16972889d6c55db6ab375db), -- progressOption_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bb559885f7175ba1eabb10ef4290f), -- billingCycle_create
 (0x019ba2676db67541a1714f0524691e73, 0x019bb559885e7175a417424ac0ae00f8), -- billingCycle_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019bb559885f7175ba1eabb10d35fbf3), -- billingCycle_read
