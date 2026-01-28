@@ -15,6 +15,9 @@ data class ScheduleWithLatestMaintenanceDTO(
     val intervalUnit: MaintenanceSchedule.IntervalUnit,
     val leadTimeHours: Int,
     val timeToCompleteHours: Int,
+    val dayOfWeek: Int?,
+    val weekRank: Int?,
+    val monthOfYear: Int?,
     val latestMaintenanceDate: Instant?
 )
 
@@ -28,12 +31,25 @@ interface MaintenanceScheduleRepository : JpaRepository<MaintenanceSchedule, UUI
             ms.intervalUnit, 
             ms.leadTimeHours, 
             ms.timeToCompleteHours, 
+            ms.dayOfWeek, 
+            ms.weekRank, 
+            ms.monthOfYear,
             MAX(am.maintenanceDate)
         )
         FROM MaintenanceSchedule ms 
         LEFT JOIN AssetMaintenance am ON am.maintenanceSchedule = ms 
         WHERE ms.isActive = true 
-        GROUP BY ms.id, ms.asset, ms.startDate, ms.intervalValue, ms.intervalUnit, ms.leadTimeHours, ms.timeToCompleteHours
+        GROUP BY 
+            ms.id, 
+            ms.asset, 
+            ms.startDate, 
+            ms.intervalValue, 
+            ms.intervalUnit, 
+            ms.leadTimeHours, 
+            ms.timeToCompleteHours,
+            ms.dayOfWeek,
+            ms.weekRank,
+            ms.monthOfYear
     """)
     fun findAllWithLatestMaintenance(): List<ScheduleWithLatestMaintenanceDTO>
 }

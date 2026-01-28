@@ -72,15 +72,18 @@ class MaintenanceSchedule {
     var timeToCompleteHours: Int = 0
 
     @Column(name = "week_rank")
-    @field: Min(1) @field: Max(5)
+    @field:Min(-1, message = "Week rank must be between -1 and 5")
+    @field:Max(5, message = "Week rank must be between -1 and 5")
     var weekRank: Int? = null
 
     @Column(name = "day_of_week")
-    @field: Min(1) @field: Max(7)
+    @field:Min(1, message = "Day of week must be between 1 and 7")
+    @field:Max(7, message = "Day of week must be between 1 and 7")
     var dayOfWeek: Int? = null
 
     @Column(name = "month_of_year")
-    @field: Min(1) @field: Max(12)
+    @field:Min(1, message = "Month of year must be between 1 and 12")
+    @field:Max(12, message = "Month of year must be between 1 and 12")
     var monthOfYear: Int? = null
 
     @Column(name = "is_active", nullable = false)
@@ -120,4 +123,13 @@ class MaintenanceSchedule {
     fun normalizeStartDate() {
         this.startDate = this.startDate.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
     }
+
+    @get:AssertTrue(message = "Advanced settings require a MONTHly or YEARly interval unit")
+    val isAdvancedSettingsAllowed: Boolean
+        get() {
+            val hasAdvancedFields = weekRank != null || dayOfWeek != null || monthOfYear != null
+            val isCorrectUnit = intervalUnit == IntervalUnit.MONTH || intervalUnit == IntervalUnit.YEAR
+
+            return if (hasAdvancedFields) isCorrectUnit else true
+        }
 }

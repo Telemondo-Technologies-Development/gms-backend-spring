@@ -5,6 +5,7 @@ import com.gms.backend.domain.domain.model.asset.MaintenanceSchedule
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
+import com.gms.backend.domain.domain.repository.asset.ScheduleWithLatestMaintenanceDTO
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
@@ -32,12 +33,30 @@ class MaintenanceSchedulerService(
         val scheds = scheduleRepository.findAllWithLatestMaintenance()// a list of all active schedules and their latest asset maintenance
 
         scheds.forEach { sched -> // loops for each maintenance schedule
-            // find whether the maintenance schedule has an asset maintenance or not
-            // if yes, nextTargetDate = calculateNextOccurence, if not, nextTargetDate = startDate
+            // if this is the first asset maintenance record fir this schedule
             var nextTargetDate = if (sched.latestMaintenanceDate == null) {
-                sched.startDate.truncatedTo(ChronoUnit.MINUTES)
-            } else {
-                calculateNextOccurrence(sched.latestMaintenanceDate, sched.intervalValue, sched.intervalUnit)
+                // if advanced settings exist:
+                if (sched.dayOfWeek != null && sched.weekRank != null) {
+                    calculateAdvancedOccurrence(sched.startDate, sched, true)
+                } else {
+                    // if advanced settings don't exist:
+                    sched.startDate.truncatedTo(ChronoUnit.MINUTES)
+                }
+            } else { // if this is not the first asset maintenance record
+                if (sched.dayOfWeek != null && sched.weekRank != null) {
+                    calculateAdvancedOccurrence(sched.latestMaintenanceDate, sched, false)
+                } else {
+                    calculateNextOccurrence(sched.latestMaintenanceDate, sched.intervalValue, sched.intervalUnit)
+                }
+            }
+
+            //check
+            if (nextTargetDate.isBefore(sched.startDate.truncatedTo(ChronoUnit.MINUTES))) {
+                nextTargetDate = if (sched.dayOfWeek != null && sched.weekRank != null) {
+                    calculateAdvancedOccurrence(nextTargetDate, sched)
+                } else {
+                    calculateNextOccurrence(nextTargetDate, sched.intervalValue, sched.intervalUnit)
+                }
             }
 
             // Fill the calendar for the next 24 hours
@@ -71,7 +90,12 @@ class MaintenanceSchedulerService(
                 }
 
                 // Move to the next occurrence and loop again
-                nextTargetDate = calculateNextOccurrence(nextTargetDate, sched.intervalValue, sched.intervalUnit)
+                nextTargetDate = if (sched.dayOfWeek != null && sched.weekRank != null) {
+                    calculateAdvancedOccurrence(nextTargetDate, sched) // if it has advanced settins
+                } else {
+                    calculateNextOccurrence(nextTargetDate, sched.intervalValue, sched.intervalUnit) // if it doesn't have advanced settigngs
+                }
+
                 if (sched.intervalValue <= 0) break
             }
         }
@@ -152,5 +176,38 @@ class MaintenanceSchedulerService(
             MaintenanceSchedule.IntervalUnit.YEAR   -> zonedDateTime.plusYears(value)
         }
         return next.toInstant().truncatedTo(ChronoUnit.MINUTES)
+    }
+
+    // calculate the next nextTargetDate for schedules that have advanced settings
+    private fun calculateAdvancedOccurrence(current: Instant, sched: ScheduleWithLatestMaintenanceDTO, isFirstRun: Boolean = false): Instant {
+        val zonedDateTime = current.atZone(ZoneId.of("UTC"))
+
+        // if it is the first asset maintenance
+        var nextBase = if (isFirstRun) {
+            zonedDateTime
+        } else {
+            when (sched.intervalUnit) {
+                MaintenanceSchedule.IntervalUnit.YEAR -> zonedDateTime.plusYears(sched.intervalValue.toLong())
+                else -> zonedDateTime.plusMonths(sched.intervalValue.toLong())
+            }
+        }
+
+        sched.monthOfYear?.let { nextBase = nextBase.withMonth(it) }
+
+        val dayToFind = java.time.DayOfWeek.of(sched.dayOfWeek!!)
+        val adjuster = if (sched.weekRank == 5) {
+            java.time.temporal.TemporalAdjusters.lastInMonth(dayToFind)
+        } else {
+            java.time.temporal.TemporalAdjusters.dayOfWeekInMonth(sched.weekRank!!, dayToFind)
+        }
+
+        val occurrence = nextBase.with(adjuster).toInstant().truncatedTo(ChronoUnit.MINUTES)
+
+        // check
+        return if (isFirstRun && occurrence.isBefore(current)) {
+            calculateAdvancedOccurrence(occurrence, sched, false)
+        } else {
+            occurrence
+        }
     }
 }
