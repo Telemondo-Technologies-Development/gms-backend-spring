@@ -8,7 +8,10 @@ import com.gms.backend.domain.domain.service.asset.MaintenanceScheduleService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.FutureOrPresent
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
@@ -35,10 +38,13 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         val assetId: UUID,
         val name: String,
         val startDate: Instant,
-        val intervalUnit: MaintenanceSchedule.IntervalUnit,
+        val intervalUnit: java.time.temporal.ChronoUnit,
         val intervalValue: Int,
         val leadTimeHours: Int,
         val timeToCompleteHours: Int,
+        val weekRank: Int?,
+        val dayOfWeek: Int?,
+        val monthOfYear: Int?,
         val active: Boolean,
         val createdById: UUID?
     )
@@ -49,32 +55,66 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         @field:NotNull(message = "Start date is required")
         @field:FutureOrPresent(message = "Start date cannot be in the past")
         val startDate: Instant,
-        val intervalUnit: MaintenanceSchedule.IntervalUnit,
+        val intervalUnit: java.time.temporal.ChronoUnit,
         @field:Positive(message = "Interval value must be greater than zero")
         val intervalValue: Int,
         @field:PositiveOrZero(message = "Lead time cannot be negative")
         val leadTimeHours: Int,
         @field:PositiveOrZero(message = "Time to complete cannot be negative")
         val timeToCompleteHours: Int,
+        @field:Min(-1) @field:Max(5)
+        val weekRank: Int?,
+        @field:Min(1) @field:Max(7)
+        val dayOfWeek: Int?,
+        @field:Min(1) @field:Max(12)
+        val monthOfYear: Int?,
         val assetId: UUID,
         val createdById: UUID
-    )
+    ){
+        @get:AssertTrue(message = "Advanced settings require a MONTHS or YEARS interval unit")
+        val isAdvancedSettingsAllowed: Boolean
+            get() {
+                val isAdvanced = weekRank != null || dayOfWeek != null || monthOfYear != null
+                val isAllowedUnit = intervalUnit == java.time.temporal.ChronoUnit.MONTHS ||
+                        intervalUnit == java.time.temporal.ChronoUnit.YEARS
+
+                // If they provided advanced fields, the unit MUST be MONTH or YEAR
+                return if (isAdvanced) isAllowedUnit else true
+            }
+    }
 
     data class SchedulePutDTO(
         @field:NotBlank(message = "Schedule name is required")
         val name: String,
-        @field: NotNull(message = "Start date is required")
+        @field:NotNull(message = "Start date is required")
         val startDate: Instant,
-        val intervalUnit: MaintenanceSchedule.IntervalUnit,
+        val intervalUnit: java.time.temporal.ChronoUnit,
         @field:Positive(message = "Interval value must be greater than zero")
         val intervalValue: Int,
         @field:PositiveOrZero(message = "Lead time cannot be negative")
         val leadTimeHours: Int,
         @field:PositiveOrZero(message = "Time to complete cannot be negative")
         val timeToCompleteHours: Int,
+        @field:Min(-1) @field:Max(5)
+        val weekRank: Int?,
+        @field:Min(1) @field:Max(7)
+        val dayOfWeek: Int?,
+        @field:Min(1) @field:Max(12)
+        val monthOfYear: Int?,
         val active: Boolean,
         val updatedById: UUID
-    )
+    ){
+        @get:AssertTrue(message = "Advanced settings require a MONTHS or YEARS interval unit")
+        val isAdvancedSettingsAllowed: Boolean
+            get() {
+                val isAdvanced = weekRank != null || dayOfWeek != null || monthOfYear != null
+                val isAllowedUnit = intervalUnit == java.time.temporal.ChronoUnit.MONTHS ||
+                        intervalUnit == java.time.temporal.ChronoUnit.YEARS
+
+                // If they provided advanced fields, the unit MUST be MONTH or YEAR
+                return if (isAdvanced) isAllowedUnit else true
+            }
+    }
 
     @PostMapping
     fun createSchedule(@Valid @RequestBody body: SchedulePostDTO) =

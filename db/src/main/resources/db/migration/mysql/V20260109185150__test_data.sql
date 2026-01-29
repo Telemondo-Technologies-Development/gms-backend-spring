@@ -267,9 +267,22 @@ INSERT INTO `assets` (`id`, `branch_id`, `asset_category_id`, `name`, `manufactu
 (0x019ba2f5b6e67271893cffab220055b1, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Treadmill', '2025-06-01 00:00:00.000000', NULL, 'Located near the window section.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
 (0x019ba2f5b6e67271893cffab220055b2, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a2, 'Leg Press Machine', '2025-08-15 00:00:00.000000', NULL, 'Located near the entrance.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837');
 
+SET @now_minute = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00');
+SET @cur_week_rank = IF(MONTH(DATE_ADD(NOW(), INTERVAL 7 DAY)) <> MONTH(NOW()), -1, (DAYOFMONTH(NOW()) + 6) DIV 7);
+SET @cur_day_of_week = WEEKDAY(NOW()) + 1;
+SET @cur_month = MONTH(NOW());
+SET @one_month_ago = DATE_SUB(@now_minute, INTERVAL 1 MONTH);
+SET @one_year_ago = DATE_SUB(@now_minute, INTERVAL 1 YEAR);
+
 INSERT INTO `maintenance_schedules` (`id`, `asset_id`, `name`, `start_date`, `interval_unit`, `interval_value`, `lead_time_hours`, `time_to_complete_hours`, `week_rank`, `day_of_week`, `month_of_year`, `is_active`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019ba2f9c6e67271893cffab220066c1, 0x019ba2f5b6e67271893cffab220055b1, 'Weekly Maintenance', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), 'WEEK', 1, 24, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:14:15.670191', '2026-01-20 07:14:15.670191'),
-(0x019ba32b5e897479850a65c0598000aa, 0x019ba2f5b6e67271893cffab220055b2, 'Daily Maintenance', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), 'DAY', 1, 2, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:18:29.462595', '2026-01-20 07:18:29.462595'),
-(0x3917b8aff5ed11f0bd300242ac140002, 0x019ba2f5b6e67271893cffab220055b1, 'Hourly Maintenance', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00'), 'HOUR', 1, 0, 0, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 10:46:06.000000', '2026-01-20 10:46:06.000000');
+-- Simple Schedules
+(0x019ba2f9c6e67271893cffab220066c1, 0x019ba2f5b6e67271893cffab220055b1, 'Weekly Maintenance', @now_minute, 'WEEKS', 1, 24, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba32b5e897479850a65c0598000aa, 0x019ba2f5b6e67271893cffab220055b2, 'Daily Maintenance', @now_minute, 'DAYS', 1, 2, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x3917b8aff5ed11f0bd300242ac140002, 0x019ba2f5b6e67271893cffab220055b1, 'Hourly Maintenance', @now_minute, 'HOURS', 1, 0, 0, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+-- Advanced Schedules
+(0x019ba2f9c6e67271893cffab2200aaa1, 0x019ba2f5b6e67271893cffab220055b1, 'Fresh Advanced Monthly', @now_minute, 'MONTHS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba2f9c6e67271893cffab2200aaa2, 0x019ba2f5b6e67271893cffab220055b2, 'Fresh Advanced Yearly', @now_minute, 'YEARS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba2f9c6e67271893cffab2200bbb1, 0x019ba2f5b6e67271893cffab220055b1, 'Old Advanced Monthly', @one_month_ago, 'MONTHS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba2f9c6e67271893cffab2200bbb2, 0x019ba2f5b6e67271893cffab220055b2, 'Old Advanced Yearly', @one_year_ago, 'YEARS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW());
 
 COMMIT;

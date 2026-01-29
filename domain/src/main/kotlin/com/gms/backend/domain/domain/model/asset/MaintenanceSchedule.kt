@@ -21,15 +21,6 @@ import java.util.*
 @Table(name = "maintenance_schedules")
 class MaintenanceSchedule {
 
-    enum class IntervalUnit {
-        MINUTE, //for testing only
-        HOUR,
-        DAY,
-        WEEK,
-        MONTH,
-        YEAR
-    }
-
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -55,9 +46,9 @@ class MaintenanceSchedule {
         }
 
     @Enumerated(EnumType.STRING)
-    @field: NotNull(message = "Interval unit must be specified")
     @Column(name = "interval_unit", nullable = false)
-    lateinit var intervalUnit: IntervalUnit
+    @field:NotNull(message = "Interval unit must be specified")
+    lateinit var intervalUnit: java.time.temporal.ChronoUnit
 
     @Column(name = "interval_value", nullable = false)
     @field: Positive(message = "Interval value must be greater than zero")
@@ -72,15 +63,18 @@ class MaintenanceSchedule {
     var timeToCompleteHours: Int = 0
 
     @Column(name = "week_rank")
-    @field: Min(1) @field: Max(5)
+    @field:Min(-1, message = "Week rank must be between -1 and 5")
+    @field:Max(5, message = "Week rank must be between -1 and 5")
     var weekRank: Int? = null
 
     @Column(name = "day_of_week")
-    @field: Min(1) @field: Max(7)
+    @field:Min(1, message = "Day of week must be between 1 and 7")
+    @field:Max(7, message = "Day of week must be between 1 and 7")
     var dayOfWeek: Int? = null
 
     @Column(name = "month_of_year")
-    @field: Min(1) @field: Max(12)
+    @field:Min(1, message = "Month of year must be between 1 and 12")
+    @field:Max(12, message = "Month of year must be between 1 and 12")
     var monthOfYear: Int? = null
 
     @Column(name = "is_active", nullable = false)
@@ -120,4 +114,14 @@ class MaintenanceSchedule {
     fun normalizeStartDate() {
         this.startDate = this.startDate.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
     }
+
+    @get:AssertTrue(message = "Advanced settings require a MONTHS or YEARS interval unit")
+    val isAdvancedSettingsAllowed: Boolean
+        get() {
+            val hasAdvancedFields = weekRank != null || dayOfWeek != null || monthOfYear != null
+            val isCorrectUnit = intervalUnit == java.time.temporal.ChronoUnit.MONTHS ||
+                    intervalUnit == java.time.temporal.ChronoUnit.YEARS
+
+            return if (hasAdvancedFields) isCorrectUnit else true
+        }
 }
