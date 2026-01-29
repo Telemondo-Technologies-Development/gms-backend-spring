@@ -31,6 +31,9 @@ class MaintenanceStartupRunner(private val scheduler: Scheduler) {
     @EventListener(ApplicationReadyEvent::class)
     fun runJobOnStartup() {
         val jobKey = JobKey("maintenanceJob")
-        scheduler.triggerJob(jobKey)
+
+        if (scheduler.checkExists(jobKey)) {
+            scheduler.triggerJob(jobKey)
+        }
     }
 }

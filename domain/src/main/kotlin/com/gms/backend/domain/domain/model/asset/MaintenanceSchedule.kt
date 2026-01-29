@@ -21,15 +21,6 @@ import java.util.*
 @Table(name = "maintenance_schedules")
 class MaintenanceSchedule {
 
-    enum class IntervalUnit {
-        MINUTE, //for testing only
-        HOUR,
-        DAY,
-        WEEK,
-        MONTH,
-        YEAR
-    }
-
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -55,9 +46,9 @@ class MaintenanceSchedule {
         }
 
     @Enumerated(EnumType.STRING)
-    @field: NotNull(message = "Interval unit must be specified")
     @Column(name = "interval_unit", nullable = false)
-    lateinit var intervalUnit: IntervalUnit
+    @field:NotNull(message = "Interval unit must be specified")
+    lateinit var intervalUnit: java.time.temporal.ChronoUnit
 
     @Column(name = "interval_value", nullable = false)
     @field: Positive(message = "Interval value must be greater than zero")
@@ -124,11 +115,12 @@ class MaintenanceSchedule {
         this.startDate = this.startDate.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
     }
 
-    @get:AssertTrue(message = "Advanced settings require a MONTHly or YEARly interval unit")
+    @get:AssertTrue(message = "Advanced settings require a MONTHS or YEARS interval unit")
     val isAdvancedSettingsAllowed: Boolean
         get() {
             val hasAdvancedFields = weekRank != null || dayOfWeek != null || monthOfYear != null
-            val isCorrectUnit = intervalUnit == IntervalUnit.MONTH || intervalUnit == IntervalUnit.YEAR
+            val isCorrectUnit = intervalUnit == java.time.temporal.ChronoUnit.MONTHS ||
+                    intervalUnit == java.time.temporal.ChronoUnit.YEARS
 
             return if (hasAdvancedFields) isCorrectUnit else true
         }

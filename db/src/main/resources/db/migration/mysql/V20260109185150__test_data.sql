@@ -276,13 +276,13 @@ SET @one_year_ago = DATE_SUB(@now_minute, INTERVAL 1 YEAR);
 
 INSERT INTO `maintenance_schedules` (`id`, `asset_id`, `name`, `start_date`, `interval_unit`, `interval_value`, `lead_time_hours`, `time_to_complete_hours`, `week_rank`, `day_of_week`, `month_of_year`, `is_active`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 -- Simple Schedules
-(0x019ba2f9c6e67271893cffab220066c1, 0x019ba2f5b6e67271893cffab220055b1, 'Weekly Maintenance', @now_minute, 'WEEK', 1, 24, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
-(0x019ba32b5e897479850a65c0598000aa, 0x019ba2f5b6e67271893cffab220055b2, 'Daily Maintenance', @now_minute, 'DAY', 1, 2, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
-(0x3917b8aff5ed11f0bd300242ac140002, 0x019ba2f5b6e67271893cffab220055b1, 'Hourly Maintenance', @now_minute, 'HOUR', 1, 0, 0, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba2f9c6e67271893cffab220066c1, 0x019ba2f5b6e67271893cffab220055b1, 'Weekly Maintenance', @now_minute, 'WEEKS', 1, 24, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba32b5e897479850a65c0598000aa, 0x019ba2f5b6e67271893cffab220055b2, 'Daily Maintenance', @now_minute, 'DAYS', 1, 2, 1, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x3917b8aff5ed11f0bd300242ac140002, 0x019ba2f5b6e67271893cffab220055b1, 'Hourly Maintenance', @now_minute, 'HOURS', 1, 0, 0, NULL, NULL, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
 -- Advanced Schedules
-(0x019ba2f9c6e67271893cffab2200aaa1, 0x019ba2f5b6e67271893cffab220055b1, 'Fresh Advanced Monthly', @now_minute, 'MONTH', 1, 0, 2, @cur_week_rank, @cur_day_of_week, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
-(0x019ba2f9c6e67271893cffab2200aaa2, 0x019ba2f5b6e67271893cffab220055b2, 'Fresh Advanced Yearly', @now_minute, 'YEAR', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
-(0x019ba2f9c6e67271893cffab2200bbb1, 0x019ba2f5b6e67271893cffab220055b1, 'Old Advanced Monthly', @one_month_ago, 'MONTH', 1, 0, 2, @cur_week_rank, @cur_day_of_week, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
-(0x019ba2f9c6e67271893cffab2200bbb2, 0x019ba2f5b6e67271893cffab220055b2, 'Old Advanced Yearly', @one_year_ago, 'YEAR', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW());
+(0x019ba2f9c6e67271893cffab2200aaa1, 0x019ba2f5b6e67271893cffab220055b1, 'Fresh Advanced Monthly', @now_minute, 'MONTHS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba2f9c6e67271893cffab2200aaa2, 0x019ba2f5b6e67271893cffab220055b2, 'Fresh Advanced Yearly', @now_minute, 'YEARS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba2f9c6e67271893cffab2200bbb1, 0x019ba2f5b6e67271893cffab220055b1, 'Old Advanced Monthly', @one_month_ago, 'MONTHS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
+(0x019ba2f9c6e67271893cffab2200bbb2, 0x019ba2f5b6e67271893cffab220055b2, 'Old Advanced Yearly', @one_year_ago, 'YEARS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW());
 
 COMMIT;

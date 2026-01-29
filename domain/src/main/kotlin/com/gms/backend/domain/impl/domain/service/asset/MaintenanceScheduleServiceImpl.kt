@@ -6,6 +6,7 @@ import com.gms.backend.domain.domain.repository.asset.AssetRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.asset.MaintenanceScheduleService
+import com.gms.backend.domain.infra.quartz.asset.MaintenanceSchedulerService
 import org.springframework.data.domain.Page
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
@@ -20,7 +21,8 @@ class MaintenanceScheduleServiceImpl(
     private val scheduleRepository: MaintenanceScheduleRepository,
     private val assetRepository: AssetRepository,
     private val actorRepository: ActorRepository,
-    private val scheduleMapper: MaintenanceScheduleMapper
+    private val scheduleMapper: MaintenanceScheduleMapper,
+    private val maintenanceSchedulerService: MaintenanceSchedulerService
 ) : MaintenanceScheduleService {
 
     @Transactional
@@ -31,7 +33,9 @@ class MaintenanceScheduleServiceImpl(
             createdBy = actorRepository.getReferenceById(body.createdById)
             updatedBy = actorRepository.getReferenceById(body.createdById)
         }
-        return scheduleMapper.scheduleToDTO(scheduleRepository.saveAndFlush(schedule))
+        val savedSchedule = scheduleMapper.scheduleToDTO(scheduleRepository.saveAndFlush(schedule))
+        maintenanceSchedulerService.processSchedules()
+        return savedSchedule
     }
 
     @Transactional
@@ -40,7 +44,10 @@ class MaintenanceScheduleServiceImpl(
         val schedule = scheduleRepository.findById(id).orElseThrow { NoSuchElementException("Schedule not found") }
         scheduleMapper.schedulePutDTOToSchedule(body, schedule)
         schedule.updatedBy = actorRepository.getReferenceById(body.updatedById)
-        return scheduleMapper.scheduleToDTO(scheduleRepository.saveAndFlush(schedule))
+        val savedSchedule = scheduleMapper.scheduleToDTO(scheduleRepository.saveAndFlush(schedule))
+        maintenanceSchedulerService.cancelFutureWorkers(id)
+        maintenanceSchedulerService.processSchedules()
+        return savedSchedule
     }
 
     @Transactional(readOnly = true)
@@ -60,6 +67,7 @@ class MaintenanceScheduleServiceImpl(
         val schedule = scheduleRepository.findById(id).orElseThrow {
             NoSuchElementException("Maintenance Schedule not found with ID: $id")
         }
+        maintenanceSchedulerService.cancelFutureWorkers(id)
         scheduleRepository.delete(schedule)
     }
 }

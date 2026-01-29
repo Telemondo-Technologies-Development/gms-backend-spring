@@ -12,7 +12,7 @@ data class ScheduleWithLatestMaintenanceDTO(
     val asset: Asset,
     val startDate: Instant,
     val intervalValue: Int,
-    val intervalUnit: MaintenanceSchedule.IntervalUnit,
+    val intervalUnit: java.time.temporal.ChronoUnit,
     val leadTimeHours: Int,
     val timeToCompleteHours: Int,
     val dayOfWeek: Int?,

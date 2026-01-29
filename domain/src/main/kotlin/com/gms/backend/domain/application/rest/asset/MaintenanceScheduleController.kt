@@ -38,7 +38,7 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         val assetId: UUID,
         val name: String,
         val startDate: Instant,
-        val intervalUnit: MaintenanceSchedule.IntervalUnit,
+        val intervalUnit: java.time.temporal.ChronoUnit,
         val intervalValue: Int,
         val leadTimeHours: Int,
         val timeToCompleteHours: Int,
@@ -55,7 +55,7 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         @field:NotNull(message = "Start date is required")
         @field:FutureOrPresent(message = "Start date cannot be in the past")
         val startDate: Instant,
-        val intervalUnit: MaintenanceSchedule.IntervalUnit,
+        val intervalUnit: java.time.temporal.ChronoUnit,
         @field:Positive(message = "Interval value must be greater than zero")
         val intervalValue: Int,
         @field:PositiveOrZero(message = "Lead time cannot be negative")
@@ -71,12 +71,12 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         val assetId: UUID,
         val createdById: UUID
     ){
-        @get:AssertTrue(message = "Advanced settings (week rank, day of week, month) can only be used with MONTH or YEAR intervals")
+        @get:AssertTrue(message = "Advanced settings require a MONTHS or YEARS interval unit")
         val isAdvancedSettingsAllowed: Boolean
             get() {
                 val isAdvanced = weekRank != null || dayOfWeek != null || monthOfYear != null
-                val isAllowedUnit = intervalUnit == MaintenanceSchedule.IntervalUnit.MONTH ||
-                        intervalUnit == MaintenanceSchedule.IntervalUnit.YEAR
+                val isAllowedUnit = intervalUnit == java.time.temporal.ChronoUnit.MONTHS ||
+                        intervalUnit == java.time.temporal.ChronoUnit.YEARS
 
                 // If they provided advanced fields, the unit MUST be MONTH or YEAR
                 return if (isAdvanced) isAllowedUnit else true
@@ -88,7 +88,7 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         val name: String,
         @field:NotNull(message = "Start date is required")
         val startDate: Instant,
-        val intervalUnit: MaintenanceSchedule.IntervalUnit,
+        val intervalUnit: java.time.temporal.ChronoUnit,
         @field:Positive(message = "Interval value must be greater than zero")
         val intervalValue: Int,
         @field:PositiveOrZero(message = "Lead time cannot be negative")
@@ -104,12 +104,12 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         val active: Boolean,
         val updatedById: UUID
     ){
-        @get:AssertTrue(message = "Advanced settings (week rank, day of week, month) can only be used with MONTH or YEAR intervals")
+        @get:AssertTrue(message = "Advanced settings require a MONTHS or YEARS interval unit")
         val isAdvancedSettingsAllowed: Boolean
             get() {
                 val isAdvanced = weekRank != null || dayOfWeek != null || monthOfYear != null
-                val isAllowedUnit = intervalUnit == MaintenanceSchedule.IntervalUnit.MONTH ||
-                        intervalUnit == MaintenanceSchedule.IntervalUnit.YEAR
+                val isAllowedUnit = intervalUnit == java.time.temporal.ChronoUnit.MONTHS ||
+                        intervalUnit == java.time.temporal.ChronoUnit.YEARS
 
                 // If they provided advanced fields, the unit MUST be MONTH or YEAR
                 return if (isAdvanced) isAllowedUnit else true

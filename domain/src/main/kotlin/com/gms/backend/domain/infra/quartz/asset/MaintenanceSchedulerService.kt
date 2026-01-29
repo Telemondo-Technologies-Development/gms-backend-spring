@@ -135,6 +135,20 @@ class MaintenanceSchedulerService(
         }
     }
 
+    @Transactional
+    @PreAuthorize("hasAuthority('maintenanceSchedule_update')")
+    // to cancel future workers, if maintenance schedule is updated or deleted
+    fun cancelFutureWorkers(scheduleId: UUID) {
+        val matcher = org.quartz.impl.matchers.GroupMatcher.jobGroupEquals("maintenance-workers")
+        val jobKeys = scheduler.getJobKeys(matcher)
+
+        val keysToDelete = jobKeys.filter { it.name.contains(scheduleId.toString()) }
+
+        if (keysToDelete.isNotEmpty()) {
+            scheduler.deleteJobs(keysToDelete.toList())
+        }
+    }
+
     // spawns worker
     private fun spawnWorker(scheduleId: UUID, runAt: Instant, targetDate: Instant, action: String) {
         val jobKey = org.quartz.JobKey("$action-$scheduleId-${targetDate.toEpochMilli()}", "maintenance-workers")
@@ -161,35 +175,26 @@ class MaintenanceSchedulerService(
     private fun calculateNextOccurrence(
         current: Instant,
         intervalValue: Int,
-        intervalUnit: MaintenanceSchedule.IntervalUnit
+        intervalUnit: java.time.temporal.ChronoUnit
     ): Instant {
         val zonedDateTime = current.atZone(ZoneId.of("UTC"))
-        val value = intervalValue.toLong()
-
-        //add current time to intervalValue and intervalUnit
-        val next = when (intervalUnit) {
-            MaintenanceSchedule.IntervalUnit.MINUTE -> zonedDateTime.plusMinutes(value)
-            MaintenanceSchedule.IntervalUnit.HOUR   -> zonedDateTime.plusHours(value)
-            MaintenanceSchedule.IntervalUnit.DAY    -> zonedDateTime.plusDays(value)
-            MaintenanceSchedule.IntervalUnit.WEEK   -> zonedDateTime.plusWeeks(value)
-            MaintenanceSchedule.IntervalUnit.MONTH  -> zonedDateTime.plusMonths(value)
-            MaintenanceSchedule.IntervalUnit.YEAR   -> zonedDateTime.plusYears(value)
-        }
+        val next = zonedDateTime.plus(intervalValue.toLong(), intervalUnit)
         return next.toInstant().truncatedTo(ChronoUnit.MINUTES)
     }
 
     // calculate the next nextTargetDate for schedules that have advanced settings
-    private fun calculateAdvancedOccurrence(current: Instant, sched: ScheduleWithLatestMaintenanceDTO, isFirstRun: Boolean = false): Instant {
+    private fun calculateAdvancedOccurrence(
+        current: Instant,
+        sched: ScheduleWithLatestMaintenanceDTO,
+        isFirstRun: Boolean = false
+    ): Instant {
         val zonedDateTime = current.atZone(ZoneId.of("UTC"))
 
         // if it is the first asset maintenance
         var nextBase = if (isFirstRun) {
             zonedDateTime
         } else {
-            when (sched.intervalUnit) {
-                MaintenanceSchedule.IntervalUnit.YEAR -> zonedDateTime.plusYears(sched.intervalValue.toLong())
-                else -> zonedDateTime.plusMonths(sched.intervalValue.toLong())
-            }
+            zonedDateTime.plus(sched.intervalValue.toLong(), sched.intervalUnit)
         }
 
         sched.monthOfYear?.let { nextBase = nextBase.withMonth(it) }
