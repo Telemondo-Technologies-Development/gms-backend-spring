@@ -330,6 +330,7 @@ CREATE TABLE payment_method_objects (
 CREATE TABLE payments (
   id 					binary(16) PRIMARY KEY,
   invoice_id 			binary(16) NOT NULL,
+  reference_num			varchar(255) NULL,
   -- Not yet sure what to put
   status 				varchar(255) NOT NULL,
   payment_method_id 	binary(16) NOT NULL,
