@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.MinIOContainer
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Container
@@ -39,6 +40,10 @@ class BaseTest {
 
         @Container
         @JvmStatic
+        val minio: MinIOContainer = MinIOContainer("minio/minio:latest")
+
+        @Container
+        @JvmStatic
         val nats: GenericContainer<*> = GenericContainer("nats:latest")
             .withExposedPorts(4222)
             .waitingFor(
@@ -56,6 +61,11 @@ class BaseTest {
             registry.add("spring.flyway.url", mysql::getJdbcUrl)
             registry.add("spring.flyway.user", mysql::getUsername)
             registry.add("spring.flyway.password", mysql::getPassword)
+
+            // Minio
+            registry.add("minio.url", minio::getS3URL)
+            registry.add("minio.access-key", minio::getUserName)
+            registry.add("minio.secret-key", minio::getPassword)
         }
     }
 }
