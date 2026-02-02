@@ -92,6 +92,15 @@ class BranchController (
         val profilePictureId: UUID?
     )
 
+    data class BranchListDTO(
+        val id: UUID,
+        val name: String
+    ): java.io.Serializable {
+        companion object {
+            private const val serialVersionUID: Long = 1L
+        }
+    }
+
     // for branch's list of employees
     @Schema(description = "Format for Branch read summary")
     data class BranchSummaryDTO(

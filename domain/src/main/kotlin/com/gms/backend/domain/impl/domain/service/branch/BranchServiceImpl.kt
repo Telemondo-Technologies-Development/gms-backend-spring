@@ -91,7 +91,7 @@ class BranchServiceImpl(
             NoSuchElementException("Branch not found with ID: $branchId")
         }
 
-        val statusToUse = status ?: BranchPersonnel.BranchPersonnelStatus.IN
+        val statusToUse = status ?: BranchPersonnel.BranchPersonnelStatus.ACTIVE
 
         // Load branch personnel rows for this branch that match the status filter, if there is no status param provided, then returns all employees
         val rows = if (status == null) {

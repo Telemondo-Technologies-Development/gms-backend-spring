@@ -1,5 +1,6 @@
 package com.gms.backend.domain.application.rest.security
 
+import com.gms.backend.domain.application.rest.branch.BranchController
 import org.springframework.security.core.CredentialsContainer
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -7,6 +8,7 @@ import java.util.UUID
 
 class CustomUserDetails(
     val email: String,
+    val branches: List<BranchController.BranchListDTO>,
     val actorId: UUID,
     private var password: String?,
     private val authorities: Collection<GrantedAuthority>

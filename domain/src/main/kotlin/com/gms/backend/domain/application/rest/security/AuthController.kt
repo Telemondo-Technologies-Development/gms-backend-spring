@@ -1,5 +1,6 @@
 package com.gms.backend.domain.application.rest.security
 
+import com.gms.backend.domain.application.rest.branch.BranchController
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -30,7 +31,7 @@ class AuthController(
 ) {
 
     data class LogInDTO(var username: String, var password: String)
-    data class LogInResponse(var email: String, var actorId: UUID)
+    data class LogInResponse(var email: String, var actorId: UUID, var branches: List<BranchController.BranchListDTO>)
 
     @PostMapping("/login")
     fun login(
@@ -61,7 +62,7 @@ class AuthController(
         }
 
         val principal = authentication.principal as CustomUserDetails
-        val response = LogInResponse(principal.email, principal.actorId)
+        val response = LogInResponse(principal.email, principal.actorId, principal.branches)
         return responseBuilder.body(response)
     }
 }

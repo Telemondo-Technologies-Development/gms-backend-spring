@@ -13,9 +13,11 @@ import java.util.*
 class BranchPersonnel {
 
     enum class BranchPersonnelStatus {
-        IN,
-        OUT,
-        UNDECIDED,
+        ACTIVE,
+        MOVED,
+        TERMINATED,
+        RESIGNED,
+        UNDECIDED
     }
 
     @Id
