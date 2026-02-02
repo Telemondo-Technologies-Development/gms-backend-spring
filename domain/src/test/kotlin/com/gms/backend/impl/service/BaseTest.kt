@@ -40,7 +40,7 @@ class BaseTest {
 
         @Container
         @JvmStatic
-        val minio: MinIOContainer = MinIOContainer("minio/minio:latest")
+        val minio: MinIOContainer = MinIOContainer("minio/minio:RELEASE.2025-09-07T16-13-09Z")
 
         @Container
         @JvmStatic
