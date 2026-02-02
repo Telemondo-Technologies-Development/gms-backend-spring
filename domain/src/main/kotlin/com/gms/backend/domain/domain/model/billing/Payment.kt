@@ -35,6 +35,10 @@ class Payment {
     @PositiveOrZero(message = "Amount must not be negative")
     var amount: BigDecimal = BigDecimal.ZERO
 
+    @Column
+    @Size(min = 1, message = "Reference Number cannot be blank if provided")
+    var referenceNum: String? = null
+
     @Column(nullable = false)
     var paidAt: Instant? = null
 

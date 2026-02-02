@@ -33,6 +33,7 @@ class PaymentController(private val paymentService: PaymentServiceImpl) {
     data class PaymentTableDTO(
         val id: UUID,
         val invoiceId: UUID,
+        val referenceNum: String?,
         val status: Payment.PaymentStatus,
         val paymentMethodId: UUID,
         val amount: BigDecimal,
@@ -49,6 +50,8 @@ class PaymentController(private val paymentService: PaymentServiceImpl) {
         val paymentMethodId: UUID,
         @field:PositiveOrZero(message = "Amount must not be negative")
         val amount: BigDecimal,
+        @field:Size(min = 1, message = "Reference Number cannot be blank if provided")
+        val referenceNum: String?,
         val paidAt: Instant?,
         @field:Size(min = 1, message = "Failure Reason cannot be blank if provided")
         val failureReason: String?,
