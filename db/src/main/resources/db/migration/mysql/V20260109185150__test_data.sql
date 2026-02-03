@@ -140,8 +140,15 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bdf23e77479c7a970d2b75fcb3092, 'maintenanceSchedule_read'),
 (0x019bdf23e77d7bd786924edaa62a87ab, 'maintenanceSchedule_update'),
 (0x019be4458174715e9ad763f4040e7013, 'assetMaintenance_read'),
-(0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update');
-
+(0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update'),
+(0x019c1cf48f427abca8e9cf32cc19c15f, 'suppliesLog_create'),
+(0x019c1cf48f427abca8e9cf33ff8ac7e4, 'suppliesLog_delete'),
+(0x019c1cf48f437abcb2fe04b4619fca4a, 'suppliesLog_read'),
+(0x019c1cf48f437abcb2fe04b4d924df25, 'suppliesLog_update'),
+(0x019c1cf48f427abca8e9cf33c6a0b80d, 'supply_create'),
+(0x019c1cf48f437abcb2fe04b3bb9a6619, 'supply_read'),
+(0x019c1cf48f3a74f3b1407976bc709fbc, 'supply_update'),
+(0x019c1cf48f427abca8e9cf32f94ffcde, 'supply_delete');
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf77bf2a490bbc1b6327a8d), -- invoice_create
@@ -235,7 +242,15 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa62a87ab), -- maintenanceSchedule_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa8eba0cc), -- maintenanceSchedule_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019be4458174715e9ad763f4040e7013), -- assetMaintenance_read
-(0x019ba2676db67541a1714f0524691e73, 0x019be479605678fbb10f3f64f56ae528); -- assetMaintenance_update
+(0x019ba2676db67541a1714f0524691e73, 0x019be479605678fbb10f3f64f56ae528), -- assetMaintenance_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf32cc19c15f), -- suppliesLog_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf33ff8ac7e4), -- suppliesLog_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b4619fca4a), -- suppliesLog_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b4d924df25), -- suppliesLog_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf33c6a0b80d), -- supply_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b3bb9a6619), -- supply_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f3a74f3b1407976bc709fbc), -- supply_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf32f94ffcde); -- supply_delete
 
 INSERT INTO `branch` (`id`, `name`, `address`, `longitude`, `latitude`, `status`, `profile_picture`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba279a6e67271893cffab220040a2, 'Matina', 'Bangkal', '125.55602001850568', '7.060337505872085', 'IN', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 11:17:20.268658', '2026-01-09 11:17:20.268658'),
@@ -284,5 +299,12 @@ INSERT INTO `maintenance_schedules` (`id`, `asset_id`, `name`, `start_date`, `in
 (0x019ba2f9c6e67271893cffab2200aaa2, 0x019ba2f5b6e67271893cffab220055b2, 'Fresh Advanced Yearly', @now_minute, 'YEARS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
 (0x019ba2f9c6e67271893cffab2200bbb1, 0x019ba2f5b6e67271893cffab220055b1, 'Old Advanced Monthly', @one_month_ago, 'MONTHS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, NULL, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW()),
 (0x019ba2f9c6e67271893cffab2200bbb2, 0x019ba2f5b6e67271893cffab220055b2, 'Old Advanced Yearly', @one_year_ago, 'YEARS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW());
+
+INSERT INTO `supplies` (`id`, `branch_id`, `name`, `description`, `quantity`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c21b46b0875df9a08c7a10ed983f0, 0x019ba279a6e67271893cffab220040a2, 'Gallon Drinking Water', 'Dispenser Refill', 0, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:13:18.002393', '2026-02-03 04:13:18.002393');
+
+INSERT INTO `supplies_logs` (`id`, `supplies_id`, `name`, `remarks`, `quantity`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c21c9cb277c48bcac03e5a6fa7924, 0x019c21b46b0875df9a08c7a10ed983f0, 'Gallon Drinking Water Restocked', NULL, 10, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:36:38.839501', '2026-02-03 04:36:38.839501'),
+(0x019c21c9f9bf706db37d8c01ee611f92, 0x019c21b46b0875df9a08c7a10ed983f0, 'Gallon Drinking Water Used', NULL, -5, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:36:50.752159', '2026-02-03 04:36:50.752159');
 
 COMMIT;

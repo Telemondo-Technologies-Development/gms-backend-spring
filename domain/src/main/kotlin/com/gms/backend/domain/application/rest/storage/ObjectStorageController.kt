@@ -65,7 +65,7 @@ class ObjectStorageController(
     fun uploadPaymentMethodDoc(@RequestParam("file") file: MultipartFile) =
         storageService.uploadFile(file, bucketConfig.private, "billing/payment-methods", storageService.getCurrentActor()).toCreatedResponse("Payment method document saved")
 
-    // --- 3. ASSETS & MAINTENANCE (Private Bucket) ---
+    // --- 3. ASSETS, SUPPLIES, AND MAINTENANCE (Private Bucket) ---
 
     @PostMapping("/upload/asset/document")
     @Operation(summary = "(private)")
@@ -76,6 +76,16 @@ class ObjectStorageController(
     @Operation(summary = "(private)")
     fun uploadMaintenanceRecord(@RequestParam("file") file: MultipartFile) =
         storageService.uploadFile(file, bucketConfig.private, "assets/maintenance", storageService.getCurrentActor()).toCreatedResponse("Maintenance record saved")
+
+    @PostMapping("/upload/supply/document")
+    @Operation(summary = "(private)")
+    fun uploadSupplyPhoto(@RequestParam("file") file: MultipartFile) =
+        storageService.uploadFile(file, bucketConfig.private, "supplies/documents", storageService.getCurrentActor()).toCreatedResponse("Supply photo uploaded")
+
+    @PostMapping("/upload/supply/log")
+    @Operation(summary = "(private)")
+    fun uploadSupplyLogAttachment(@RequestParam("file") file: MultipartFile) =
+        storageService.uploadFile(file, bucketConfig.private, "supplies/logs", storageService.getCurrentActor()).toCreatedResponse("Log attachment saved")
 
     // --- 4. REPORTS (Private Bucket) ---
 
