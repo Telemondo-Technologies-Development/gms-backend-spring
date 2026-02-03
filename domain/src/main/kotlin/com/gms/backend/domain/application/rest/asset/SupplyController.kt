@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -52,6 +52,12 @@ class SupplyController(
         val updatedById: UUID
     )
 
+    @Schema(description = "Wrapper for Supply and its Logs")
+    data class SupplyWithLogsDTO(
+        val supply: SupplyTableDTO,
+        val logs: List<SuppliesLogController.SuppliesLogTableDTO>?
+    )
+
     @PostMapping
     @Operation(summary = "Create a new Supply")
     fun createSupply(@RequestBody body: SupplyPostDTO) =
@@ -76,4 +82,12 @@ class SupplyController(
     @Operation(summary = "Delete a Supply by id")
     fun deleteSupply(@PathVariable id: UUID) =
         supplyService.deleteSupply(id).toOkResponse("Supply Deleted")
+
+    @GetMapping("/{id}/log")
+    @Operation(summary = "Get supply info and its logs")
+    fun getSupplyLogs(
+        @PathVariable id: UUID,
+        pageable: Pageable
+    ) = supplyService.getSupplyLogs(id, pageable).toOkResponse()
+
 }

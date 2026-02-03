@@ -1,7 +1,10 @@
 package com.gms.backend.domain.impl.domain.service.asset
 
+import com.gms.backend.domain.application.mapper.asset.SuppliesLogMapper
 import com.gms.backend.domain.application.mapper.asset.SupplyMapper
+import com.gms.backend.domain.application.rest.asset.SuppliesLogController
 import com.gms.backend.domain.application.rest.asset.SupplyController
+import com.gms.backend.domain.domain.repository.asset.SuppliesLogRepository
 import com.gms.backend.domain.domain.repository.asset.SupplyRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
@@ -22,6 +25,8 @@ class SupplyServiceImpl(
     private val branchRepository: BranchRepository,
     private val supplyMapper: SupplyMapper,
     private val objectStorageRepository: ObjectStorageRepository,
+    private val suppliesLogRepository: SuppliesLogRepository,
+    private val suppliesLogMapper: SuppliesLogMapper,
 ) : SupplyService {
 
     @Transactional
@@ -89,5 +94,20 @@ class SupplyServiceImpl(
             NoSuchElementException("Supply not found with ID: $id")
         }
         supplyRepository.delete(supply)
+    }
+
+    @Transactional
+    @PreAuthorize("hasAuthority('supply_read') and hasAuthority('suppliesLog_read')")
+    override fun getSupplyLogs(supplyId: UUID, pageable: Pageable): SupplyController.SupplyWithLogsDTO {
+        val supply = supplyRepository.findById(supplyId).orElseThrow {
+            NoSuchElementException("Supply not found with ID: $supplyId")
+        }
+
+        val logsPage = suppliesLogRepository.findAllBySuppliesId(supplyId, pageable)
+
+        return SupplyController.SupplyWithLogsDTO(
+            supply = supplyMapper.supplyToDTO(supply),
+            logs = logsPage.content.map { log -> suppliesLogMapper.suppliesLogToDTO(log) }
+        )
     }
 }
