@@ -304,7 +304,8 @@ INSERT INTO `maintenance_schedules` (`id`, `asset_id`, `name`, `start_date`, `in
 (0x019ba2f9c6e67271893cffab2200bbb2, 0x019ba2f5b6e67271893cffab220055b2, 'Old Advanced Yearly', @one_year_ago, 'YEARS', 1, 0, 2, @cur_week_rank, @cur_day_of_week, @cur_month, 1, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, NOW(), NOW());
 
 INSERT INTO `supplies` (`id`, `branch_id`, `name`, `description`, `quantity`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019c21b46b0875df9a08c7a10ed983f0, 0x019ba279a6e67271893cffab220040a2, 'Gallon Drinking Water', 'Dispenser Refill', 0, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:13:18.002393', '2026-02-03 04:13:18.002393');
+(0x019c21b46b0875df9a08c7a10ed983f0, 0x019ba279a6e67271893cffab220040a2, 'Gallon Drinking Water', 'Dispenser Refill', 0, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:13:18.002393', '2026-02-03 04:13:18.002393'),
+(0x019c2caa28807436b2aafea1e4dc528c, 0x019ba279a6e67271893cffab220040a2, 'Equipment Wipes', 'Equipment Wipes', 0, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-05 07:17:54.961232', '2026-02-05 07:17:54.961232');
 
 INSERT INTO `supplies_logs` (`id`, `supplies_id`, `name`, `remarks`, `quantity`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019c21c9cb277c48bcac03e5a6fa7924, 0x019c21b46b0875df9a08c7a10ed983f0, 'Gallon Drinking Water Restocked', NULL, 10, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:36:38.839501', '2026-02-03 04:36:38.839501'),
