@@ -1,8 +1,11 @@
 package com.gms.backend.domain.domain.model.asset
 
 import com.gms.backend.domain.domain.model.expense.SuppliesExpense
+import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -20,10 +23,15 @@ class SuppliesLog {
     lateinit var id: UUID
 
     @Column(nullable = false)
+    @field:NotBlank(message = "Name is required")
     lateinit var name: String
 
     @Column(nullable = false)
+    @field:NotNull(message = "Quantity is required")
     var quantity: Int = 0
+
+    @Column
+    var remarks: String? = null
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -56,4 +64,12 @@ class SuppliesLog {
 
     @OneToMany(mappedBy = "suppliesLog")
     var suppliesLogSuppliesExpenses = mutableSetOf<SuppliesExpense>()
+
+    @ManyToMany
+    @JoinTable(
+        name = "supplies_logs_objects",
+        joinColumns = [JoinColumn(name = "supplies_log_id")],
+        inverseJoinColumns = [JoinColumn(name = "object_id")]
+    )
+    var suppliesLogObjects = mutableSetOf<ObjectStorage>()
 }

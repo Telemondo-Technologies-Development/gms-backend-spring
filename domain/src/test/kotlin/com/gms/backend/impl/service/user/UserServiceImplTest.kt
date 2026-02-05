@@ -14,9 +14,11 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Pageable
+import org.springframework.test.annotation.DirtiesContext
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class UserServiceImplTest
 @Autowired constructor(
     private val userServiceImpl: UserServiceImpl,

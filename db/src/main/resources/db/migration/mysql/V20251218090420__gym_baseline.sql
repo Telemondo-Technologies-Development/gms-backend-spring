@@ -489,14 +489,23 @@ CREATE TABLE supplies (
   name 			varchar(255) NOT NULL,
   description 	text NULL,
   -- derived from the supplies_log
-  quantity 		int NOT NULL,
+  quantity 		int NOT NULL DEFAULT 0,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT chk_supplies_quantity_positive CHECK (quantity >= 0),
   CONSTRAINT supplies_ibfk_1 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT supplies_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT supplies_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE supplies_objects (
+  supplies_id  binary(16) NOT NULL,
+  object_id    binary(16) NOT NULL,
+  PRIMARY KEY (supplies_id, object_id),
+  CONSTRAINT supplies_objects_ibfk_1 FOREIGN KEY (supplies_id) REFERENCES supplies (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT supplies_objects_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 CREATE TABLE supplies_logs (
@@ -504,7 +513,7 @@ CREATE TABLE supplies_logs (
   supplies_id 	binary(16) NOT NULL,
   name 			varchar(255) NOT NULL,
   remarks		text NULL,
-  quantity 		int NOT NULL,
+  quantity 		int NOT NULL DEFAULT 0,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -513,6 +522,59 @@ CREATE TABLE supplies_logs (
   CONSTRAINT supplies_logs_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT supplies_logs_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
+
+CREATE TABLE supplies_logs_objects (
+  supplies_log_id  binary(16) NOT NULL,
+  object_id        binary(16) NOT NULL,
+  PRIMARY KEY (supplies_log_id, object_id),
+  CONSTRAINT supplies_logs_objects_ibfk_1 FOREIGN KEY (supplies_log_id) REFERENCES supplies_logs (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT supplies_logs_objects_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
+);
+
+-- Triggers to update quantity in 'supplies' table
+-- Insert Trigger
+DELIMITER //
+CREATE TRIGGER tr_supplies_log_after_insert
+AFTER INSERT ON supplies_logs
+FOR EACH ROW
+BEGIN
+    UPDATE supplies
+    SET quantity = quantity + NEW.quantity
+    WHERE id = NEW.supplies_id;
+END //
+DELIMITER ;
+
+DELIMITER ;
+
+-- Delete Trigger
+DELIMITER //
+CREATE TRIGGER tr_supplies_log_after_delete
+AFTER DELETE ON supplies_logs
+FOR EACH ROW
+BEGIN
+    UPDATE supplies
+    SET quantity = quantity - OLD.quantity
+    WHERE id = OLD.supplies_id;
+END //
+DELIMITER ;
+
+-- Update Trigger
+DELIMITER //
+CREATE TRIGGER tr_supplies_log_after_update
+AFTER UPDATE ON supplies_logs
+FOR EACH ROW
+BEGIN
+    IF OLD.quantity <> NEW.quantity OR OLD.supplies_id <> NEW.supplies_id THEN
+        UPDATE supplies
+        SET quantity = quantity - OLD.quantity
+        WHERE id = OLD.supplies_id;
+
+        UPDATE supplies
+        SET quantity = quantity + NEW.quantity
+        WHERE id = NEW.supplies_id;
+    END IF;
+END //
+DELIMITER ;
 
 -- Expense Tracking
 

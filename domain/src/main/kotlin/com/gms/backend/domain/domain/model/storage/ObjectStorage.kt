@@ -3,6 +3,8 @@ package com.gms.backend.domain.domain.model.storage
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.gms.backend.domain.domain.model.asset.Asset
 import com.gms.backend.domain.domain.model.asset.AssetMaintenance
+import com.gms.backend.domain.domain.model.asset.SuppliesLog
+import com.gms.backend.domain.domain.model.asset.Supply
 import com.gms.backend.domain.domain.model.billing.PaymentMethod
 import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.domain.model.expense.*
@@ -104,6 +106,14 @@ class ObjectStorage {
     @JsonIgnore
     var assetMaintenanceExpenses =
         mutableSetOf<AssetMaintenanceExpense>()
+
+    @ManyToMany(mappedBy = "suppliesObjects")
+    @JsonIgnore
+    var supplies = mutableSetOf<Supply>()
+
+    @ManyToMany(mappedBy = "suppliesLogObjects")
+    @JsonIgnore
+    var suppliesLogs = mutableSetOf<SuppliesLog>()
 
     @ManyToMany(mappedBy = "salaryExpensesObjects")
     @JsonIgnore
