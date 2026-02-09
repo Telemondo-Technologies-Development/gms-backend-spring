@@ -150,7 +150,15 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019c1cf48f427abca8e9cf33c6a0b80d, 'supply_create'),
 (0x019c1cf48f437abcb2fe04b3bb9a6619, 'supply_read'),
 (0x019c1cf48f3a74f3b1407976bc709fbc, 'supply_update'),
-(0x019c1cf48f427abca8e9cf32f94ffcde, 'supply_delete');
+(0x019c1cf48f427abca8e9cf32f94ffcde, 'supply_delete'),
+(0x019c40fe24427ef480fe55107665e327, 'report_create'),
+(0x019c40fe24427ef480fe5510f6b948bb, 'report_delete'),
+(0x019c40fe24427ef480fe5511533a266c, 'report_read'),
+(0x019c40fe24427ef480fe550fed7b79c2, 'report_update'),
+(0x019c40fe24427ef480fe5511585a5852, 'reportType_create'),
+(0x019c40fe24427ef480fe5512542904e9, 'reportType_delete'),
+(0x019c40fe24427ef480fe55103544f417, 'reportType_read'),
+(0x019c40fe24427657a6e179fd612b3155, 'reportType_update');
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf77bf2a490bbc1b6327a8d), -- invoice_create
@@ -252,7 +260,15 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf33c6a0b80d), -- supply_create
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b3bb9a6619), -- supply_read
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f3a74f3b1407976bc709fbc), -- supply_update
-(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf32f94ffcde); -- supply_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf32f94ffcde), -- supply_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe550fed7b79c2), -- report_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe55107665e327), -- report_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe5510f6b948bb), -- report_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe5511533a266c), -- report_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427657a6e179fd612b3155), -- reportType_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe55103544f417), -- reportType_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe5511585a5852), -- reportType_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe5512542904e9); -- reportType_delete
 
 INSERT INTO `branch` (`id`, `name`, `address`, `longitude`, `latitude`, `status`, `profile_picture`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba279a6e67271893cffab220040a2, 'Matina', 'Bangkal', '125.55602001850568', '7.060337505872085', 'ACTIVE', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 11:17:20.268658', '2026-01-09 11:17:20.268658'),
@@ -310,5 +326,12 @@ INSERT INTO `supplies` (`id`, `branch_id`, `name`, `description`, `quantity`, `c
 INSERT INTO `supplies_logs` (`id`, `supplies_id`, `name`, `remarks`, `quantity`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019c21c9cb277c48bcac03e5a6fa7924, 0x019c21b46b0875df9a08c7a10ed983f0, 'Gallon Drinking Water Restocked', NULL, 10, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:36:38.839501', '2026-02-03 04:36:38.839501'),
 (0x019c21c9f9bf706db37d8c01ee611f92, 0x019c21b46b0875df9a08c7a10ed983f0, 'Gallon Drinking Water Used', NULL, -5, 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-03 04:36:50.752159', '2026-02-03 04:36:50.752159');
+
+INSERT INTO `report_types` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c4120d55b7ac78b3134dcf3a9e69d, 'Negative', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-09 06:39:56.764291', '2026-02-09 06:50:36.639823'),
+(0x019c4121866978b2a456ba590a1c5467, 'Positive', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-09 06:40:42.090416', '2026-02-09 06:40:42.090416');
+
+INSERT INTO `reports` (`id`, `branch_id`, `actor_id`, `report_type_id`, `description`, `occurred_at`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c412a055a78f2b2a85cc652587123, 0x019ba279a6e67271893cffab220040a2, 0x8140f50da33f4569b76a20c348b77222, 0x019c4120d55b7ac78b3134dcf3a9e69d, 'Member intentionally threw a dumbbell at a mirror', '2026-02-09 14:45:00.000000', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-09 06:49:58.875087', '2026-02-09 06:49:58.875087');
 
 COMMIT;
