@@ -1,0 +1,18 @@
+package com.gms.backend.domain.application.mapper.member.report
+
+import com.gms.backend.domain.application.rest.member.report.ReportController
+import com.gms.backend.domain.domain.model.member.report.Report
+import com.gms.backend.domain.domain.model.storage.ObjectStorage
+import org.mapstruct.*
+import java.util.*
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+interface ReportMapper {
+    fun reportPostDTOToReport(dto: ReportController.ReportPostDTO): Report
+    fun reportPutDTOToReport(dto: ReportController.ReportPutDTO, @MappingTarget report: Report): Report
+    @Mapping(target = "objectIds", source = "reportsObjects")
+    fun reportToDTO(report: Report): ReportController.ReportTableDTO
+    fun mapObjectsToIds(objects: Set<ObjectStorage>?): List<UUID> {
+        return objects?.map { it.id } ?: emptyList()
+    }
+}
