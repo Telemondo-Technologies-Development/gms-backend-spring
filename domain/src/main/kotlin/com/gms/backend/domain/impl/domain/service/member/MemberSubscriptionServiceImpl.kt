@@ -4,13 +4,11 @@ import com.gms.backend.domain.application.mapper.member.MemberSubscriptionMapper
 import com.gms.backend.domain.application.response.ApiErrorType
 import com.gms.backend.domain.application.response.DomainException
 import com.gms.backend.domain.application.rest.member.MemberSubscriptionController
-import com.gms.backend.domain.application.rest.subscription.SubscriptionAvailedController
 import com.gms.backend.domain.domain.model.member.MemberSubscription
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.member.MemberSubscriptionRepository
 import com.gms.backend.domain.domain.repository.subscription.SubscriptionAvailedRepository
-import com.gms.backend.domain.domain.repository.subscription.SubscriptionRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.member.MemberSubscriptionService
 import com.gms.backend.domain.impl.domain.service.subscription.SubscriptionAvailedServiceImpl
@@ -29,29 +27,26 @@ class MemberSubscriptionServiceImpl(
     private val memberSubscriptionMapper: MemberSubscriptionMapper,
     private val actorRepository: ActorRepository,
     private val branchRepository: BranchRepository,
-    private val subscriptionRepository: SubscriptionRepository,
     private val subscriptionAvailedRepository: SubscriptionAvailedRepository,
     private val subscriptionAvailedServiceImpl: SubscriptionAvailedServiceImpl
 ) : MemberSubscriptionService {
     @Transactional
     @PreAuthorize("hasAuthority('memberSubscription_create')")
     override fun createMemberSubscription(body: MemberSubscriptionController.MemberSubscriptionPostDTO): MemberSubscriptionController.MemberSubscriptionTableDTO {
-        val existingSubscription = memberSubscriptionRepository.findAllByActorIdAndStatus(
-            body.actorId,
-            MemberSubscription.MemberSubscriptionStatus.ACTIVE
+        val existingSubscription = memberSubscriptionRepository.findIdsByActorIdAndStatus(
+            actorId = body.actorId,
+            status = MemberSubscription.MemberSubscriptionStatus.ACTIVE
         )
         if (existingSubscription.isNotEmpty()) throw DomainException(
             ApiErrorType.INVALID_CASE,
             "Member has an Active Subscription, you might want to edit/cancel existing subscription"
         )
-        val subscriptionAvailed = subscriptionAvailedServiceImpl.createSubscriptionAvailed(
-            SubscriptionAvailedController.SubscriptionAvailedPostDTO(body.subscriptionId)
-        )
+        val subscriptionAvailedId = subscriptionAvailedServiceImpl.insertSubscriptionAvailed(body.subscriptionId)
         // not sure if we will create member separately or the same time as this one
         val memberSubscription = memberSubscriptionMapper.memberSubscriptionPostDTOToMemberSubscription(body).apply {
             actor = actorRepository.getReferenceById(body.actorId)
             branch = branchRepository.getReferenceById(body.branchId)
-            this.subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(subscriptionAvailed.id)
+            subscriptionAvailed = subscriptionAvailedRepository.findById(subscriptionAvailedId).orElseThrow()
             createdBy = actorRepository.getReferenceById(body.createdById)
             updatedBy = actorRepository.getReferenceById(body.createdById)
         }
@@ -80,36 +75,20 @@ class MemberSubscriptionServiceImpl(
         body: MemberSubscriptionController.MemberSubscriptionPutDTO
     ): MemberSubscriptionController.MemberSubscriptionTableDTO {
         val memberSubscription = memberSubscriptionRepository.findById(id).orElseThrow()
-        var subscriptionAvailed = memberSubscription.subscriptionAvailed
+        val memberSubscriptionIds = memberSubscriptionRepository.findMemberSubscriptionById(id).orElseThrow()
 
         // Check whether the subscription is changed or still the same
-        if (memberSubscription.subscriptionAvailed.subscriptionId == body.subscriptionId) {
-            if (body.updateCurrentSubscription) {
-                // updates the current Subscription Availed
-                val subscription = subscriptionRepository.findById(body.subscriptionId).orElseThrow()
-                val billingCycle = subscription.billingCycle
-                subscriptionAvailed.apply {
-                    this.subscription = subscription
-                    name = subscription.name
-                    amount = subscription.amount
-                    intervals = billingCycle.intervals
-                    intervalCount = billingCycle.intervalCount
-                    gracePeriodDays = billingCycle.gracePeriodDays
-                }
-            }
+        val subscriptionAvailedId = if (memberSubscriptionIds.subscriptionId == body.subscriptionId && !body.updateCurrentSubscription) {
+            memberSubscription.subscriptionAvailedId!!
         } else {
-            // Creates a new subscriptionAvailed
-            val new = subscriptionAvailedServiceImpl.createSubscriptionAvailed(
-                SubscriptionAvailedController.SubscriptionAvailedPostDTO(body.subscriptionId)
-            )
-            subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(new.id)
+            subscriptionAvailedServiceImpl.insertSubscriptionAvailed(memberSubscriptionIds.subscriptionId)
         }
 
         memberSubscription.apply {
             memberSubscriptionMapper.memberSubscriptionPutDTOToMemberSubscription(body, this)
             actor = actorRepository.getReferenceById(body.actorId)
             branch = branchRepository.getReferenceById(body.branchId)
-            this.subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(subscriptionAvailed.id)
+            this.subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(subscriptionAvailedId)
             updatedBy = actorRepository.getReferenceById(body.updatedById)
         }
 

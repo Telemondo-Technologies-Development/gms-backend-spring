@@ -12,10 +12,13 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Pageable
+import org.springframework.test.annotation.DirtiesContext
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class UserServiceImplTest
 @Autowired constructor(
     private val userServiceImpl: UserServiceImpl,
@@ -41,12 +44,12 @@ class UserServiceImplTest
     @Test
     fun testCreateUser() {
         // Given
-        val user = UserController.UserPostDTO("test", "password")
+        val user = UserController.UserPostDTO("test@email.com", "password")
         // When
         val saved = userServiceImpl.createUser(user)
         // Then
-        assertEquals("test", saved.email)
-        assertThrows<ConstraintViolationException>({
+        assertEquals("test@email.com", saved.email)
+        assertThrows<DataIntegrityViolationException>({
             userServiceImpl.createUser(user)
             entityManager.flush()
         })
@@ -55,13 +58,13 @@ class UserServiceImplTest
     @Test
     fun testUpdateUsers() {
         // Given
-        val user = UserController.UserPutDTO("new")
+        val user = UserController.UserPutDTO("new@email.com")
         val id = UUID.fromString("019ba28a-c6e5-727a-88fd-1b640603d4e6")
         // When
         val updated = userServiceImpl.updateUser(id, user)
         // Then
         assertNotNull(updated.actorId)
-        assertEquals("new", updated.email)
+        assertEquals("new@email.com", updated.email)
     }
 
     @Test

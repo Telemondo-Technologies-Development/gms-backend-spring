@@ -1,9 +1,12 @@
 package com.gms.backend.domain.domain.model.billing
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.gms.backend.domain.domain.model.branch.Branch
+import com.gms.backend.domain.domain.model.member.MemberSubscription
 import com.gms.backend.domain.domain.model.subscription.SubscriptionAvailed
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.PositiveOrZero
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -33,6 +36,7 @@ class Invoice {
     lateinit var status: InvoiceStatus
 
     @Column(nullable = false, precision = 10, scale = 2)
+    @PositiveOrZero(message = "Subtotal must not be negative")
     var subtotal: BigDecimal = BigDecimal.ZERO
 
     @Column(precision = 10, scale = 2)
@@ -42,10 +46,14 @@ class Invoice {
     var convenienceFee: BigDecimal? = null
 
     @Column(nullable = false, precision = 10, scale = 2)
+    @PositiveOrZero(message = "Total must not be negative")
     var total: BigDecimal = BigDecimal.ZERO
 
     @Column(nullable = false)
     lateinit var dueDate: Instant
+
+    @Column(nullable = false)
+    lateinit var gracePeriodDate: Instant
 
     @Column(nullable = false)
     lateinit var issuedAt: Instant
@@ -65,9 +73,15 @@ class Invoice {
     @JoinColumn(name = "actor_id", nullable = false)
     lateinit var actor: Actor
 
+    @Column(name = "actor_id", insertable = false, updatable = false)
+    var actorId: UUID? = null
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_availed_id", nullable = false)
     lateinit var subscriptionAvailed: SubscriptionAvailed
+
+    @Column(name = "subscription_availed_id", insertable = false, updatable = false)
+    var subscriptionAvailedId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
@@ -75,6 +89,13 @@ class Invoice {
 
     @Column(name = "branch_id", insertable = false, updatable = false)
     var branchId: UUID? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_subscription_id", nullable = false)
+    lateinit var memberSubscription: MemberSubscription
+
+    @Column(name = "member_subscription_id", insertable = false, updatable = false)
+    var memberSubscriptionId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
@@ -91,8 +112,10 @@ class Invoice {
     var updatedById: UUID? = null
 
     @OneToMany(mappedBy = "invoice")
+    @JsonIgnore
     var invoicePayments = mutableSetOf<Payment>()
 
     @OneToMany(mappedBy = "invoice")
+    @JsonIgnore
     var invoiceLedgers = mutableSetOf<Ledger>()
 }

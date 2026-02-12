@@ -25,8 +25,8 @@ import java.util.*
 class Branch {
 
     enum class BranchStatus {
-        IN,
-        OUT,
+        ACTIVE,
+        CLOSED,
         UNDECIDED,
     }
 

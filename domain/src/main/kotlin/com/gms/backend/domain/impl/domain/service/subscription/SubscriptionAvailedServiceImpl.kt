@@ -2,6 +2,8 @@ package com.gms.backend.domain.impl.domain.service.subscription
 
 import com.gms.backend.domain.application.mapper.subscription.SubscriptionAvailedMapper
 import com.gms.backend.domain.application.rest.subscription.SubscriptionAvailedController
+import com.gms.backend.domain.domain.model.subscription.SubscriptionAvailed
+import com.gms.backend.domain.domain.repository.subscription.BillingCycleRepository
 import com.gms.backend.domain.domain.repository.subscription.SubscriptionAvailedRepository
 import com.gms.backend.domain.domain.repository.subscription.SubscriptionRepository
 import com.gms.backend.domain.domain.service.subscription.SubscriptionAvailedService
@@ -17,13 +19,14 @@ import java.util.*
 class SubscriptionAvailedServiceImpl(
     private val subscriptionAvailedRepository: SubscriptionAvailedRepository,
     private val subscriptionAvailedMapper: SubscriptionAvailedMapper,
-    private val subscriptionRepository: SubscriptionRepository
+    private val subscriptionRepository: SubscriptionRepository,
+    private val billingCycleRepository: BillingCycleRepository
 ) : SubscriptionAvailedService {
     @Transactional
     @PreAuthorize("hasAuthority('subscriptionAvailed_create')")
     override fun createSubscriptionAvailed(body: SubscriptionAvailedController.SubscriptionAvailedPostDTO): SubscriptionAvailedController.SubscriptionAvailedTableDTO {
         val subscription = subscriptionRepository.findById(body.subscriptionId).orElseThrow()
-        val billingCycle = subscription.billingCycle
+        val billingCycle = billingCycleRepository.findBillingCycleById(subscription.billingCycleId!!).orElseThrow()
         val subscriptionAvailed =
             subscriptionAvailedMapper.subscriptionAvailedPostDTOToSubscriptionAvailed(body).apply {
                 this.subscription = subscription
@@ -36,6 +39,38 @@ class SubscriptionAvailedServiceImpl(
 
         val saved = subscriptionAvailedRepository.saveAndFlush(subscriptionAvailed)
         return subscriptionAvailedMapper.subscriptionAvailedToSubscriptionAvailedTableDTO(saved)
+    }
+
+    @Transactional
+    @PreAuthorize("hasAuthority('subscriptionAvailed_create')")
+    override fun insertSubscriptionAvailed(id: UUID): UUID {
+        val subscription = subscriptionRepository.findById(id).orElseThrow()
+        val billingCycle = billingCycleRepository.findBillingCycleById(subscription.billingCycleId!!).orElseThrow()
+        // Verify if an existing subscriptionAvailed exist with the exact information
+        val existing = subscriptionAvailedRepository.findBySubscriptionCriteria(
+            name = subscription.name,
+            amount = subscription.amount,
+            intervals = billingCycle.intervals,
+            intervalCount = billingCycle.intervalCount,
+            gracePeriodDays = billingCycle.gracePeriodDays,
+            subscriptionId = subscription.id
+        )
+
+        if (existing == null) {
+            val subscriptionAvailed =
+                SubscriptionAvailed().apply {
+                    this.subscription = subscription
+                    name = subscription.name
+                    amount = subscription.amount
+                    intervals = billingCycle.intervals
+                    intervalCount = billingCycle.intervalCount
+                    gracePeriodDays = billingCycle.gracePeriodDays
+                }
+
+            val saved = subscriptionAvailedRepository.saveAndFlush(subscriptionAvailed)
+            return saved.id
+        }
+        return existing
     }
 
     @Transactional(readOnly = true)

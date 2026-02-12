@@ -2,6 +2,8 @@ package com.gms.backend.domain.domain.model.billing
 
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.PositiveOrZero
+import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -30,12 +32,18 @@ class Payment {
     lateinit var status: PaymentStatus
 
     @Column(nullable = false, precision = 10, scale = 2)
+    @PositiveOrZero(message = "Amount must not be negative")
     var amount: BigDecimal = BigDecimal.ZERO
+
+    @Column
+    @Size(min = 1, message = "Reference Number cannot be blank if provided")
+    var referenceNum: String? = null
 
     @Column(nullable = false)
     var paidAt: Instant? = null
 
     @Column
+    @Size(min = 1, message = "Failure Reason cannot be blank if provided")
     var failureReason: String? = null
 
     @CreationTimestamp

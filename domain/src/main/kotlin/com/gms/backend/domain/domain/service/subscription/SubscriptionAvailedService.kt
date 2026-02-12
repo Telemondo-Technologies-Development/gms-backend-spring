@@ -7,6 +7,7 @@ import java.util.*
 
 interface SubscriptionAvailedService {
     fun createSubscriptionAvailed(body: SubscriptionAvailedController.SubscriptionAvailedPostDTO): SubscriptionAvailedController.SubscriptionAvailedTableDTO
+    fun insertSubscriptionAvailed(id: UUID): UUID
     fun getSubscriptionAvailed(pageable: Pageable): Page<SubscriptionAvailedController.SubscriptionAvailedTableDTO>
     fun getSubscriptionAvailedById(id: UUID): SubscriptionAvailedController.SubscriptionAvailedTableDTO
 //    fun updateSubscriptionAvailed(id: UUID, body: SubscriptionAvailedController.SubscriptionAvailedPutDTO): SubscriptionAvailedController.SubscriptionAvailedTableDTO

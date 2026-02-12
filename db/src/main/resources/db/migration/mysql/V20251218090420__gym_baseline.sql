@@ -250,6 +250,7 @@ CREATE TABLE subscriptions_availed (
   intervals 		varchar(255) NOT NULL,
   interval_count 	int NOT NULL,
   grace_period_days int NOT NULL,
+  CONSTRAINT uk_subscription_availed UNIQUE (subscription_id, name, amount, intervals, interval_count, grace_period_days),
   CONSTRAINT subscriptions_availed_ibfk_1 FOREIGN KEY (subscription_id) REFERENCES subscriptions (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
@@ -266,6 +267,8 @@ CREATE TABLE member_subscriptions (
   updated_by 				binary(16) NOT NULL,
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX start_date (start_date),
+  INDEX end_date (end_date),
   CONSTRAINT member_subscriptions_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT member_subscriptions_ibfk_2 FOREIGN KEY (subscription_availed_id) REFERENCES subscriptions_availed (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT member_subscriptions_ibfk_3 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
@@ -280,6 +283,7 @@ CREATE TABLE invoices (
   actor_id 					binary(16) NOT NULL,
   subscription_availed_id 	binary(16) NOT NULL,
   branch_id 				binary(16) NOT NULL,
+  member_subscription_id 	binary(16) NOT NULL,
   -- Not yet sure what to put
   status 					varchar(255) NOT NULL,
   subtotal 					decimal(10,2) NOT NULL,
@@ -287,17 +291,21 @@ CREATE TABLE invoices (
   convenience_fee 			decimal(10,2) NULL,
   total 					decimal(10,2) NOT NULL,
   due_date 					datetime(6) NOT NULL,
+  grace_period_date 		datetime(6) NOT NULL,
   issued_at					datetime(6) NOT NULL,
   system_generated 			BOOLEAN NOT NULL DEFAULT TRUE,
   created_by 				binary(16) NOT NULL,
   updated_by 				binary(16) NOT NULL,
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX due_date (due_date),
+  INDEX grace_period_date (grace_period_date),
   CONSTRAINT invoices_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT invoices_ibfk_2 FOREIGN KEY (subscription_availed_id) REFERENCES subscriptions_availed (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT invoices_ibfk_3 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT invoices_ibfk_4 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT invoices_ibfk_5 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT invoices_ibfk_4 FOREIGN KEY (member_subscription_id) REFERENCES member_subscriptions (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT invoices_ibfk_5 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT invoices_ibfk_6 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE payment_methods (
@@ -322,6 +330,7 @@ CREATE TABLE payment_method_objects (
 CREATE TABLE payments (
   id 					binary(16) PRIMARY KEY,
   invoice_id 			binary(16) NOT NULL,
+  reference_num			varchar(255) NULL,
   -- Not yet sure what to put
   status 				varchar(255) NOT NULL,
   payment_method_id 	binary(16) NOT NULL,
@@ -396,17 +405,9 @@ CREATE TABLE asset_categories (
   CONSTRAINT asset_categories_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-CREATE TABLE maintenance_schedules (
-  id 			binary(16) PRIMARY KEY,
-  start_date 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  intervals 	varchar(255) NOT NULL,
-  interval_count int NOT NULL
-);
-
 CREATE TABLE assets (
   id 						binary(16) PRIMARY KEY,
   branch_id 				binary(16) NOT NULL,
-  maintenance_schedule_id 	binary(16) NOT NULL,
   asset_category_id 		binary(16) NOT NULL,
   name 						varchar(255) NOT NULL,
   manufactured_date 		datetime(6) NULL,
@@ -418,10 +419,32 @@ CREATE TABLE assets (
   created_at 				datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at			 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   CONSTRAINT assets_ibfk_1 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_2 FOREIGN KEY (maintenance_schedule_id) REFERENCES maintenance_schedules (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_3 FOREIGN KEY (asset_category_id) REFERENCES asset_categories (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_4 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT assets_ibfk_5 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT assets_ibfk_2 FOREIGN KEY (asset_category_id) REFERENCES asset_categories (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT assets_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT assets_ibfk_4 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE maintenance_schedules (
+  id 			            binary(16) PRIMARY KEY,
+  asset_id                  binary(16) NOT NULL,
+  name                      varchar(255) NOT NULL,
+  start_date 	            datetime(6) NOT NULL,
+  interval_unit             varchar(255) NOT NULL,
+  interval_value            int NOT NULL,
+  lead_time_hours           int NOT NULL DEFAULT 0,
+  time_to_complete_hours    int NOT NULL DEFAULT 0,
+  week_rank                 int NULL,
+  day_of_week               int NULL,
+  month_of_year             int NULL,
+  is_active                 boolean NOT NULL DEFAULT true,
+  created_by 				binary(16) NOT NULL,
+  updated_by 				binary(16) NOT NULL,
+  created_at                datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at                datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT maintenance_schedules_ibfk_1 FOREIGN KEY (asset_id) REFERENCES assets (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT maintenance_schedules_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT maintenance_schedules_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+
 );
 
 CREATE TABLE asset_objects (
@@ -433,17 +456,23 @@ CREATE TABLE asset_objects (
 );
 
 CREATE TABLE asset_maintenance (
-  id 			binary(16) PRIMARY KEY,
-  asset_id 		binary(16) NOT NULL,
-  status 		varchar(255) NOT NULL,
-  description 	text NULL,
-  created_by 	binary(16) NOT NULL,
-  updated_by 	binary(16) NOT NULL,
-  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  id 			            binary(16) PRIMARY KEY,
+  asset_id 		            binary(16) NOT NULL,
+  maintenance_schedule_id  binary(16) NOT NULL,
+  maintenance_date          datetime(6) NOT NULL,
+  due_date                  datetime(6) NOT NULL,
+  completion_date           datetime(6) NULL,
+  status 		            varchar(255) NOT NULL,
+  description 	            text NULL,
+  created_by 	            binary(16) NOT NULL,
+  updated_by 	            binary(16) NOT NULL,
+  created_at 	            datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	            datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT uk_asset_maintenance UNIQUE (asset_id, maintenance_schedule_id, maintenance_date),
   CONSTRAINT asset_maintenance_ibfk_1 FOREIGN KEY (asset_id) REFERENCES assets (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT asset_maintenance_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT asset_maintenance_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT asset_maintenance_ibfk_2 FOREIGN KEY (maintenance_schedule_id) REFERENCES maintenance_schedules (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT asset_maintenance_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT asset_maintenance_ibfk_4 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE asset_maintenance_objects (
@@ -460,14 +489,23 @@ CREATE TABLE supplies (
   name 			varchar(255) NOT NULL,
   description 	text NULL,
   -- derived from the supplies_log
-  quantity 		int NOT NULL,
+  quantity 		int NOT NULL DEFAULT 0,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT chk_supplies_quantity_positive CHECK (quantity >= 0),
   CONSTRAINT supplies_ibfk_1 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT supplies_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT supplies_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE supplies_objects (
+  supplies_id  binary(16) NOT NULL,
+  object_id    binary(16) NOT NULL,
+  PRIMARY KEY (supplies_id, object_id),
+  CONSTRAINT supplies_objects_ibfk_1 FOREIGN KEY (supplies_id) REFERENCES supplies (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT supplies_objects_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 CREATE TABLE supplies_logs (
@@ -475,7 +513,7 @@ CREATE TABLE supplies_logs (
   supplies_id 	binary(16) NOT NULL,
   name 			varchar(255) NOT NULL,
   remarks		text NULL,
-  quantity 		int NOT NULL,
+  quantity 		int NOT NULL DEFAULT 0,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -484,6 +522,59 @@ CREATE TABLE supplies_logs (
   CONSTRAINT supplies_logs_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT supplies_logs_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
+
+CREATE TABLE supplies_logs_objects (
+  supplies_log_id  binary(16) NOT NULL,
+  object_id        binary(16) NOT NULL,
+  PRIMARY KEY (supplies_log_id, object_id),
+  CONSTRAINT supplies_logs_objects_ibfk_1 FOREIGN KEY (supplies_log_id) REFERENCES supplies_logs (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT supplies_logs_objects_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
+);
+
+-- Triggers to update quantity in 'supplies' table
+-- Insert Trigger
+DELIMITER //
+CREATE TRIGGER tr_supplies_log_after_insert
+AFTER INSERT ON supplies_logs
+FOR EACH ROW
+BEGIN
+    UPDATE supplies
+    SET quantity = quantity + NEW.quantity
+    WHERE id = NEW.supplies_id;
+END //
+DELIMITER ;
+
+DELIMITER ;
+
+-- Delete Trigger
+DELIMITER //
+CREATE TRIGGER tr_supplies_log_after_delete
+AFTER DELETE ON supplies_logs
+FOR EACH ROW
+BEGIN
+    UPDATE supplies
+    SET quantity = quantity - OLD.quantity
+    WHERE id = OLD.supplies_id;
+END //
+DELIMITER ;
+
+-- Update Trigger
+DELIMITER //
+CREATE TRIGGER tr_supplies_log_after_update
+AFTER UPDATE ON supplies_logs
+FOR EACH ROW
+BEGIN
+    IF OLD.quantity <> NEW.quantity OR OLD.supplies_id <> NEW.supplies_id THEN
+        UPDATE supplies
+        SET quantity = quantity - OLD.quantity
+        WHERE id = OLD.supplies_id;
+
+        UPDATE supplies
+        SET quantity = quantity + NEW.quantity
+        WHERE id = NEW.supplies_id;
+    END IF;
+END //
+DELIMITER ;
 
 -- Expense Tracking
 

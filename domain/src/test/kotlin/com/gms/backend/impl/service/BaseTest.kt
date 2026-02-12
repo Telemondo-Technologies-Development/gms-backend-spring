@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.MinIOContainer
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Container
@@ -24,6 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @DBUnit(
     schema = "testdb",
     caseSensitiveTableNames = true,
+    cacheConnection = false
 //    alwaysCleanBefore = true,
 //    alwaysCleanAfter = true,
 )
@@ -34,8 +36,12 @@ class BaseTest {
         val mysql: MySQLContainer<*> =
             MySQLContainer("mysql:9.2")
                 .withDatabaseName("testdb")
-                .withUsername("test")
-                .withPassword("test")
+                .withEnv("MYSQL_ROOT_PASSWORD", "test")
+                .withEnv("MYSQL_LOG_BIN_TRUST_FUNCTION_CREATORS", "1")
+
+        @Container
+        @JvmStatic
+        val minio: MinIOContainer = MinIOContainer("minio/minio:RELEASE.2025-09-07T16-13-09Z")
 
         @Container
         @JvmStatic
@@ -48,14 +54,22 @@ class BaseTest {
         @JvmStatic
         @DynamicPropertySource
         fun registerProperties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.url", mysql::getJdbcUrl)
-            registry.add("spring.datasource.username", mysql::getUsername)
-            registry.add("spring.datasource.password", mysql::getPassword)
+            val jdbcUrl = mysql.jdbcUrl
+            val rootPassword = mysql.password
 
-            // Ensure Flyway points to the Testcontainers DB
-            registry.add("spring.flyway.url", mysql::getJdbcUrl)
-            registry.add("spring.flyway.user", mysql::getUsername)
-            registry.add("spring.flyway.password", mysql::getPassword)
+            registry.add("spring.datasource.url") { jdbcUrl }
+            registry.add("spring.datasource.username") { "root" }
+            registry.add("spring.datasource.password") { rootPassword }
+
+            // Ensure Flyway also uses root to execute the migration scripts
+            registry.add("spring.flyway.url") { jdbcUrl }
+            registry.add("spring.flyway.user") { "root" }
+            registry.add("spring.flyway.password") { rootPassword }
+
+            // MiniO
+            registry.add("minio.url", minio::getS3URL)
+            registry.add("minio.access-key", minio::getUserName)
+            registry.add("minio.secret-key", minio::getPassword)
         }
     }
 }
