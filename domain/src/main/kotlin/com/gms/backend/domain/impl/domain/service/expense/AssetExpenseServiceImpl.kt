@@ -27,7 +27,7 @@ class AssetExpenseServiceImpl(
 ) : AssetExpenseService {
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_create')")
+    @PreAuthorize("hasAuthority('assetExpense_create')")
     override fun createAssetExpense(body: AssetExpenseController.AssetExpenseCreateDTO): AssetExpenseController.AssetExpenseReadDTO {
         val expense = assetExpenseMapper.toAssetExpense(body).apply {
             branch = branchRepository.getReferenceById(body.branchId)
@@ -47,13 +47,13 @@ class AssetExpenseServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('assetExpense_read')")
     override fun getAssetExpense(pageable: Pageable): Page<AssetExpenseController.AssetExpenseReadDTO> {
         return assetExpenseRepository.findAll(pageable).map(assetExpenseMapper::toReadDto)
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('assetExpense_read')")
     override fun getAssetExpenseById(id: UUID): AssetExpenseController.AssetExpenseReadDTO {
         return assetExpenseRepository.findById(id)
             .orElseThrow { NoSuchElementException("Asset Expense not found") }
@@ -61,7 +61,7 @@ class AssetExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_update')")
+    @PreAuthorize("hasAuthority('assetExpense_update')")
     override fun updateAssetExpense(id: UUID, body: AssetExpenseController.AssetExpenseUpdateDTO): AssetExpenseController.AssetExpenseReadDTO {
         val expense = assetExpenseRepository.findById(id).orElseThrow().apply {
             assetExpenseMapper.updateFromDto(body, this)
@@ -78,7 +78,7 @@ class AssetExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_delete')")
+    @PreAuthorize("hasAuthority('assetExpense_delete')")
     override fun deleteAssetExpense(id: UUID) {
         if (!assetExpenseRepository.existsById(id)) {
             throw NoSuchElementException("Asset Expense not found")

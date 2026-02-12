@@ -91,6 +91,18 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bd460624e79238c67993a76d64e78, 'objectStorage_read'),
 (0x019bd458aaf0749e8723c6e9ace4c91c, 'objectStorage_update'),
 (0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_upload'),
+(0x019c51293e1f75b1a64eecaa4f91bbb4, 'otherExpense_create'),
+(0x019c51293e1f75b1a64eecaaf4214ac2, 'otherExpense_delete'),
+(0x019c51293e1e7d6f94de1b35401dc7fe, 'otherExpense_read'),
+(0x019c51293e1e7d6f94de1b35c83d5225, 'otherExpense_update'),
+(0x019c512961877ee89b65da88a686af12, 'salaryExpense_create'),
+(0x019c512961877ee89b65da88d12785ef, 'salaryExpense_delete'),
+(0x019c512961877ee89b65da880e997023, 'salaryExpense_read'),
+(0x019c512961877ee89b65da8827003bae, 'salaryExpense_update'),
+(0x019c51290894791e80e8874d9904c851, 'utilityExpense_create'),
+(0x019c51290894791e80e8874e02879afc, 'utilityExpense_delete'),
+(0x019c51290894791e80e8874c4acf781e, 'utilityExpense_read'),
+(0x019c51290894791e80e8874cee3625b6, 'utilityExpense_update'),
 (0x019bded9eaec78ef9f56a9072ea88ce2, 'payment_create'),
 (0x019bded9eaf57bbc831803963ba6537d, 'payment_delete'),
 (0x019bded9eaf870739e96d9f9f5108f78, 'payment_read'),
@@ -137,16 +149,28 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bd58eff7473009e875068df8c0ad0, 'assetCategory_delete'),
 (0x019bd58eff7473009e875067619b5653, 'assetCategory_read'),
 (0x019bd58eff7473009e875068320448af, 'assetCategory_update'),
+(0x019c51285db9751685c0f8be9b1dd94b, 'assetExpense_create'),
+(0x019c51285db9751685c0f8bfa0a4c5dd, 'assetExpense_delete'),
+(0x019c51285db9751685c0f8bf1e96aef9, 'assetExpense_read'),
+(0x019c51285db87cafa229772bd81f307e, 'assetExpense_update'),
 (0x019bdf23e77d7bd786924eda392f2ee0, 'maintenanceSchedule_create'),
 (0x019bdf23e77d7bd786924edaa8eba0cc, 'maintenanceSchedule_delete'),
 (0x019bdf23e77479c7a970d2b75fcb3092, 'maintenanceSchedule_read'),
 (0x019bdf23e77d7bd786924edaa62a87ab, 'maintenanceSchedule_update'),
 (0x019be4458174715e9ad763f4040e7013, 'assetMaintenance_read'),
 (0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update'),
+(0x019c5128a4fe7838ab3f9f35022bdf7a, 'assetMaintenanceExpense_create'),
+(0x019c5128a4fe7838ab3f9f34ab7b6a2c, 'assetMaintenanceExpense_delete'),
+(0x019c5128a4fe7838ab3f9f34879c650d, 'assetMaintenanceExpense_read'),
+(0x019c5128a4fe7838ab3f9f35e3d5281c, 'assetMaintenanceExpense_update'),
 (0x019c1cf48f427abca8e9cf32cc19c15f, 'suppliesLog_create'),
 (0x019c1cf48f427abca8e9cf33ff8ac7e4, 'suppliesLog_delete'),
 (0x019c1cf48f437abcb2fe04b4619fca4a, 'suppliesLog_read'),
 (0x019c1cf48f437abcb2fe04b4d924df25, 'suppliesLog_update'),
+(0x019c512ac78a72ffb9e50eff79cd8e93, 'suppliesExpense_create'),
+(0x019c512ac78a7b858ffbb340b9c0cdf5, 'suppliesExpense_delete'),
+(0x019c512ac78a72ffb9e50efe8871442e, 'suppliesExpense_read'),
+(0x019c512ac78a7b858ffbb34135e5aa78, 'suppliesExpense_update'),
 (0x019c1cf48f427abca8e9cf33c6a0b80d, 'supply_create'),
 (0x019c1cf48f437abcb2fe04b3bb9a6619, 'supply_read'),
 (0x019c1cf48f3a74f3b1407976bc709fbc, 'supply_update'),
@@ -221,6 +245,18 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019bd458aafa7f34bf419ca0dfa1bddd), -- objectStorage_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019bd458aaf0749e8723c6e9ace4c91c), -- objectStorage_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bd458aafa7f34bf419ca0a74ebb71), -- objectStorage_upload
+(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874d9904c851), -- utilityExpense_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874e02879afc), -- utilityExpense_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874c4acf781e), -- utilityExpense_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874cee3625b6), -- utilityExpense_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1f75b1a64eecaa4f91bbb4), -- otherExpense_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1f75b1a64eecaaf4214ac2), -- otherExpense_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1e7d6f94de1b35401dc7fe), -- otherExpense_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1e7d6f94de1b35c83d5225), -- otherExpense_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da88a686af12), -- salaryExpense_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da88d12785ef), -- salaryExpense_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da880e997023), -- salaryExpense_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da8827003bae), -- salaryExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e897479850a65bfed2e0453), -- employee_create
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e87747ebe3d630f9c04b5f2), -- employee_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e88747b836acfacb4481e30), -- employee_read
@@ -247,16 +283,28 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875068df8c0ad0), -- assetCategory_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875067619b5653), -- assetCategory_read
 (0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875068320448af), -- assetCategory_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c51285db9751685c0f8be9b1dd94b), -- assetExpense_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c51285db9751685c0f8bfa0a4c5dd), -- assetExpense_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c51285db9751685c0f8bf1e96aef9), -- assetExpense_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c51285db87cafa229772bd81f307e), -- assetExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77479c7a970d2b75fcb3092), -- maintenanceSchedule_read
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924eda392f2ee0), -- maintenanceSchedule_create
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa62a87ab), -- maintenanceSchedule_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa8eba0cc), -- maintenanceSchedule_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019be4458174715e9ad763f4040e7013), -- assetMaintenance_read
 (0x019ba2676db67541a1714f0524691e73, 0x019be479605678fbb10f3f64f56ae528), -- assetMaintenance_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f35022bdf7a), -- assetMaintenanceExpense_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f34ab7b6a2c), -- assetMaintenanceExpense_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f34879c650d), -- assetMaintenanceExpense_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f35e3d5281c), -- assetMaintenanceExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf32cc19c15f), -- suppliesLog_create
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf33ff8ac7e4), -- suppliesLog_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b4619fca4a), -- suppliesLog_read
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b4d924df25), -- suppliesLog_update
+(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a72ffb9e50eff79cd8e93), -- suppliesExpense_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a7b858ffbb340b9c0cdf5), -- suppliesExpense_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a72ffb9e50efe8871442e), -- suppliesExpense_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a7b858ffbb34135e5aa78), -- suppliesExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf33c6a0b80d), -- supply_create
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b3bb9a6619), -- supply_read
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f3a74f3b1407976bc709fbc), -- supply_update

@@ -27,7 +27,7 @@ class OtherExpenseServiceImpl(
 ) : OtherExpenseService {
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_create')")
+    @PreAuthorize("hasAuthority('otherExpense_create')")
     override fun createOtherExpense(body: OtherExpenseController.OtherExpenseCreateDTO): OtherExpenseController.OtherExpenseReadDTO {
         val expense = otherExpenseMapper.toOtherExpense(body).apply {
             branch = branchRepository.getReferenceById(body.branchId)
@@ -47,13 +47,13 @@ class OtherExpenseServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('otherExpense_read')")
     override fun getOtherExpense(pageable: Pageable): Page<OtherExpenseController.OtherExpenseReadDTO> {
         return otherExpenseRepository.findAll(pageable).map(otherExpenseMapper::toReadDto)
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('otherExpense_read')")
     override fun getOtherExpenseById(id: UUID): OtherExpenseController.OtherExpenseReadDTO {
         return otherExpenseRepository.findById(id)
             .orElseThrow { NoSuchElementException("Other Expense not found") }
@@ -61,7 +61,7 @@ class OtherExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_update')")
+    @PreAuthorize("hasAuthority('otherExpense_update')")
     override fun updateOtherExpense(id: UUID, body: OtherExpenseController.OtherExpenseUpdateDTO): OtherExpenseController.OtherExpenseReadDTO {
         val expense = otherExpenseRepository.findById(id).orElseThrow().apply {
             otherExpenseMapper.updateOtherExpenseFromDto(body, this)
@@ -78,7 +78,7 @@ class OtherExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_delete')")
+    @PreAuthorize("hasAuthority('otherExpense_delete')")
     override fun deleteOtherExpense(id: UUID) {
         if (!otherExpenseRepository.existsById(id)) {
             throw NoSuchElementException("Other Expense not found")

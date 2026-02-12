@@ -27,7 +27,7 @@ class SuppliesExpenseServiceImpl(
 ) : SuppliesExpenseService {
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_create')")
+    @PreAuthorize("hasAuthority('suppliesExpense_create')")
     override fun createSuppliesExpense(body: SuppliesExpenseController.SuppliesExpenseCreateDTO): SuppliesExpenseController.SuppliesExpenseReadDTO {
         val expense = suppliesExpenseMapper.toSuppliesExpense(body).apply {
             branch = branchRepository.getReferenceById(body.branchId)
@@ -47,13 +47,13 @@ class SuppliesExpenseServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('suppliesExpense_read')")
     override fun getSuppliesExpense(pageable: Pageable): Page<SuppliesExpenseController.SuppliesExpenseReadDTO> {
         return suppliesExpenseRepository.findAll(pageable).map(suppliesExpenseMapper::toReadDto)
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('suppliesExpense_read')")
     override fun getSuppliesExpenseById(id: UUID): SuppliesExpenseController.SuppliesExpenseReadDTO {
         return suppliesExpenseRepository.findById(id)
             .orElseThrow { NoSuchElementException("Supplies Expense not found") }
@@ -61,7 +61,7 @@ class SuppliesExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_update')")
+    @PreAuthorize("hasAuthority('suppliesExpense_update')")
     override fun updateSuppliesExpense(id: UUID, body: SuppliesExpenseController.SuppliesExpenseUpdateDTO): SuppliesExpenseController.SuppliesExpenseReadDTO {
         val expense = suppliesExpenseRepository.findById(id).orElseThrow().apply {
             suppliesExpenseMapper.updateSuppliesExpenseFromDto(body, this)
@@ -78,7 +78,7 @@ class SuppliesExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_delete')")
+    @PreAuthorize("hasAuthority('suppliesExpense_delete')")
     override fun deleteSuppliesExpense(id: UUID) {
         if (!suppliesExpenseRepository.existsById(id)) {
             throw NoSuchElementException("Supplies Expense not found")

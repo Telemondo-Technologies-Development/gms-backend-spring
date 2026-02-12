@@ -27,7 +27,7 @@ class UtilityExpenseServiceImpl(
 ) : UtilityExpenseService {
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_create')")
+    @PreAuthorize("hasAuthority('utilityExpense_create')")
     override fun createUtilityExpense(body: UtilityExpenseController.UtilityExpenseCreateDTO): UtilityExpenseController.UtilityExpenseReadDTO {
         val expense = utilityExpenseMapper.toUtilityExpense(body).apply {
             branch = branchRepository.getReferenceById(body.branchId)
@@ -47,13 +47,13 @@ class UtilityExpenseServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('utilityExpense_read')")
     override fun getUtilityExpense(pageable: Pageable): Page<UtilityExpenseController.UtilityExpenseReadDTO> {
         return utilityExpenseRepository.findAll(pageable).map(utilityExpenseMapper::toReadDto)
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('utilityExpense_read')")
     override fun getUtilityExpenseById(id: UUID): UtilityExpenseController.UtilityExpenseReadDTO {
         return utilityExpenseRepository.findById(id)
             .orElseThrow { NoSuchElementException("Utility Expense not found") }
@@ -61,7 +61,7 @@ class UtilityExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_update')")
+    @PreAuthorize("hasAuthority('utilityExpense_update')")
     override fun updateUtilityExpense(id: UUID, body: UtilityExpenseController.UtilityExpenseUpdateDTO): UtilityExpenseController.UtilityExpenseReadDTO {
         val expense = utilityExpenseRepository.findById(id).orElseThrow().apply {
             utilityExpenseMapper.updateUtilityExpenseFromDto(body, this)
@@ -78,7 +78,7 @@ class UtilityExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_delete')")
+    @PreAuthorize("hasAuthority('utilityExpense_delete')")
     override fun deleteUtilityExpense(id: UUID) {
         if (!utilityExpenseRepository.existsById(id)) {
             throw NoSuchElementException("Utility Expense not found")

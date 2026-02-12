@@ -27,7 +27,7 @@ class AssetMaintenanceExpenseServiceImpl(
 ) : AssetMaintenanceExpenseService {
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_create')")
+    @PreAuthorize("hasAuthority('assetMaintenanceExpense_create')")
     override fun createAssetMaintenanceExpense(body: AssetMaintenanceExpenseController.AssetMaintenanceExpenseCreateDTO): AssetMaintenanceExpenseController.AssetMaintenanceExpenseReadDTO {
         val expense = assetMaintenanceExpenseMapper.toAssetMaintenanceExpense(body).apply {
             branch = branchRepository.getReferenceById(body.branchId)
@@ -47,13 +47,13 @@ class AssetMaintenanceExpenseServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('assetMaintenanceExpense_read')")
     override fun getAssetMaintenanceExpense(pageable: Pageable): Page<AssetMaintenanceExpenseController.AssetMaintenanceExpenseReadDTO> {
         return assetMaintenanceExpenseRepository.findAll(pageable).map(assetMaintenanceExpenseMapper::toReadDto)
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('assetMaintenanceExpense_read')")
     override fun getAssetMaintenanceExpenseById(id: UUID): AssetMaintenanceExpenseController.AssetMaintenanceExpenseReadDTO {
         return assetMaintenanceExpenseRepository.findById(id)
             .orElseThrow { NoSuchElementException("Asset Maintenance Expense not found") }
@@ -61,7 +61,7 @@ class AssetMaintenanceExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_update')")
+    @PreAuthorize("hasAuthority('assetMaintenanceExpense_update')")
     override fun updateAssetMaintenanceExpense(id: UUID, body: AssetMaintenanceExpenseController.AssetMaintenanceExpenseUpdateDTO): AssetMaintenanceExpenseController.AssetMaintenanceExpenseReadDTO {
         val expense = assetMaintenanceExpenseRepository.findById(id).orElseThrow().apply {
             assetMaintenanceExpenseMapper.updateFromDto(body, this)
@@ -78,7 +78,7 @@ class AssetMaintenanceExpenseServiceImpl(
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_delete')")
+    @PreAuthorize("hasAuthority('assetMaintenanceExpense_delete')")
     override fun deleteAssetMaintenanceExpense(id: UUID) {
         if (!assetMaintenanceExpenseRepository.existsById(id)) {
             throw NoSuchElementException("Asset Maintenance Expense not found")

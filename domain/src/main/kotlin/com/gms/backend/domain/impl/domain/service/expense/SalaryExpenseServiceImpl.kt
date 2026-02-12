@@ -24,7 +24,7 @@ class SalaryExpenseServiceImpl (
     private val salaryExpenseMapper: SalaryExpenseMapper
 ): SalaryExpenseService {
     @Transactional
-    @PreAuthorize("hasAuthority('member_create')")
+    @PreAuthorize("hasAuthority('salaryExpense_create')")
     override fun createSalaryExpense(body: SalaryExpenseController.SalaryExpenseCreateDTO): SalaryExpenseController.SalaryExpenseReadDTO {
         val expense = salaryExpenseMapper.toSalaryExpense(body).apply {
             branch = branchRepository.getReferenceById(body.branchId)
@@ -43,13 +43,13 @@ class SalaryExpenseServiceImpl (
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('salaryExpense_read')")
     override fun getSalaryExpense(pageable: Pageable): Page<SalaryExpenseController.SalaryExpenseReadDTO> {
         return salaryExpenseRepository.findAll(pageable).map(salaryExpenseMapper::toReadDto)
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('member_read')")
+    @PreAuthorize("hasAuthority('salaryExpense_read')")
     override fun getSalaryExpenseById(id: UUID): SalaryExpenseController.SalaryExpenseReadDTO {
         return salaryExpenseRepository.findById(id)
             .orElseThrow { NoSuchElementException("Asset Expense not found") }
@@ -57,7 +57,7 @@ class SalaryExpenseServiceImpl (
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_update')")
+    @PreAuthorize("hasAuthority('salaryExpense_update')")
     override fun updateSalaryExpense(
         id: UUID,
         body: SalaryExpenseController.SalaryExpenseUpdateDTO
@@ -76,7 +76,7 @@ class SalaryExpenseServiceImpl (
     }
 
     @Transactional
-    @PreAuthorize("hasAuthority('member_delete')")
+    @PreAuthorize("hasAuthority('salaryExpense_delete')")
     override fun deleteSalaryExpense(id: UUID) {
         if (!salaryExpenseRepository.existsById(id)) {
             throw NoSuchElementException("Asset Expense not found")
