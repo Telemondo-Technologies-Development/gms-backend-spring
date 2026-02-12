@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable
 import java.util.UUID
 
 interface AssetExpenseService {
-    fun createAssetExpense(body: AssetExpenseController.AssetExpensePostDTO): AssetExpenseController.AssetExpenseResponseDTO
-    fun getAssetExpenses(pageable: Pageable): Page<AssetExpenseController.AssetExpenseResponseDTO>
-    fun getAssetExpenseById(id: UUID): AssetExpenseController.AssetExpenseResponseDTO
-    fun updateAssetExpense(id: UUID, body: AssetExpenseController.AssetExpensePutDTO): AssetExpenseController.AssetExpenseResponseDTO
+    fun createAssetExpense(body: AssetExpenseController.AssetExpenseCreateDTO): AssetExpenseController.AssetExpenseReadDTO
+    fun getAssetExpense(pageable: Pageable): Page<AssetExpenseController.AssetExpenseReadDTO>
+    fun getAssetExpenseById(id: UUID): AssetExpenseController.AssetExpenseReadDTO
+    fun updateAssetExpense(id: UUID, body: AssetExpenseController.AssetExpenseUpdateDTO): AssetExpenseController.AssetExpenseReadDTO
     fun deleteAssetExpense(id: UUID)
 }

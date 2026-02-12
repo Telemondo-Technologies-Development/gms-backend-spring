@@ -2,7 +2,7 @@ package com.gms.backend.domain.application.rest.expense
 
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.domain.service.expense.AssetExpenseService
+import com.gms.backend.domain.domain.service.expense.SuppliesExpenseService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -15,12 +15,12 @@ import java.time.Instant
 import java.util.*
 
 @RestController
-@RequestMapping("/api/assetExpense")
-@Tag(name = "Asset Expense")
-class AssetExpenseController(
-    private val assetExpenseService: AssetExpenseService
+@RequestMapping("/api/suppliesExpense")
+@Tag(name = "Supplies Expense")
+class SuppliesExpenseController(
+    private val suppliesExpenseService: SuppliesExpenseService
 ) {
-    data class AssetExpenseCreateDTO(
+    data class SuppliesExpenseCreateDTO(
         @field:Positive(message = "Amount must be greater than zero")
         val amount: BigDecimal,
 
@@ -30,8 +30,8 @@ class AssetExpenseController(
         @field:NotNull(message = "Branch ID is required")
         val branchId: UUID,
 
-        @field:NotNull(message = "Asset ID is required")
-        val assetId: UUID,
+        @field:NotNull(message = "Supplies Log ID is required")
+        val suppliesLogId: UUID,
 
         @field:NotNull(message = "Actor ID (Payer) is required")
         val actorId: UUID,
@@ -39,7 +39,7 @@ class AssetExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
-    data class AssetExpenseUpdateDTO(
+    data class SuppliesExpenseUpdateDTO(
         @field:Positive(message = "Amount must be greater than zero")
         val amount: BigDecimal,
 
@@ -49,8 +49,8 @@ class AssetExpenseController(
         @field:NotNull(message = "Branch ID is required")
         val branchId: UUID,
 
-        @field:NotNull(message = "Asset ID is required")
-        val assetId: UUID,
+        @field:NotNull(message = "Supplies Log ID is required")
+        val suppliesLogId: UUID,
 
         @field:NotNull(message = "Actor ID is required")
         val actorId: UUID,
@@ -58,34 +58,35 @@ class AssetExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
-    data class AssetExpenseReadDTO(
+    data class SuppliesExpenseReadDTO(
         val id: UUID,
         val amount: BigDecimal,
         val paidAt: Instant,
         val branchId: UUID?,
-        val assetId: UUID?,
+        val suppliesLogId: UUID?,
         val createdAt: Instant,
         val updatedAt: Instant,
         val objectIds: List<UUID> = emptyList()
     )
 
     @GetMapping
-    fun getAllAssetExpense(pageable: Pageable) =
-        assetExpenseService.getAssetExpense(pageable).toPaginatedResponse()
+    @Operation(summary = "Get all supplies expenses")
+    fun getAllSuppliesExpense(pageable: Pageable) =
+        suppliesExpenseService.getSuppliesExpense(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
-    fun getAssetExpenseById(@PathVariable id: UUID) =
-        assetExpenseService.getAssetExpenseById(id)
+    fun getSuppliesExpenseById(@PathVariable id: UUID) =
+        suppliesExpenseService.getSuppliesExpenseById(id)
 
     @PostMapping
-    fun createAssetExpense(@Valid @RequestBody body: AssetExpenseCreateDTO) =
-        assetExpenseService.createAssetExpense(body).toOkResponse("Asset Expense Created!")
+    fun createSuppliesExpense(@Valid @RequestBody body: SuppliesExpenseCreateDTO) =
+        suppliesExpenseService.createSuppliesExpense(body).toOkResponse("Supplies Expense Created!")
 
     @PutMapping("/{id}")
-    fun updateAssetExpense(@PathVariable id: UUID, @Valid @RequestBody body: AssetExpenseUpdateDTO) =
-        assetExpenseService.updateAssetExpense(id, body).toOkResponse("Asset Expense Updated!")
+    fun updateSuppliesExpense(@PathVariable id: UUID, @Valid @RequestBody body: SuppliesExpenseUpdateDTO) =
+        suppliesExpenseService.updateSuppliesExpense(id, body).toOkResponse("Supplies Expense Updated!")
 
     @DeleteMapping("/{id}")
-    fun deleteAssetExpense(@PathVariable id: UUID) =
-        assetExpenseService.deleteAssetExpense(id).toOkResponse("Asset Expense Deleted!")
+    fun deleteSuppliesExpense(@PathVariable id: UUID) =
+        suppliesExpenseService.deleteSuppliesExpense(id).toOkResponse("Supplies Expense Deleted!")
 }
