@@ -25,7 +25,7 @@ import java.util.UUID
 import java.time.Instant
 
 @RestController
-@RequestMapping("/api/salaryExpense")
+@RequestMapping("/api/expense/salary")
 @Tag(name = "Salary Expense")
 class SalaryExpenseController (
     private val salaryExpenseService: SalaryExpenseService

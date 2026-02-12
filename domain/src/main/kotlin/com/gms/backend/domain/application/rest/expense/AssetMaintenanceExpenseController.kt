@@ -16,7 +16,7 @@ import java.time.Instant
 import java.util.*
 
 @RestController
-@RequestMapping("/api/assetMaintenanceExpense")
+@RequestMapping("/api/expense/assetMaintenance")
 @Tag(name = "Asset Maintenance Expense")
 class AssetMaintenanceExpenseController(
     private val assetMaintenanceExpenseService: AssetMaintenanceExpenseService

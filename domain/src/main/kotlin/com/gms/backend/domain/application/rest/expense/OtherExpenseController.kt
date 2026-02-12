@@ -16,7 +16,7 @@ import java.time.Instant
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/otherExpense")
+@RequestMapping("/api/expense/other")
 @Tag(name = "Other Expense")
 class OtherExpenseController(
     private val otherExpenseService: OtherExpenseService

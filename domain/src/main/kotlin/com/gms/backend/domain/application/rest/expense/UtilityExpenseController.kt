@@ -17,7 +17,7 @@ import java.time.LocalDate
 import java.util.*
 
 @RestController
-@RequestMapping("/api/utilityExpense")
+@RequestMapping("/api/expense/utility")
 @Tag(name = "Utility Expense")
 class UtilityExpenseController(
     private val utilityExpenseService: UtilityExpenseService
