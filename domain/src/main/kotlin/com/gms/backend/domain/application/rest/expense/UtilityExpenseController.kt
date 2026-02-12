@@ -4,6 +4,7 @@ import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.service.expense.UtilityExpenseService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
@@ -21,6 +22,7 @@ import java.util.*
 class UtilityExpenseController(
     private val utilityExpenseService: UtilityExpenseService
 ) {
+    @Schema(description = "Request body for creating a new utility expense record (e.g., water, electricity)")
     data class UtilityExpenseCreateDTO(
         @field:NotNull(message = "Meter reading is required")
         val meter: String,
@@ -46,6 +48,7 @@ class UtilityExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
+    @Schema(description = "Request body for updating an existing utility expense record")
     data class UtilityExpenseUpdateDTO(
         @field:NotNull(message = "Meter reading is required")
         val meter: String,
@@ -71,6 +74,7 @@ class UtilityExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
+    @Schema(description = "Response data representing utility expense details")
     data class UtilityExpenseReadDTO(
         val id: UUID,
         val meter: String,
@@ -85,22 +89,27 @@ class UtilityExpenseController(
     )
 
     @GetMapping
+    @Operation(summary = "Get all utility expenses")
     fun getAllUtilityExpense(pageable: Pageable) =
         utilityExpenseService.getUtilityExpense(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a utility expense by ID")
     fun getUtilityExpenseById(@PathVariable id: UUID) =
         utilityExpenseService.getUtilityExpenseById(id)
 
     @PostMapping
+    @Operation(summary = "Create a utility expense")
     fun createUtilityExpense(@Valid @RequestBody body: UtilityExpenseCreateDTO) =
         utilityExpenseService.createUtilityExpense(body).toOkResponse("Utility Expense Created!")
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a utility expense by ID")
     fun updateUtilityExpense(@PathVariable id: UUID, @Valid @RequestBody body: UtilityExpenseUpdateDTO) =
         utilityExpenseService.updateUtilityExpense(id, body).toOkResponse("Utility Expense Updated!")
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a utility expense by ID")
     fun deleteUtilityExpense(@PathVariable id: UUID) =
         utilityExpenseService.deleteUtilityExpense(id).toOkResponse("Utility Expense Deleted!")
 }

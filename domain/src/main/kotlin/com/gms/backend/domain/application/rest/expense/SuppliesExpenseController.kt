@@ -4,6 +4,7 @@ import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.service.expense.SuppliesExpenseService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
@@ -20,6 +21,7 @@ import java.util.*
 class SuppliesExpenseController(
     private val suppliesExpenseService: SuppliesExpenseService
 ) {
+    @Schema(description = "Request body for creating a new supplies expense record")
     data class SuppliesExpenseCreateDTO(
         @field:Positive(message = "Amount must be greater than zero")
         val amount: BigDecimal,
@@ -39,6 +41,7 @@ class SuppliesExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
+    @Schema(description = "Request body for updating an existing supplies expense record")
     data class SuppliesExpenseUpdateDTO(
         @field:Positive(message = "Amount must be greater than zero")
         val amount: BigDecimal,
@@ -58,6 +61,7 @@ class SuppliesExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
+    @Schema(description = "Response data representing supplies expense details")
     data class SuppliesExpenseReadDTO(
         val id: UUID,
         val amount: BigDecimal,
@@ -75,18 +79,22 @@ class SuppliesExpenseController(
         suppliesExpenseService.getSuppliesExpense(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a supplies expense by ID")
     fun getSuppliesExpenseById(@PathVariable id: UUID) =
         suppliesExpenseService.getSuppliesExpenseById(id)
 
     @PostMapping
+    @Operation(summary = "Create a supplies expense")
     fun createSuppliesExpense(@Valid @RequestBody body: SuppliesExpenseCreateDTO) =
         suppliesExpenseService.createSuppliesExpense(body).toOkResponse("Supplies Expense Created!")
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a supplies expense by ID")
     fun updateSuppliesExpense(@PathVariable id: UUID, @Valid @RequestBody body: SuppliesExpenseUpdateDTO) =
         suppliesExpenseService.updateSuppliesExpense(id, body).toOkResponse("Supplies Expense Updated!")
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a supplies expense by ID")
     fun deleteSuppliesExpense(@PathVariable id: UUID) =
         suppliesExpenseService.deleteSuppliesExpense(id).toOkResponse("Supplies Expense Deleted!")
 }

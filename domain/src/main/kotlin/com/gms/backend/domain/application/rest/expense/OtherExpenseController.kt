@@ -4,6 +4,7 @@ import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.service.expense.OtherExpenseService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
@@ -20,6 +21,7 @@ import java.util.UUID
 class OtherExpenseController(
     private val otherExpenseService: OtherExpenseService
 ) {
+    @Schema(description = "Request body for creating a new miscellaneous (other) expense record")
     data class OtherExpenseCreateDTO(
         @field:Positive(message = "Amount must be greater than zero")
         val amount: BigDecimal,
@@ -39,6 +41,7 @@ class OtherExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
+    @Schema(description = "Request body for updating an existing miscellaneous (other) expense record")
     data class OtherExpenseUpdateDTO(
         @field:Positive(message = "Amount must be greater than zero")
         val amount: BigDecimal,
@@ -58,6 +61,7 @@ class OtherExpenseController(
         val objectIds: Set<UUID>? = emptySet()
     )
 
+    @Schema(description = "Response data representing miscellaneous (other) expense details")
     data class OtherExpenseReadDTO(
         val id: UUID,
         val amount: BigDecimal,
@@ -70,22 +74,27 @@ class OtherExpenseController(
     )
 
     @GetMapping
+    @Operation(summary = "Get all other expenses")
     fun getAllOtherExpense(pageable: Pageable) =
         otherExpenseService.getOtherExpense(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get an other expense by ID")
     fun getOtherExpenseById(@PathVariable id: UUID) =
         otherExpenseService.getOtherExpenseById(id)
 
     @PostMapping
+    @Operation(summary = "Create an other expense")
     fun createOtherExpense(@Valid @RequestBody body: OtherExpenseCreateDTO) =
         otherExpenseService.createOtherExpense(body).toOkResponse("Other Expense Created!")
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an other expense by ID")
     fun updateOtherExpense(@PathVariable id: UUID, @Valid @RequestBody body: OtherExpenseUpdateDTO) =
         otherExpenseService.updateOtherExpense(id, body).toOkResponse("Other Expense Updated!")
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an other expense by ID")
     fun deleteOtherExpense(@PathVariable id: UUID) =
         otherExpenseService.deleteOtherExpense(id).toOkResponse("Other Expense Deleted!")
 }

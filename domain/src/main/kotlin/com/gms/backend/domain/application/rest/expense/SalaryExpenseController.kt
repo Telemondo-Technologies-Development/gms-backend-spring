@@ -5,6 +5,7 @@ import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.expense.SalaryExpense
 import com.gms.backend.domain.domain.service.expense.SalaryExpenseService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
@@ -29,6 +30,7 @@ import java.time.Instant
 class SalaryExpenseController (
     private val salaryExpenseService: SalaryExpenseService
 ) {
+    @Schema(description = "Request body for creating a new salary expense record")
     data class SalaryExpenseCreateDTO(
         @field:NotNull(message = "Salary type is required")
         val salaryType: SalaryExpense.SalaryType,
@@ -48,9 +50,10 @@ class SalaryExpenseController (
         @field:NotNull(message = "Actor ID (Employee) is required")
         val actorId: UUID,
 
-        // Optional: List of object storage IDs (receipts/documents)
         val objectIds: Set<UUID>? = emptySet()
     )
+
+    @Schema(description = "Request body for updating an existing salary expense record")
     data class SalaryExpenseUpdateDTO(
         @field:NotNull(message = "Salary type is required")
         val salaryType: SalaryExpense.SalaryType,
@@ -70,10 +73,10 @@ class SalaryExpenseController (
         @field:NotNull(message = "Actor ID (Employee) is required")
         val actorId: UUID,
 
-
-        // Optional: List of object storage IDs (receipts/documents)
         val objectIds: Set<UUID>? = emptySet()
     )
+
+    @Schema(description = "Response data representing salary expense details")
     data class SalaryExpenseReadDTO(
         val salaryType: SalaryExpense.SalaryType,
         val amount: BigDecimal,
@@ -86,7 +89,7 @@ class SalaryExpenseController (
         val objectIds: List<UUID> = emptyList()
     )
     @GetMapping
-    @Operation(summary = "Get all salary expense details")
+    @Operation(summary = "Get all salary expenses")
     fun getAllSalaryExpense(pageable: Pageable) = salaryExpenseService.getSalaryExpense(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
