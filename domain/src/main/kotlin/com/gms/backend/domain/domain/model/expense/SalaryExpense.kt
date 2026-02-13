@@ -28,6 +28,7 @@ class SalaryExpense {
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     lateinit var id: UUID
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     lateinit var salaryType: SalaryType
 
@@ -78,7 +79,7 @@ class SalaryExpense {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "salary_expenses_objects",
+        name = "salary_expense_objects",
         joinColumns = [JoinColumn(name = "salary_expense_id")],
         inverseJoinColumns = [JoinColumn(name = "object_id")],
     )
