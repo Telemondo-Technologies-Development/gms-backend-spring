@@ -343,11 +343,13 @@ INSERT INTO `member_subscriptions` (`id`, `actor_id`, `subscription_availed_id`,
 
 INSERT INTO `asset_categories` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba2f1a6e67271893cffab220040a1, 'Cardio Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244'),
-(0x019ba2f1a6e67271893cffab220040a2, 'Strength Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244');
+(0x019ba2f1a6e67271893cffab220040a2, 'Strength Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244'),
+(0x019ba2f1a6e67271893cffab220040a3, 'Yoga Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244');
 
 INSERT INTO `assets` (`id`, `branch_id`, `asset_category_id`, `name`, `manufactured_date`, `end_of_life`, `remarks`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba2f5b6e67271893cffab220055b1, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Treadmill', '2025-06-01 00:00:00.000000', NULL, 'Located near the window section.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
-(0x019ba2f5b6e67271893cffab220055b2, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a2, 'Leg Press Machine', '2025-08-15 00:00:00.000000', NULL, 'Located near the entrance.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837');
+(0x019ba2f5b6e67271893cffab220055b2, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a2, 'Leg Press Machine', '2025-08-15 00:00:00.000000', NULL, 'Located near the entrance.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
+(0x019ba2f5b6e67271893cffab220055b3, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Stationary Bike', '2025-07-20 00:00:00.000000', NULL, 'Next to the treadmills.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-12 16:43:00.000000', '2026-02-12 16:43:00.000000');
 
 SET @now_minute = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00');
 SET @cur_week_rank = IF(MONTH(DATE_ADD(NOW(), INTERVAL 7 DAY)) <> MONTH(NOW()), -1, (DAYOFMONTH(NOW()) + 6) DIV 7);

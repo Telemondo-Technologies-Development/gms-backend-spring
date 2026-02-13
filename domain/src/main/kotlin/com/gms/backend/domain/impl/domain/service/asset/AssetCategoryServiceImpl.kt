@@ -28,7 +28,7 @@ class AssetCategoryServiceImpl (
             updatedBy = actorRepository.getReferenceById(body.createdById)
         }
 
-        val saved = assetCategoryRepository.save(assetCategory)
+        val saved = assetCategoryRepository.saveAndFlush(assetCategory)
         return assetCategoryMapper.assetCategoryToDTO(saved)
     }
 
@@ -43,7 +43,7 @@ class AssetCategoryServiceImpl (
             updatedBy = actorRepository.getReferenceById(body.updatedById)
         }
 
-        assetCategoryRepository.save(assetCategory)
+        assetCategoryRepository.saveAndFlush(assetCategory)
         return assetCategoryMapper.assetCategoryToDTO(assetCategory)
     }
 
