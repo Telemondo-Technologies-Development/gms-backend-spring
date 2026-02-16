@@ -19,7 +19,7 @@ class ReportType {
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     lateinit var id: UUID
 
-    @field:NotBlank(message = "Name is required")
+    @field:NotBlank(message = "Name must not be empty")
     @Column(nullable = false, unique = true)
     lateinit var name: String
 

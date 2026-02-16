@@ -2,7 +2,6 @@ package com.gms.backend.domain.impl.domain.service.asset
 
 import com.gms.backend.domain.application.mapper.asset.AssetMaintenanceMapper
 import com.gms.backend.domain.application.rest.asset.AssetMaintenanceController
-import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository

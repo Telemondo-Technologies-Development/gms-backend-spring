@@ -28,7 +28,7 @@ class MaintenanceSchedule {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    @field: NotBlank(message = "Schedule Name cannot be blank")
+    @field: NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
     @Column(nullable = false)

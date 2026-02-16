@@ -3,15 +3,17 @@ package com.gms.backend.domain.application.rest.asset
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.application.rest.asset.SupplyController.SupplyPutDTO
 import com.gms.backend.domain.domain.service.asset.SuppliesLogService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
+import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import java.time.Instant
 import java.util.*
 
 @RestController
@@ -31,11 +33,13 @@ class SuppliesLogController(
         val objectIds: List<UUID> = emptyList(),
         val createdById: UUID?,
         val updatedById: UUID?,
+        val createdAt: Instant,
+        val updatedAt: Instant
     )
 
     @Schema(description = "Format for Supplies Log create")
     data class SuppliesLogPostDTO(
-        @field:NotBlank(message = "Name is required")
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:NotNull(message = "Quantity is required")
         val quantity: Int,
@@ -43,11 +47,14 @@ class SuppliesLogController(
         val suppliesId: UUID,
         val objectIds: List<UUID> = emptyList(),
         val createdById: UUID,
-    )
+    ){
+        @AssertTrue(message = "Quantity cannot be zero")
+        fun isQuantityValid(): Boolean = quantity != 0
+    }
 
     @Schema(description = "Format for Supplies Log update")
     data class SuppliesLogPutDTO(
-        @field:NotBlank(message = "Name is required")
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:NotNull(message = "Quantity is required")
         val quantity: Int,
@@ -55,16 +62,20 @@ class SuppliesLogController(
         val suppliesId: UUID,
         val objectIds: List<UUID> = emptyList(),
         val updatedById: UUID
-    )
+    ){
+        @AssertTrue(message = "Quantity cannot be zero")
+        fun isQuantityValid(): Boolean = quantity != 0
+    }
 
+    // Basic CRUD
     @PostMapping
-    @Operation(summary = "Create a new Supplies Log")
-    fun createSuppliesLog(@RequestBody body: SuppliesLogPostDTO) =
+    @Operation(summary = "Create a Supplies Log")
+    fun createSuppliesLog(@Valid @RequestBody body: SuppliesLogPostDTO) =
         suppliesLogService.createSuppliesLog(body).toCreatedResponse("Supplies Log Created")
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a Supplies Log by id")
-    fun updateSupply(@PathVariable id: UUID, @RequestBody body: SuppliesLogPutDTO) =
+    fun updateSupply(@PathVariable id: UUID, @Valid @RequestBody body: SuppliesLogPutDTO) =
         suppliesLogService.updateSuppliesLog(id, body).toOkResponse("Supply Updated")
 
     @GetMapping

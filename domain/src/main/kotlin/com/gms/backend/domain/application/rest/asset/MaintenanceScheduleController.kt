@@ -3,9 +3,9 @@ package com.gms.backend.domain.application.rest.asset
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.domain.model.asset.MaintenanceSchedule
 import com.gms.backend.domain.domain.service.asset.MaintenanceScheduleService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertTrue
@@ -33,6 +33,7 @@ import java.util.UUID
 @Tag(name = "Maintenance Schedule")
 class MaintenanceScheduleController(private val scheduleService: MaintenanceScheduleService) {
 
+    @Schema(description = "Format for Maintenance Schedule read")
     data class ScheduleTableDTO(
         val id: UUID,
         val assetId: UUID,
@@ -46,11 +47,14 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
         val dayOfWeek: Int?,
         val monthOfYear: Int?,
         val active: Boolean,
-        val createdById: UUID?
+        val createdById: UUID?,
+        val createdAt: Instant,
+        val updatedAt: Instant
     )
 
+    @Schema(description = "Format for Maintenance Schedule create")
     data class SchedulePostDTO(
-        @field:NotBlank(message = "Schedule name is required")
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:NotNull(message = "Start date is required")
         @field:FutureOrPresent(message = "Start date cannot be in the past")
@@ -83,8 +87,9 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
             }
     }
 
+    @Schema(description = "Format for Maintenance Schedule update")
     data class SchedulePutDTO(
-        @field:NotBlank(message = "Schedule name is required")
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:NotNull(message = "Start date is required")
         val startDate: Instant,
@@ -116,24 +121,29 @@ class MaintenanceScheduleController(private val scheduleService: MaintenanceSche
             }
     }
 
+    // Basic CRUD
     @PostMapping
+    @Operation(summary = "Create a Maintenance Schedule")
     fun createSchedule(@Valid @RequestBody body: SchedulePostDTO) =
         scheduleService.createSchedule(body).toCreatedResponse("Schedule Created")
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a Maintenance Schedule by id")
     fun updateSchedule(@PathVariable id: UUID, @Valid @RequestBody body: SchedulePutDTO) =
         scheduleService.updateSchedule(id, body).toOkResponse("Schedule Updated")
 
     @GetMapping
+    @Operation(summary = "Get all Maintenance Schedules")
     fun getAllSchedules(pageable: Pageable) =
         scheduleService.getSchedules(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get an asset by ID")
+    @Operation(summary = "Get a Maintenance Schedule by ID")
     fun getAsset(@PathVariable id: UUID) =
         scheduleService.getScheduleById(id).toOkResponse()
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a Maintenance Schedule by ID")
     fun deleteSchedule(@PathVariable id: UUID) =
         scheduleService.deleteSchedule(id).toOkResponse("Schedule Deleted")
 }

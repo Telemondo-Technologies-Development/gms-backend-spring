@@ -131,6 +131,7 @@ class BranchController (
         val employees: List<EmployeeInBranchDTO>?
     )
 
+    // Basic CRUD
     @PostMapping
     @Operation(summary = "Create a new Branch")
     fun createBranch(@Valid @RequestBody body: BranchPostDTO) =
@@ -156,7 +157,8 @@ class BranchController (
     fun deleteBranch(@PathVariable id: UUID) =
         branchService.deleteBranch(id).toOkResponse("Branch Deleted")
 
-    @GetMapping("/{id}/employees")
+    // Extended endpoints
+    @GetMapping("/{id}/employee")
     @Operation(summary = "Get all Personnel per Branch by id")
     fun getBranchEmployees(
         @PathVariable id: UUID,

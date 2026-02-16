@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
 import java.util.UUID
 
 @RestController
@@ -30,31 +31,32 @@ class AssetCategoryController (
         val name: String,
         val createdById: UUID?,
         val updatedById: UUID?,
-//        val createdAt: Instant,
-//        val updatedAt: Instant
+        val createdAt: Instant,
+        val updatedAt: Instant
     )
 
     @Schema(description = "Format for Asset Category create")
     data class AssetCategoryPostDTO(
-        @field: NotBlank(message = "Category name is required")
+        @field: NotBlank(message = "Name must not be empty")
         val name: String,
         val createdById: UUID
     )
 
     @Schema(description = "Format for Asset Category update")
     data class AssetCategoryPutDTO(
-        @field:NotBlank(message = "Category name is required")
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         val updatedById: UUID
     )
 
+    // Basic CRUD
     @PostMapping
-    @Operation(summary = "Create a new Asset Category")
+    @Operation(summary = "Create an Asset Category")
     fun createAssetCategory(@Valid @RequestBody body: AssetCategoryPostDTO) =
         assetCategoryService.createAssetCategory(body).toCreatedResponse("Asset Category Created")
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update a Asset Category by id")
+    @Operation(summary = "Update an Asset Category by id")
     fun updateAssetCategory(@PathVariable id: UUID, @Valid @RequestBody body: AssetCategoryPutDTO) =
         assetCategoryService.updateAssetCategory(id, body).toOkResponse("Asset Category Updated")
 
@@ -64,12 +66,12 @@ class AssetCategoryController (
         assetCategoryService.getAssetCategories().toOkResponse()
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a Asset Category by id")
+    @Operation(summary = "Get an Asset Category by id")
     fun getAssetCategory (@PathVariable id: UUID) =
         assetCategoryService.getAssetCategoryById(id).toOkResponse()
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a Asset Category by id")
+    @Operation(summary = "Delete an Asset Category by id")
     fun deleteAssetCategory(@PathVariable id: UUID) =
         assetCategoryService.deleteAssetCategory(id).toOkResponse("Asset Category Deleted")
 

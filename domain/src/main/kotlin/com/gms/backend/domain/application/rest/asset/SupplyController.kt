@@ -7,10 +7,11 @@ import com.gms.backend.domain.domain.service.asset.SupplyService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import java.time.Instant
 import java.util.*
 
 @RestController
@@ -30,11 +31,13 @@ class SupplyController(
         val objectIds: List<UUID> = emptyList(),
         val createdById: UUID?,
         val updatedById: UUID?,
+        val createdAt: Instant,
+        val updatedAt: Instant
     )
 
     @Schema(description = "Format for Supply create")
     data class SupplyPostDTO(
-        @field:NotBlank(message = "Name is required")
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         val description: String?,
         val branchId: UUID,
@@ -44,7 +47,7 @@ class SupplyController(
 
     @Schema(description = "Format for Supply update")
     data class SupplyPutDTO(
-        @field:NotBlank(message = "Name is required")
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         val description: String?,
         val branchId: UUID,
@@ -58,14 +61,15 @@ class SupplyController(
         val logs: List<SuppliesLogController.SuppliesLogTableDTO>?
     )
 
+    // Basic CRUD
     @PostMapping
-    @Operation(summary = "Create a new Supply")
-    fun createSupply(@RequestBody body: SupplyPostDTO) =
+    @Operation(summary = "Create a Supply")
+    fun createSupply(@Valid @RequestBody body: SupplyPostDTO) =
         supplyService.createSupply(body).toCreatedResponse("Supply Created")
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a Supply by id")
-    fun updateSupply(@PathVariable id: UUID, @RequestBody body: SupplyPutDTO) =
+    fun updateSupply(@PathVariable id: UUID, @Valid @RequestBody body: SupplyPutDTO) =
         supplyService.updateSupply(id, body).toOkResponse("Supply Updated")
 
     @GetMapping
@@ -83,8 +87,9 @@ class SupplyController(
     fun deleteSupply(@PathVariable id: UUID) =
         supplyService.deleteSupply(id).toOkResponse("Supply Deleted")
 
+    // Extended endpoints
     @GetMapping("/{id}/log")
-    @Operation(summary = "Get supply info and its logs")
+    @Operation(summary = "Get Supply info and its Logs")
     fun getSupplyLogs(
         @PathVariable id: UUID,
         pageable: Pageable

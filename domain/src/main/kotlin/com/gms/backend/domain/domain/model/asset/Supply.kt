@@ -23,7 +23,7 @@ class Supply {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    @field:NotBlank(message = "Name is required")
+    @field:NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
     @Column

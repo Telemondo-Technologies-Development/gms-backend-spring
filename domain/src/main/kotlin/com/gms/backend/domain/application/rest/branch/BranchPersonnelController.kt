@@ -56,6 +56,7 @@ class BranchPersonnelController(
         val updatedById: UUID
     )
 
+    // Basic CRUD
     @PostMapping
     @Operation(summary = "Create a new Branch Personnel")
     fun createBranchPersonnel(@RequestBody body: BranchPersonnelPostDTO) =

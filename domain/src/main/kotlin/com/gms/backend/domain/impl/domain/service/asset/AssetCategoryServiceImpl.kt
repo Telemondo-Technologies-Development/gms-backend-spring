@@ -2,8 +2,6 @@ package com.gms.backend.domain.impl.domain.service.asset
 
 import com.gms.backend.domain.application.mapper.asset.AssetCategoryMapper
 import com.gms.backend.domain.application.rest.asset.AssetCategoryController
-import com.gms.backend.domain.application.rest.branch.BranchController
-import com.gms.backend.domain.domain.model.asset.AssetCategory
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.asset.AssetCategoryService
@@ -47,14 +45,14 @@ class AssetCategoryServiceImpl (
         return assetCategoryMapper.assetCategoryToDTO(assetCategory)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('assetCategory_read')")
     override fun getAssetCategories(): List<AssetCategoryController.AssetCategoryTableDTO>{
         val assetCategories = assetCategoryRepository.findAll()
         return assetCategoryMapper.assetCategoriesToDTO(assetCategories)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('assetCategory_read')")
     override fun getAssetCategoryById(id: UUID): AssetCategoryController.AssetCategoryTableDTO{
         val assetCategory = assetCategoryRepository.findById(id).orElseThrow {

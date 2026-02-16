@@ -6,6 +6,7 @@ import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
 import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.PastOrPresent
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -23,9 +24,10 @@ class Asset {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    @field: NotBlank(message = "Asset name must not be empty")
+    @field: NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
+    @field:PastOrPresent(message = "Manufactured date cannot be in the future")
     @Column
     var manufacturedDate: Instant? = null
 

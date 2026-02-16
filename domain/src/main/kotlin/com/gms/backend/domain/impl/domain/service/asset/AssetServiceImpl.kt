@@ -2,7 +2,6 @@ package com.gms.backend.domain.impl.domain.service.asset
 
 import com.gms.backend.domain.application.mapper.asset.AssetMapper
 import com.gms.backend.domain.application.rest.asset.AssetController
-import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
