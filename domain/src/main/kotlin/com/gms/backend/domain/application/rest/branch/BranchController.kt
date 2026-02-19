@@ -100,18 +100,7 @@ class BranchController (
             private const val serialVersionUID: Long = 1L
         }
     }
-
     // for branch's list of employees
-    @Schema(description = "Format for Branch read summary")
-    data class BranchSummaryDTO(
-        val id: UUID,
-        val name: String,
-        val address: String,
-        val longitude: String,
-        val latitude: String,
-        val status: Branch.BranchStatus
-    )
-
     data class EmployeeSummaryDTO(
         val id: UUID,
         val surname: String?,
@@ -123,12 +112,6 @@ class BranchController (
     data class EmployeeInBranchDTO(
         val actorId: UUID,
         val employee: EmployeeSummaryDTO?
-    )
-
-    @Schema(description = "Format for Branch with Personnel read")
-    data class BranchEmployeesDTO(
-        val branch: BranchSummaryDTO,
-        val employees: List<EmployeeInBranchDTO>?
     )
 
     // Basic CRUD
@@ -162,6 +145,7 @@ class BranchController (
     @Operation(summary = "Get all Personnel per Branch by id")
     fun getBranchEmployees(
         @PathVariable id: UUID,
-        @RequestParam(required = false) status: BranchPersonnel.BranchPersonnelStatus?
-    ) = branchService.getBranchEmployees(id, status).toOkResponse()
+        @RequestParam(required = false) status: BranchPersonnel.BranchPersonnelStatus?,
+        pageable: Pageable
+    ) = branchService.getBranchEmployees(id, status, pageable).toPaginatedResponse()
 }

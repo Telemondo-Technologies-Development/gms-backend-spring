@@ -2,6 +2,8 @@ package com.gms.backend.domain.domain.repository.asset
 
 import com.gms.backend.domain.domain.model.asset.AssetMaintenance
 import com.gms.backend.domain.domain.model.user.Actor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -32,4 +34,5 @@ interface AssetMaintenanceRepository : JpaRepository<AssetMaintenance, UUID> {
         @Param("systemActor") systemActor: Actor,
         @Param("now") now: Instant
     ): Int
+    fun findAllByAssetId(assetId: UUID, pageable: Pageable): Page<AssetMaintenance>
 }

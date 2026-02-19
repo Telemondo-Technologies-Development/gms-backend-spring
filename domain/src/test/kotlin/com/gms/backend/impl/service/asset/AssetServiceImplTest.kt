@@ -109,4 +109,17 @@ class AssetServiceImplTest @Autowired constructor(
             assetServiceImpl.deleteAsset(id)
         }
     }
+
+    @Test
+    fun testGetAssetSchedules() {
+        // Given
+        val assetId = UUID.fromString("019ba2f5-b6e6-7271-893c-ffab220055b1")
+
+        // When
+        val result = assetServiceImpl.getAssetSchedules(assetId, Pageable.unpaged())
+
+        // Then
+        assertNotNull(result.content)
+        assertEquals(4, result.content.size)
+    }
 }

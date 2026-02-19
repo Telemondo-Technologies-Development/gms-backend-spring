@@ -2,6 +2,8 @@ package com.gms.backend.domain.domain.repository.asset
 
 import com.gms.backend.domain.domain.model.asset.Asset
 import com.gms.backend.domain.domain.model.asset.MaintenanceSchedule
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import java.time.Instant
@@ -52,4 +54,5 @@ interface MaintenanceScheduleRepository : JpaRepository<MaintenanceSchedule, UUI
             ms.monthOfYear
     """)
     fun findAllWithLatestMaintenance(): List<ScheduleWithLatestMaintenanceDTO>
+    fun findAllByAssetId(assetId: UUID, pageable: Pageable): Page<MaintenanceSchedule>
 }

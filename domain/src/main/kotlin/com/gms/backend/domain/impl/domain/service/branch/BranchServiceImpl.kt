@@ -84,51 +84,27 @@ class BranchServiceImpl(
     @PreAuthorize("hasAuthority('branch_read') and hasAuthority('branchPersonnel_read')")
     override fun getBranchEmployees(
         branchId: UUID,
-        status: BranchPersonnel.BranchPersonnelStatus?
-    ): BranchController.BranchEmployeesDTO {
+        status: BranchPersonnel.BranchPersonnelStatus?,
+        pageable: Pageable
+    ): Page<BranchController.EmployeeInBranchDTO> {
 
-        val branch = branchRepository.findById(branchId).orElseThrow {
-            NoSuchElementException("Branch not found with ID: $branchId")
-        }
-
-        val statusToUse = status ?: BranchPersonnel.BranchPersonnelStatus.ACTIVE
-
-        // Load branch personnel rows for this branch that match the status filter, if there is no status param provided, then returns all employees
-        val rows = if (status == null) {
-            branchPersonnelRepository.findAllByBranchId(branchId)
+        val rowsPage: Page<BranchPersonnel> = if (status == null) {
+            branchPersonnelRepository.findAllByBranchId(branchId, pageable)
         } else {
-            branchPersonnelRepository.findAllByBranchIdAndStatus(branchId, status)
-        }
-        // if there is no employee under the branch, returns null
-        if (rows.isEmpty()) {
-            return BranchController.BranchEmployeesDTO(
-                branch = branchMapper.branchToSummaryDTO(branch),
-                employees = null
-            )
+            branchPersonnelRepository.findAllByBranchIdAndStatus(branchId, status, pageable)
         }
 
-        // Collect actors from personnel
-        val actorIds = rows.map { it.actorId!! }
+        val actorIds = rowsPage.content.mapNotNull { it.actorId }
+        val employeeByActorId = employeeRepository.findAllByActorIdIn(actorIds).associateBy { it.actorId }
 
-        // load employees by actor ids
-        val employees = employeeRepository.findAllByActorIdIn(actorIds)
-        val employeeByActorId = employees.associateBy { e -> e.actorId }
-
-        // Build response
-        val result = rows.map { bp ->
+        return rowsPage.map { bp ->
             val actorId = bp.actorId!!
-            val employee = employeeByActorId.getValue(actorId)
+            val employee = employeeByActorId[actorId]
 
             BranchController.EmployeeInBranchDTO(
                 actorId = actorId,
-                employee = employee.let(branchMapper::employeeToSummaryDTO)
+                employee = employee?.let(branchMapper::employeeToSummaryDTO)
             )
         }
-
-        return BranchController.BranchEmployeesDTO(
-            branch = branchMapper.branchToSummaryDTO(branch),
-            employees = result
-        )
     }
-
 }

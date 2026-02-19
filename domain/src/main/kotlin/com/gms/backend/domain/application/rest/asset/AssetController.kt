@@ -109,4 +109,19 @@ class AssetController(
     @Operation(summary = "Delete an Asset by ID")
     fun deleteAsset(@PathVariable id: UUID) =
         assetService.deleteAsset(id).toOkResponse("Asset Deleted")
+
+    // Extended endpoints
+    @GetMapping("/{id}/maintenance")
+    @Operation(summary = "Get Asset Maintenance Logs by Asset ID")
+    fun getAssetMaintenance(
+        @PathVariable id: UUID,
+        pageable: Pageable
+    ) = assetService.getAssetMaintenance(id, pageable).toPaginatedResponse()
+
+    @GetMapping("/{id}/maintenance/schedule")
+    @Operation(summary = "Get Asset Maintenance Schedules by Asset ID")
+    fun getAssetSchedules(
+        @PathVariable id: UUID,
+        pageable: Pageable
+    ) = assetService.getAssetSchedules(id, pageable).toPaginatedResponse()
 }

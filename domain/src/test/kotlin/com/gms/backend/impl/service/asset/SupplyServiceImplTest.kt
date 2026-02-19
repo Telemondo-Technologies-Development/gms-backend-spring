@@ -102,9 +102,8 @@ class SupplyServiceImplTest
         val result = supplyServiceImpl.getSupplyLogs(supplyId, Pageable.unpaged())
 
         // Then
-        assertNotNull(result.supply)
-        assertEquals(supplyId, result.supply.id)
-        assertNotNull(result.logs)
+        assertNotNull(result.content)
+        assertEquals(2, result.content.size)
     }
 
     @Test

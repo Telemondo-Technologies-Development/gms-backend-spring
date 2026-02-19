@@ -55,12 +55,6 @@ class SupplyController(
         val updatedById: UUID
     )
 
-    @Schema(description = "Wrapper for Supply and its Logs")
-    data class SupplyWithLogsDTO(
-        val supply: SupplyTableDTO,
-        val logs: List<SuppliesLogController.SuppliesLogTableDTO>?
-    )
-
     // Basic CRUD
     @PostMapping
     @Operation(summary = "Create a Supply")
@@ -89,10 +83,10 @@ class SupplyController(
 
     // Extended endpoints
     @GetMapping("/{id}/log")
-    @Operation(summary = "Get Supply info and its Logs")
+    @Operation(summary = "Get Supply Logs by Supply ID")
     fun getSupplyLogs(
         @PathVariable id: UUID,
         pageable: Pageable
-    ) = supplyService.getSupplyLogs(id, pageable).toOkResponse()
+    ) = supplyService.getSupplyLogs(id, pageable).toPaginatedResponse()
 
 }

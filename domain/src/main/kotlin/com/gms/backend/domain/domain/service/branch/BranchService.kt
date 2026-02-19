@@ -14,6 +14,7 @@ interface BranchService {
     fun deleteBranch(id: UUID)
     fun getBranchEmployees(
         branchId: UUID,
-        status: BranchPersonnel.BranchPersonnelStatus?
-    ): BranchController.BranchEmployeesDTO
+        status: BranchPersonnel.BranchPersonnelStatus?,
+        pageable: Pageable
+    ): Page<BranchController.EmployeeInBranchDTO>
 }

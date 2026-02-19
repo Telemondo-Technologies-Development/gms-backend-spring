@@ -117,12 +117,10 @@ class BranchServiceImplTest
         val branchId = UUID.fromString("019ba279-a6e6-7271-893c-ffab220040a2")
 
         // When
-        val result = branchServiceImpl.getBranchEmployees(branchId, BranchPersonnel.BranchPersonnelStatus.ACTIVE)
+        val result = branchServiceImpl.getBranchEmployees(branchId, BranchPersonnel.BranchPersonnelStatus.ACTIVE, Pageable.unpaged())
 
         // Then
-        assertNotNull(result.branch)
-        assertEquals("Matina", result.branch.name)
-        assertNotNull(result.employees)
-        assertEquals(3, result.employees?.size)
+        assertNotNull(result.content)
+        assertEquals(3, result.content.size)
     }
 }

@@ -12,5 +12,5 @@ interface SupplyService {
     fun getSupplies(pageable: Pageable): Page<SupplyController.SupplyTableDTO>
     fun getSupplyById(id: UUID): SupplyController.SupplyTableDTO
     fun deleteSupply(id: UUID)
-    fun getSupplyLogs(supplyId: UUID, pageable: Pageable): SupplyController.SupplyWithLogsDTO
+    fun getSupplyLogs(supplyId: UUID, pageable: Pageable): Page<SuppliesLogController.SuppliesLogTableDTO>
 }
