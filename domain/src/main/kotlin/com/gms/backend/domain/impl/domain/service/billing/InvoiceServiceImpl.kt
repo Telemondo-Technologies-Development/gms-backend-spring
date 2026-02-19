@@ -29,11 +29,12 @@ class InvoiceServiceImpl(
     @Transactional
     @PreAuthorize("hasAuthority('invoice_create')")
     override fun createInvoice(body: InvoiceController.InvoicePostDTO): InvoiceController.InvoiceTableDTO {
+        val memberSubscription = memberSubscriptionRepository.findById(body.memberSubscriptionId).orElseThrow()
         val invoice = invoiceMapper.invoicePostDTOToInvoice(body).apply {
             actor = actorRepository.getReferenceById(body.actorId)
-            branch = branchRepository.getReferenceById(body.branchId)
-            subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(body.subscriptionAvailedId)
-            memberSubscription = memberSubscriptionRepository.getReferenceById(body.memberSubscriptionId)
+            branch = branchRepository.getReferenceById(memberSubscription.branchId!!)
+            subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(memberSubscription.subscriptionAvailedId!!)
+            this.memberSubscription = memberSubscription
             issuedAt = Instant.now()
             // Currently has no discount
             total = body.subtotal

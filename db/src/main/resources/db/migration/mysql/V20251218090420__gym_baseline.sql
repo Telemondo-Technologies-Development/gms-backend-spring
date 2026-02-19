@@ -129,7 +129,6 @@ CREATE TABLE user_roles (
 
 CREATE TABLE members (
   id 				binary(16) PRIMARY KEY,
-  -- Formulate a unique key to prevent duplicate members
   actor_id 			binary(16) UNIQUE NOT NULL,
   surname			varchar(255) NOT NULL,
   first_name 		varchar(255) NOT NULL,
@@ -142,6 +141,8 @@ CREATE TABLE members (
   updated_by 		binary(16) NOT NULL,
   created_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  -- Not sure to include middle_name and suffix as they are nullable
+  CONSTRAINT uk_name UNIQUE (surname, first_name),
   CONSTRAINT members_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT members_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT members_ibfk_3 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
@@ -215,7 +216,7 @@ CREATE TABLE attendance (
 
 CREATE TABLE billing_cycles (
   id 				binary(16) PRIMARY KEY,
-  name 				varchar(255) NOT NULL,
+  name 				varchar(255) UNIQUE NOT NULL,
   intervals 		varchar(255) NOT NULL,
   interval_count 	int NOT NULL,
   grace_period_days int NOT NULL,
@@ -230,13 +231,14 @@ CREATE TABLE billing_cycles (
 CREATE TABLE subscriptions (
   id 					binary(16) PRIMARY KEY,
   billing_cycle_id 		binary(16) NOT NULL,
-  name 					varchar(255) NOT NULL,
+  name 					varchar(255) UNIQUE NOT NULL,
   description 			text NULL,
   amount 				decimal(10,2) NOT NULL,
   created_by 			binary(16) NOT NULL,
   updated_by 			binary(16) NOT NULL,
   created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT uk_billing_name UNIQUE (billing_cycle_id, name),
   CONSTRAINT subscriptions_ibfk_1 FOREIGN KEY (billing_cycle_id) REFERENCES billing_cycles (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT subscriptions_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT subscriptions_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT

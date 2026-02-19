@@ -14,7 +14,7 @@ import java.math.BigDecimal
 import java.util.*
 
 @RestController
-@RequestMapping("/api/subscriptionAvailed")
+@RequestMapping("/api/subscription-availed")
 @Tag(name = "Subscription Availed")
 class SubscriptionAvailedController(private val subscriptionAvailedService: SubscriptionAvailedServiceImpl) {
 

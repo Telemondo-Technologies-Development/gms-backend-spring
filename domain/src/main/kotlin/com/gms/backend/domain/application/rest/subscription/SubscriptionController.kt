@@ -42,7 +42,7 @@ class SubscriptionController(private val subscriptionService: SubscriptionServic
         @field:NotBlank(message = "Description must not be empty")
         val description: String,
         @field:Positive(message = "Amount must be positive")
-        val amount: Double,
+        val amount: BigDecimal,
         val createdById: UUID
     )
 
@@ -54,7 +54,7 @@ class SubscriptionController(private val subscriptionService: SubscriptionServic
         @field:NotBlank("Description must not be empty")
         val description: String,
         @field:Positive("Amount must be positive")
-        val amount: Double,
+        val amount: BigDecimal,
         val updatedById: UUID
     )
 
