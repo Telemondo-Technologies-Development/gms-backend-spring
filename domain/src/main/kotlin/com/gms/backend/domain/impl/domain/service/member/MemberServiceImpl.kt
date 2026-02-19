@@ -49,7 +49,7 @@ class MemberServiceImpl(
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('member_read')")
     override fun getMemberById(id: UUID): MemberController.MemberTableDTO {
-        return memberRepository.findById(id).orElseThrow().let(memberMapper::memberToMemberTableDTO)
+        return memberRepository.findProjectedBy(id).orElseThrow()
     }
 
     @Transactional

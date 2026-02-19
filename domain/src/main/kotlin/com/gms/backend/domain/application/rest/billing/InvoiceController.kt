@@ -49,8 +49,6 @@ class InvoiceController(private val invoiceService: InvoiceServiceImpl) {
     @Schema(description = "Format for Invoice create")
     data class InvoicePostDTO(
         val actorId: UUID,
-        val subscriptionAvailedId: UUID,
-        val branchId: UUID,
         val memberSubscriptionId: UUID,
         // TODO: Check whether subtotal will be based subscription amount
         @field:PositiveOrZero(message = "Subtotal must not be negative")

@@ -18,7 +18,7 @@ import java.time.Instant
 import java.util.*
 
 @RestController
-@RequestMapping("/api/billingCycle")
+@RequestMapping("/api/billing-cycle")
 @Tag(name = "Billing Cycle")
 class BillingCycleController(private val billingCycleService: BillingCycleServiceImpl) {
 

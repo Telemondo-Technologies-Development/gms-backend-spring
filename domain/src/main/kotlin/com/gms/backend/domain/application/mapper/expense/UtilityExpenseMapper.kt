@@ -6,9 +6,10 @@ import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingTarget
+import org.mapstruct.ReportingPolicy
 import java.util.UUID
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface UtilityExpenseMapper {
     @Mapping(target = "objectIds", source = "utilityExpensesObjects")
     fun toReadDto(utilityExpense: UtilityExpense): UtilityExpenseController.UtilityExpenseReadDTO

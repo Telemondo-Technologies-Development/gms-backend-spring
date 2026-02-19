@@ -6,7 +6,6 @@ import com.gms.backend.domain.impl.domain.service.user.UserServiceImpl
 import com.gms.backend.impl.service.BaseTest
 import io.nats.client.Connection
 import jakarta.persistence.EntityManager
-import org.hibernate.exception.ConstraintViolationException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -14,11 +13,9 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Pageable
-import org.springframework.test.annotation.DirtiesContext
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class UserServiceImplTest
 @Autowired constructor(
     private val userServiceImpl: UserServiceImpl,

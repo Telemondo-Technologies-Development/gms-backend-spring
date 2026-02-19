@@ -5,6 +5,7 @@ import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.impl.domain.service.user.PermissionServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -15,7 +16,7 @@ class PermissionController(private val permissionService: PermissionServiceImpl)
 
     @GetMapping
     @Operation(summary = "Get all Permissions")
-    fun getAllPermissions() = permissionService.getPermissions().toOkResponse()
+    fun getAllPermissions(pageable: Pageable) = permissionService.getPermissions(pageable).toOkResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Permission by id")

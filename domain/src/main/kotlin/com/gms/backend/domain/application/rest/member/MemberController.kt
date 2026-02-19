@@ -5,6 +5,7 @@ import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.application.rest.storage.ObjectStorageController
 import com.gms.backend.domain.domain.model.member.Member
+import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import com.gms.backend.domain.impl.domain.service.member.MemberServiceImpl
 import io.swagger.v3.oas.annotations.Operation
@@ -37,7 +38,15 @@ class MemberController(
         val suffix: String?,
         val status: Member.MemberStatus,
         val createdById: UUID?,
-        val updatedById: UUID?
+        val createdByType: Actor.ActorType?,
+        val createdByEmail: String?,
+        val createdBySurname: String?,
+        val createdByFirstName: String?,
+        val updatedById: UUID?,
+        val updatedByType: Actor.ActorType?,
+        val updatedByEmail: String?,
+        val updatedBySurname: String?,
+        val updatedByFirstName: String?
     )
 
     @Schema(description = "Format for Member create")
