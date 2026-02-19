@@ -4,6 +4,7 @@ import com.gms.backend.domain.application.mapper.user.RoleMapper
 import com.gms.backend.domain.application.response.ApiErrorType
 import com.gms.backend.domain.application.response.DomainException
 import com.gms.backend.domain.application.rest.user.RoleController
+import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.repository.user.PermissionRepository
 import com.gms.backend.domain.domain.repository.user.RoleRepository
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -63,7 +65,8 @@ class RoleServiceImpl(
     @Transactional
     @PreAuthorize("hasAuthority('role_delete')")
     override fun deleteRole(id: UUID) {
-        return roleRepository.deleteById(id)
+        val role = roleRepository.findById(id).orElseThrow()
+        return roleRepository.delete(role)
     }
 
 

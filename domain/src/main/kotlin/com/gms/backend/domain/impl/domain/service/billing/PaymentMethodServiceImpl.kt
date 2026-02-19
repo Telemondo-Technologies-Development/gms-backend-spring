@@ -62,6 +62,7 @@ class PaymentMethodServiceImpl(
     @Transactional
     @PreAuthorize("hasAuthority('paymentMethod_delete')")
     override fun deletePaymentMethod(id: UUID) {
-        return paymentMethodRepository.deleteById(id)
+        val payment = paymentMethodRepository.findById(id).orElseThrow()
+        paymentMethodRepository.delete(payment)
     }
 }

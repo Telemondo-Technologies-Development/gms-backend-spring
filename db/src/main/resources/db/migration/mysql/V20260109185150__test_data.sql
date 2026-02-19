@@ -37,7 +37,8 @@ INSERT INTO `members` (`id`, `actor_id`, `surname`, `first_name`, `middle_name`,
 (0x019ba2c9ef0f7c2f848345ca1d5a42f5, 0xd594bb1121f44511a3fb184b9b557410, 'Connelly', 'Odessa', NULL, NULL, 'IN', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:45:01.587466', '2026-01-09 12:45:01.587466');
 
 INSERT INTO `roles` (`id`, `name`, `description`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019ba2676db67541a1714f0524691e73, 'ADMIN', 'Full Access', 0x8b31746166d1489085a665ae7c6a92d9, 0x8b31746166d1489085a665ae7c6a92d9, '2026-01-09 10:57:25.942328', '2026-01-09 10:57:25.942328');
+(0x019ba2676db67541a1714f0524691e73, 'ADMIN', 'Full Access', 0x8b31746166d1489085a665ae7c6a92d9, 0x8b31746166d1489085a665ae7c6a92d9, '2026-01-09 10:57:25.942328', '2026-01-09 10:57:25.942328'),
+(0x019c52decb087221bbf328a31a517376, 'Test', 'No Access', 0x8b31746166d1489085a665ae7c6a92d9, 0x8b31746166d1489085a665ae7c6a92d9, '2026-01-09 10:57:25.942328', '2026-01-09 10:57:25.942328');
 
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0x019ba2676db67541a1714f0524691e73);
@@ -91,18 +92,6 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bd460624e79238c67993a76d64e78, 'objectStorage_read'),
 (0x019bd458aaf0749e8723c6e9ace4c91c, 'objectStorage_update'),
 (0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_upload'),
-(0x019c51293e1f75b1a64eecaa4f91bbb4, 'otherExpense_create'),
-(0x019c51293e1f75b1a64eecaaf4214ac2, 'otherExpense_delete'),
-(0x019c51293e1e7d6f94de1b35401dc7fe, 'otherExpense_read'),
-(0x019c51293e1e7d6f94de1b35c83d5225, 'otherExpense_update'),
-(0x019c512961877ee89b65da88a686af12, 'salaryExpense_create'),
-(0x019c512961877ee89b65da88d12785ef, 'salaryExpense_delete'),
-(0x019c512961877ee89b65da880e997023, 'salaryExpense_read'),
-(0x019c512961877ee89b65da8827003bae, 'salaryExpense_update'),
-(0x019c51290894791e80e8874d9904c851, 'utilityExpense_create'),
-(0x019c51290894791e80e8874e02879afc, 'utilityExpense_delete'),
-(0x019c51290894791e80e8874c4acf781e, 'utilityExpense_read'),
-(0x019c51290894791e80e8874cee3625b6, 'utilityExpense_update'),
 (0x019bded9eaec78ef9f56a9072ea88ce2, 'payment_create'),
 (0x019bded9eaf57bbc831803963ba6537d, 'payment_delete'),
 (0x019bded9eaf870739e96d9f9f5108f78, 'payment_read'),
@@ -149,28 +138,16 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bd58eff7473009e875068df8c0ad0, 'assetCategory_delete'),
 (0x019bd58eff7473009e875067619b5653, 'assetCategory_read'),
 (0x019bd58eff7473009e875068320448af, 'assetCategory_update'),
-(0x019c51285db9751685c0f8be9b1dd94b, 'assetExpense_create'),
-(0x019c51285db9751685c0f8bfa0a4c5dd, 'assetExpense_delete'),
-(0x019c51285db9751685c0f8bf1e96aef9, 'assetExpense_read'),
-(0x019c51285db87cafa229772bd81f307e, 'assetExpense_update'),
 (0x019bdf23e77d7bd786924eda392f2ee0, 'maintenanceSchedule_create'),
 (0x019bdf23e77d7bd786924edaa8eba0cc, 'maintenanceSchedule_delete'),
 (0x019bdf23e77479c7a970d2b75fcb3092, 'maintenanceSchedule_read'),
 (0x019bdf23e77d7bd786924edaa62a87ab, 'maintenanceSchedule_update'),
 (0x019be4458174715e9ad763f4040e7013, 'assetMaintenance_read'),
 (0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update'),
-(0x019c5128a4fe7838ab3f9f35022bdf7a, 'assetMaintenanceExpense_create'),
-(0x019c5128a4fe7838ab3f9f34ab7b6a2c, 'assetMaintenanceExpense_delete'),
-(0x019c5128a4fe7838ab3f9f34879c650d, 'assetMaintenanceExpense_read'),
-(0x019c5128a4fe7838ab3f9f35e3d5281c, 'assetMaintenanceExpense_update'),
 (0x019c1cf48f427abca8e9cf32cc19c15f, 'suppliesLog_create'),
 (0x019c1cf48f427abca8e9cf33ff8ac7e4, 'suppliesLog_delete'),
 (0x019c1cf48f437abcb2fe04b4619fca4a, 'suppliesLog_read'),
 (0x019c1cf48f437abcb2fe04b4d924df25, 'suppliesLog_update'),
-(0x019c512ac78a72ffb9e50eff79cd8e93, 'suppliesExpense_create'),
-(0x019c512ac78a7b858ffbb340b9c0cdf5, 'suppliesExpense_delete'),
-(0x019c512ac78a72ffb9e50efe8871442e, 'suppliesExpense_read'),
-(0x019c512ac78a7b858ffbb34135e5aa78, 'suppliesExpense_update'),
 (0x019c1cf48f427abca8e9cf33c6a0b80d, 'supply_create'),
 (0x019c1cf48f437abcb2fe04b3bb9a6619, 'supply_read'),
 (0x019c1cf48f3a74f3b1407976bc709fbc, 'supply_update'),
@@ -245,18 +222,6 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019bd458aafa7f34bf419ca0dfa1bddd), -- objectStorage_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019bd458aaf0749e8723c6e9ace4c91c), -- objectStorage_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bd458aafa7f34bf419ca0a74ebb71), -- objectStorage_upload
-(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874d9904c851), -- utilityExpense_create
-(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874e02879afc), -- utilityExpense_delete
-(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874c4acf781e), -- utilityExpense_read
-(0x019ba2676db67541a1714f0524691e73, 0x019c51290894791e80e8874cee3625b6), -- utilityExpense_update
-(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1f75b1a64eecaa4f91bbb4), -- otherExpense_create
-(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1f75b1a64eecaaf4214ac2), -- otherExpense_delete
-(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1e7d6f94de1b35401dc7fe), -- otherExpense_read
-(0x019ba2676db67541a1714f0524691e73, 0x019c51293e1e7d6f94de1b35c83d5225), -- otherExpense_update
-(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da88a686af12), -- salaryExpense_create
-(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da88d12785ef), -- salaryExpense_delete
-(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da880e997023), -- salaryExpense_read
-(0x019ba2676db67541a1714f0524691e73, 0x019c512961877ee89b65da8827003bae), -- salaryExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e897479850a65bfed2e0453), -- employee_create
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e87747ebe3d630f9c04b5f2), -- employee_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019ba3ba5e88747b836acfacb4481e30), -- employee_read
@@ -283,28 +248,16 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875068df8c0ad0), -- assetCategory_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875067619b5653), -- assetCategory_read
 (0x019ba2676db67541a1714f0524691e73, 0x019bd58eff7473009e875068320448af), -- assetCategory_update
-(0x019ba2676db67541a1714f0524691e73, 0x019c51285db9751685c0f8be9b1dd94b), -- assetExpense_create
-(0x019ba2676db67541a1714f0524691e73, 0x019c51285db9751685c0f8bfa0a4c5dd), -- assetExpense_delete
-(0x019ba2676db67541a1714f0524691e73, 0x019c51285db9751685c0f8bf1e96aef9), -- assetExpense_read
-(0x019ba2676db67541a1714f0524691e73, 0x019c51285db87cafa229772bd81f307e), -- assetExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77479c7a970d2b75fcb3092), -- maintenanceSchedule_read
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924eda392f2ee0), -- maintenanceSchedule_create
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa62a87ab), -- maintenanceSchedule_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bdf23e77d7bd786924edaa8eba0cc), -- maintenanceSchedule_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019be4458174715e9ad763f4040e7013), -- assetMaintenance_read
 (0x019ba2676db67541a1714f0524691e73, 0x019be479605678fbb10f3f64f56ae528), -- assetMaintenance_update
-(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f35022bdf7a), -- assetMaintenanceExpense_create
-(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f34ab7b6a2c), -- assetMaintenanceExpense_delete
-(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f34879c650d), -- assetMaintenanceExpense_read
-(0x019ba2676db67541a1714f0524691e73, 0x019c5128a4fe7838ab3f9f35e3d5281c), -- assetMaintenanceExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf32cc19c15f), -- suppliesLog_create
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf33ff8ac7e4), -- suppliesLog_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b4619fca4a), -- suppliesLog_read
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b4d924df25), -- suppliesLog_update
-(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a72ffb9e50eff79cd8e93), -- suppliesExpense_create
-(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a7b858ffbb340b9c0cdf5), -- suppliesExpense_delete
-(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a72ffb9e50efe8871442e), -- suppliesExpense_read
-(0x019ba2676db67541a1714f0524691e73, 0x019c512ac78a7b858ffbb34135e5aa78), -- suppliesExpense_update
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f427abca8e9cf33c6a0b80d), -- supply_create
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f437abcb2fe04b3bb9a6619), -- supply_read
 (0x019ba2676db67541a1714f0524691e73, 0x019c1cf48f3a74f3b1407976bc709fbc), -- supply_update
@@ -333,13 +286,29 @@ INSERT INTO `billing_cycles` (`id`, `name`, `intervals`, `interval_count`, `grac
 (0x019bd4719cd07d638f0f6305426f29a1, 'Monthly', 'MONTHLY', 1, 7, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:09:34.161889', '2026-01-19 04:09:34.161889');
 
 INSERT INTO `subscriptions` (`id`, `billing_cycle_id`, `name`, `description`, `amount`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019bd4733fd77ffe8f6b4b5216aecc62, 0x019bd4719cd07d638f0f6305426f29a1, 'Silver', 'Basic Monthly plan for casual members with service to most equipment', 1299.99, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:11:21.432568', '2026-01-19 04:11:21.432568');
+(0x019bd4733fd77ffe8f6b4b5216aecc62, 0x019bd4719cd07d638f0f6305426f29a1, 'Silver', 'Basic Monthly plan for casual members with service to most equipment', 1299.99, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:11:21.432568', '2026-01-19 04:11:21.432568'),
+(0x019bd4733fd7456e8f6b4b5216afcf22, 0x019bd4719cd07d638f0f6305426f29a1, 'Test', 'Basic Monthly plan for casual members with service to most equipment', 1299.99, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:11:21.432568', '2026-01-19 04:11:21.432568');
 
 INSERT INTO `subscriptions_availed` (`id`, `subscription_id`, `name`, `amount`, `intervals`, `interval_count`, `grace_period_days`) VALUES
-(0x019bd47aea9279f584c8224f9cca1972, 0x019bd4733fd77ffe8f6b4b5216aecc62, 'Silver', 1299.99, 'MONTHLY', 1, 7);
+(0x019bd47aea9279f584c8224f9cca1972, 0x019bd4733fd77ffe8f6b4b5216aecc62, 'Silver', 1299.99, 'MONTHLY', 1, 7),
+(0x019c6fd8694b78649177ae92006e476f, 0x019bd4733fd77ffe8f6b4b5216aecc62, 'Test', 1299.99, 'MONTHLY', 1, 7);
 
 INSERT INTO `member_subscriptions` (`id`, `actor_id`, `subscription_availed_id`, `branch_id`, `start_date`, `end_date`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019bd47aeacd7d4789afe3f9285da33a, 0x8140f50da33f4569b76a20c348b77222, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, '2026-01-19 04:19:44.000000', NULL, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-01-19 04:19:43.951676', '2026-01-19 04:19:43.951676');
+(0x019bd47aeacd7d4789afe3f9285da33a, 0x8140f50da33f4569b76a20c348b77222, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, '2026-01-19 04:19:44.000000', NULL, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-01-19 04:19:43.951676', '2026-01-19 04:19:43.951676'),
+(0x019bd47aeacd7d478140f50da33f4569, 0x8140f50da33f4569b76a20c348b77222, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, '2026-01-19 04:19:44.000000', NULL, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-01-19 04:19:43.951676', '2026-01-19 04:19:43.951676');
+
+INSERT INTO `invoices` (`id`, `actor_id`, `subscription_availed_id`, `branch_id`, `member_subscription_id`, `status`, `subtotal`, `discount`, `convenience_fee`, `total`, `due_date`, `grace_period_date`, `issued_at`, `system_generated`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c716e86d47aeba8d2517c464a9eab, 0xcd950aff5baa4eeab5de2cd1365e5657, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, 0x019bd47aeacd7d4789afe3f9285da33a, 'DRAFT', 1000.00, NULL, NULL, 1000.00, '2026-02-18 15:46:35.000000', '2026-02-18 15:46:35.000000', '2026-02-18 15:46:34.835682', 1, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-18 15:46:34.837189', '2026-02-18 15:46:34.837189'),
+(0x019c716e86d47aeba8d2517c7982a8d0, 0xcd950aff5baa4eeab5de2cd1365e5657, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, 0x019bd47aeacd7d4789afe3f9285da33a, 'DRAFT', 1000.00, NULL, NULL, 1000.00, '2026-02-18 15:46:35.000000', '2026-02-18 15:46:35.000000', '2026-02-18 15:46:34.835682', 1, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-18 15:46:34.837189', '2026-02-18 15:46:34.837189');
+
+INSERT INTO `payment_methods` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c748b4b927982a8d041ebfa856dd8, 'G-Cash', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:16:51.859124', '2026-02-19 06:16:51.859124'),
+(0x019c748b6dd77f578135c86b077d7f77, 'Cash', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:17:00.632486', '2026-02-19 06:17:00.632486'),
+(0x019c748b848f79ac82df9cd6fa601a45, 'Card', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:17:06.448128', '2026-02-19 06:17:06.448128');
+
+INSERT INTO `payments` (`id`, `invoice_id`, `reference_num`, `status`, `payment_method_id`, `amount`, `paid_at`, `failure_reason`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c748e57dd71cc8ad301923aa45f12, 0x019c716e86d47aeba8d2517c464a9eab, NULL, 'OUT', 0x019c748b4b927982a8d041ebfa856dd8, 1000.00, NULL, NULL, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:20:11.614664', '2026-02-19 06:20:11.614664');
+
 
 INSERT INTO `asset_categories` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba2f1a6e67271893cffab220040a1, 'Cardio Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244'),
