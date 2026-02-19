@@ -33,6 +33,7 @@ class BranchPersonnelController(
         val id: UUID,
         val actorId: UUID,
         val branchId: UUID,
+        val personnelRoleId: UUID,
         val status: BranchPersonnel.BranchPersonnelStatus,
         val createdById: UUID?,
         val updatedById: UUID?,
@@ -44,6 +45,7 @@ class BranchPersonnelController(
     data class BranchPersonnelPostDTO(
         val actorId: UUID,
         val branchId: UUID,
+        val personnelRoleId: UUID,
         val status: BranchPersonnel.BranchPersonnelStatus = BranchPersonnel.BranchPersonnelStatus.UNDECIDED,
         val createdById: UUID,
     )
@@ -52,6 +54,7 @@ class BranchPersonnelController(
     data class BranchPersonnelPutDTO(
         val actorId: UUID,
         val branchId: UUID,
+        val personnelRoleId: UUID,
         val status: BranchPersonnel.BranchPersonnelStatus,
         val updatedById: UUID
     )

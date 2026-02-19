@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -43,7 +44,7 @@ class RoleController(private val roleService: RoleServiceImpl) {
     data class RolePostDTO(
         @field:NotBlank
         val name: String,
-        @field:NotBlank
+        @field:Size(min = 1, message = "Description cannot be blank if provided")
         val description: String,
         val createdById: UUID
     )
@@ -52,7 +53,7 @@ class RoleController(private val roleService: RoleServiceImpl) {
     data class RolePutDTO(
         @field:NotBlank
         val name: String,
-        @field:NotBlank
+        @field:Size(min = 1, message = "Description cannot be blank if provided")
         val description: String,
         val updatedById: UUID
     )

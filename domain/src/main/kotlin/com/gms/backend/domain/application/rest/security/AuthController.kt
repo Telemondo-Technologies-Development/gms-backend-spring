@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/auth")
@@ -25,19 +25,22 @@ import java.util.UUID
 class AuthController(
     private val authenticationManager: AuthenticationManager,
     private val securityContextRepository: SecurityContextRepository = DelegatingSecurityContextRepository(
-        HttpSessionSecurityContextRepository(),
-        RequestAttributeSecurityContextRepository()
+        HttpSessionSecurityContextRepository(), RequestAttributeSecurityContextRepository()
     )
 ) {
 
     data class LogInDTO(var username: String, var password: String)
-    data class LogInResponse(var email: String, var actorId: UUID, var branches: List<BranchController.BranchListDTO>)
+    data class LogInResponse(
+        var email: String,
+        var actorId: UUID,
+        var branches: List<BranchController.BranchListDTO>,
+        var roles: List<String>,
+        val permissions: Map<String, List<Char>>
+    )
 
     @PostMapping("/login")
     fun login(
-        @RequestBody body: LogInDTO,
-        request: HttpServletRequest,
-        response: HttpServletResponse
+        @RequestBody body: LogInDTO, request: HttpServletRequest, response: HttpServletResponse
     ): ResponseEntity<LogInResponse> {
         // 1. Create the authentication token from request data
         val authToken = UsernamePasswordAuthenticationToken.unauthenticated(body.username, body.password)
@@ -62,7 +65,9 @@ class AuthController(
         }
 
         val principal = authentication.principal as CustomUserDetails
-        val response = LogInResponse(principal.email, principal.actorId, principal.branches)
+        val response = LogInResponse(
+            principal.email, principal.actorId, principal.branches, principal.roles, principal.compactPermissions
+        )
         return responseBuilder.body(response)
     }
 }

@@ -10,6 +10,8 @@ class CustomUserDetails(
     val email: String,
     val branches: List<BranchController.BranchListDTO>,
     val actorId: UUID,
+    val roles: List<String>,
+    val compactPermissions: Map<String, List<Char>>,
     private var password: String?,
     private val authorities: Collection<GrantedAuthority>
 ) : UserDetails, CredentialsContainer {
