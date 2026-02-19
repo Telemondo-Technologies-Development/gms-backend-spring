@@ -377,10 +377,23 @@ CREATE TABLE ledgers (
 
 -- Branch Management
 
+CREATE TABLE personnel_roles (
+  id          binary(16) PRIMARY KEY,
+  name        varchar(255) UNIQUE NOT NULL,
+  description varchar(255) NULL,
+  created_by  binary(16) NOT NULL,
+  updated_by  binary(16) NOT NULL,
+  created_at  datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at  datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT personnel_roles_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT personnel_roles_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
 CREATE TABLE branch_personnel (
-  id 			binary(16) PRIMARY KEY,
-  actor_id 		binary(16) NOT NULL,
-  branch_id 	binary(16) NOT NULL,
+  id 					binary(16) PRIMARY KEY,
+  actor_id 				binary(16) NOT NULL,
+  branch_id 			binary(16) NOT NULL,
+  personnel_role_id		binary(16) NOT NULL,
   -- Not final
   status 		varchar(255) NOT NULL,
   created_by 	binary(16) NOT NULL,
@@ -390,8 +403,9 @@ CREATE TABLE branch_personnel (
   CONSTRAINT uk_actor_branch UNIQUE (actor_id, branch_id),
   CONSTRAINT branch_personnel_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT branch_personnel_ibfk_2 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT branch_personnel_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT branch_personnel_ibfk_4 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT branch_personnel_ibfk_3 FOREIGN KEY (personnel_role_id) REFERENCES personnel_roles (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT branch_personnel_ibfk_4 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT branch_personnel_ibfk_5 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 -- Asset Tracking
