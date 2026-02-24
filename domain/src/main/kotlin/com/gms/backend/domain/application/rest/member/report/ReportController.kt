@@ -3,6 +3,9 @@ package com.gms.backend.domain.application.rest.member.report
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
+import com.gms.backend.domain.domain.model.branch.Branch
+import com.gms.backend.domain.domain.model.member.Member
+import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.impl.domain.service.member.report.ReportServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
@@ -20,18 +23,44 @@ class ReportController(private val reportService: ReportServiceImpl) {
 
     @Schema(description = "Format for Report read")
     data class ReportTableDTO(
+        // Report fields
         val id: UUID,
-        val branchId: UUID,
-        val actorId: UUID,
         val reportTypeId: UUID,
         val description: String?,
         val occurredAt: Instant?,
-        val objectIds: List<UUID> = emptyList(),
+
+        // branch fields
+        val branchId: UUID?,
+        val branchName: String?,
+        val branchAddress: String?,
+        val branchStatus: Branch.BranchStatus?,
+
+        // actor/member fields
+        val actorId: UUID?,
+        val actorSurname: String?,
+        val actorFirstname: String?,
+        val actorStatus: Member.MemberStatus?,
+
+        // createdBy fields
         val createdById: UUID?,
+        val createdByType: Actor.ActorType?,
+        val createdByEmail: String?,
+        val createdBySurname: String?,
+        val createdByFirstName: String?,
+
+        // updatedBy fields
         val updatedById: UUID?,
+        val updatedByType: Actor.ActorType?,
+        val updatedByEmail: String?,
+        val updatedBySurname: String?,
+        val updatedByFirstName: String?,
+
         val createdAt: Instant,
         val updatedAt: Instant
     )
+    {
+        var objectIds: List<UUID> = emptyList()
+    }
 
     @Schema(description = "Format for Report create")
     data class ReportPostDTO(
@@ -53,6 +82,11 @@ class ReportController(private val reportService: ReportServiceImpl) {
         val occurredAt: Instant?,
         val objectIds: List<UUID> = emptyList(),
         val updatedById: UUID
+    )
+
+    data class ReportObjectMappingDTO(
+        val reportId: UUID,
+        val objectId: UUID
     )
 
     // Basic CRUD

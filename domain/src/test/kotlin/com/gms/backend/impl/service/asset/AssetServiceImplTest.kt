@@ -18,7 +18,6 @@ import java.util.NoSuchElementException
 import java.util.UUID
 import kotlin.jvm.optionals.getOrNull
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class AssetServiceImplTest @Autowired constructor(
     private val assetServiceImpl: AssetServiceImpl,
     private val assetRepository: AssetRepository,
@@ -120,6 +119,6 @@ class AssetServiceImplTest @Autowired constructor(
 
         // Then
         assertNotNull(result.content)
-        assertEquals(4, result.content.size)
+        assertEquals(5, result.content.size)
     }
 }

@@ -16,7 +16,6 @@ import org.springframework.test.annotation.DirtiesContext
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class BranchServiceImplTest
 @Autowired constructor(
     private val branchServiceImpl: BranchServiceImpl,

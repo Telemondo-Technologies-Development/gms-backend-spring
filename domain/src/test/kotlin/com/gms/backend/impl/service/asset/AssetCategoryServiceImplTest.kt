@@ -16,7 +16,6 @@ import org.springframework.test.annotation.DirtiesContext
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class AssetCategoryServiceImplTest @Autowired constructor(
     private val assetCategoryServiceImpl: AssetCategoryServiceImpl,
     private val assetCategoryRepository: AssetCategoryRepository,

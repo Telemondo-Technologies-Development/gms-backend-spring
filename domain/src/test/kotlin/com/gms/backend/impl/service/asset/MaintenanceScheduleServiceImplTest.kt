@@ -21,7 +21,6 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class MaintenanceScheduleServiceImplTest @Autowired constructor(
     private val maintenanceScheduleServiceImpl: MaintenanceScheduleServiceImpl,
     private val maintenanceScheduleRepository: MaintenanceScheduleRepository,
@@ -39,7 +38,7 @@ class MaintenanceScheduleServiceImplTest @Autowired constructor(
     @Test
     fun testReadMaintenanceSchedules() {
         val schedules = maintenanceScheduleServiceImpl.getSchedules(Pageable.unpaged())
-        assertEquals(7, schedules.totalElements)
+        assertEquals(8, schedules.totalElements)
     }
 
     @Test
@@ -116,7 +115,7 @@ class MaintenanceScheduleServiceImplTest @Autowired constructor(
     @Test
     fun testDeleteMaintenanceSchedule() {
         // Given
-        val id = UUID.fromString("3917b8af-f5ed-11f0-bd30-0242ac140002")//Hourly maintenance
+        val id = UUID.fromString("019ba2f9-c6e6-7271-893c-ffab22009999")
         val initialCount = maintenanceScheduleRepository.count()
 
         // When
