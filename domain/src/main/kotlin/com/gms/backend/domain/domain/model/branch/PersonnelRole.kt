@@ -2,6 +2,8 @@ package com.gms.backend.domain.domain.model.branch
 
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -9,16 +11,8 @@ import java.time.Instant
 import java.util.*
 
 @Entity
-@Table(name = "branch_personnel")
-class BranchPersonnel {
-
-    enum class BranchPersonnelStatus {
-        ACTIVE,
-        MOVED,
-        TERMINATED,
-        RESIGNED,
-        UNDECIDED
-    }
+@Table(name = "personnel_roles")
+class PersonnelRole {
 
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
@@ -26,16 +20,13 @@ class BranchPersonnel {
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     lateinit var id: UUID
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    lateinit var status: BranchPersonnelStatus
+    @Column(nullable = false, unique = true)
+    @NotBlank
+    lateinit var name: String
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
-    @JoinColumn(name = "personnel_role_id", nullable = false)
-    lateinit var personnelRole: PersonnelRole
-
-    @Column(name = "personnel_role_id", insertable = false, updatable = false)
-    var personnelRoleId: UUID? = null
+    @Column(nullable = true, name = "description")
+    @field:Size(min = 1, message = "Description cannot be blank if provided")
+    var description: String? = null
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -44,20 +35,6 @@ class BranchPersonnel {
     @UpdateTimestamp
     @Column(nullable = false)
     lateinit var updatedAt: Instant
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "actor_id", nullable = false)
-    lateinit var actor: Actor
-
-    @Column(name = "actor_id", insertable = false, updatable = false)
-    var actorId: UUID? = null
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id", nullable = false)
-    lateinit var branch: Branch
-
-    @Column(name = "branch_id", insertable = false, updatable = false)
-    var branchId: UUID? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
@@ -72,4 +49,7 @@ class BranchPersonnel {
 
     @Column(name = "updated_by", insertable = false, updatable = false)
     var updatedById: UUID? = null
+
+    @OneToMany(mappedBy = "personnelRole")
+    var branchPersonnelRoles = mutableSetOf<BranchPersonnel>()
 }

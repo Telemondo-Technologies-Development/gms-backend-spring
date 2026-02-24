@@ -44,6 +44,16 @@ INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0x019ba2676db67541a1714f0524691e73);
 
 INSERT INTO `permissions` (`id`, `name`) VALUES
+(0x019bd58eff7473009e875069c52f54be, 'asset_create'),
+(0x019bd58eff637c2b87b654e7a15ea030, 'asset_delete'),
+(0x019bd58eff7473009e87506608bff869, 'asset_read'),
+(0x019bd58eff7473009e875066f42d80fd, 'asset_update'),
+(0x019bd58eff7473009e875067d60e0bbb, 'assetCategory_create'),
+(0x019bd58eff7473009e875068df8c0ad0, 'assetCategory_delete'),
+(0x019bd58eff7473009e875067619b5653, 'assetCategory_read'),
+(0x019bd58eff7473009e875068320448af, 'assetCategory_update'),
+(0x019be4458174715e9ad763f4040e7013, 'assetMaintenance_read'),
+(0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update'),
 (0x019bdedaf07975009778b92857da58b4, 'attendance_create'),
 (0x019bdedaf07975009778b9293fdfc819, 'attendance_delete'),
 (0x019bdedaf0787c83832caeaa986c720d, 'attendance_read'),
@@ -76,6 +86,10 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bded9eaf67bbda6fad79b18d2bbb5, 'ledger_delete'),
 (0x019bded9eaf67bbda6fad79b5ea8178c, 'ledger_read'),
 (0x019bded9eaf67bbda6fad79b178b51c6, 'ledger_update'),
+(0x019bdf23e77d7bd786924eda392f2ee0, 'maintenanceSchedule_create'),
+(0x019bdf23e77d7bd786924edaa8eba0cc, 'maintenanceSchedule_delete'),
+(0x019bdf23e77479c7a970d2b75fcb3092, 'maintenanceSchedule_read'),
+(0x019bdf23e77d7bd786924edaa62a87ab, 'maintenanceSchedule_update'),
 (0x019ba2c04a027259a6a80fd67e3babbf, 'member_create'),
 (0x019ba2c04a027259a6a80fd6e82d35a6, 'member_delete'),
 (0x019ba2c04a0179cf901764ca8478a14e, 'member_read'),
@@ -104,6 +118,10 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba3ba5e897479850a65be77b00a39, 'permission_delete'),
 (0x019ba3ba5e88747b836acfabdf25808c, 'permission_read'),
 (0x019ba3ba5e897479850a65c05980003a, 'permission_update'),
+(0x019c7529f2d8744a99ea6c7af76a4564, 'personnelRole_create'),
+(0x019c7529f2df74caa54615ee3e2224f9, 'personnelRole_delete'),
+(0x019c7529f2df74caa54615eeedabf717, 'personnelRole_read'),
+(0x019c7529f2df74caa54615ed5b9ff2b8, 'personnelRole_update'),
 (0x019bdedaa16972889d6c55d9e6f09595, 'progress_create'),
 (0x019bdedaa16879e5bdcdebf93342c00c, 'progress_delete'),
 (0x019bdedaa16879e5bdcdebfaf6b299c5, 'progress_read'),
@@ -112,6 +130,14 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bdedaa16879e5bdcdebfa0c113edf, 'progressOption_delete'),
 (0x019bdedaa16778f1b5be9d03f8c576cb, 'progressOption_read'),
 (0x019bdedaa16972889d6c55db6ab375db, 'progressOption_update'),
+(0x019c40fe24427ef480fe55107665e327, 'report_create'),
+(0x019c40fe24427ef480fe5510f6b948bb, 'report_delete'),
+(0x019c40fe24427ef480fe5511533a266c, 'report_read'),
+(0x019c40fe24427ef480fe550fed7b79c2, 'report_update'),
+(0x019c40fe24427ef480fe5511585a5852, 'reportType_create'),
+(0x019c40fe24427ef480fe5512542904e9, 'reportType_delete'),
+(0x019c40fe24427ef480fe55103544f417, 'reportType_read'),
+(0x019c40fe24427657a6e179fd612b3155, 'reportType_update'),
 (0x019ba3ba5e88747b836acfad3358623a, 'role_create'),
 (0x019ba3ba5e897479850a65bd3e46013e, 'role_delete'),
 (0x019ba3ba5e897479850a65bf0827d3b9, 'role_read'),
@@ -126,42 +152,24 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bb559885e7175a417424c8bacb0e3, 'subscriptionAvailed_delete'),
 (0x019bb559885e7175a417424a8d6b5f97, 'subscriptionAvailed_read'),
 (0x019bb559885e7175a417424ba1dc0b6e, 'subscriptionAvailed_update'),
-(0x019ba3ba5e897479850a65bc67eedbac, 'user_create'),
-(0x019ba3ba5e757aa1afdbdcb4efe4654d, 'user_delete'),
-(0x019ba3ba5e897479850a65bd7a7ce73a, 'user_read'),
-(0x019ba3ba5e87747ebe3d630d6635fa0e, 'user_update'),
-(0x019bd58eff7473009e875069c52f54be, 'asset_create'),
-(0x019bd58eff637c2b87b654e7a15ea030, 'asset_delete'),
-(0x019bd58eff7473009e87506608bff869, 'asset_read'),
-(0x019bd58eff7473009e875066f42d80fd, 'asset_update'),
-(0x019bd58eff7473009e875067d60e0bbb, 'assetCategory_create'),
-(0x019bd58eff7473009e875068df8c0ad0, 'assetCategory_delete'),
-(0x019bd58eff7473009e875067619b5653, 'assetCategory_read'),
-(0x019bd58eff7473009e875068320448af, 'assetCategory_update'),
-(0x019bdf23e77d7bd786924eda392f2ee0, 'maintenanceSchedule_create'),
-(0x019bdf23e77d7bd786924edaa8eba0cc, 'maintenanceSchedule_delete'),
-(0x019bdf23e77479c7a970d2b75fcb3092, 'maintenanceSchedule_read'),
-(0x019bdf23e77d7bd786924edaa62a87ab, 'maintenanceSchedule_update'),
-(0x019be4458174715e9ad763f4040e7013, 'assetMaintenance_read'),
-(0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update'),
 (0x019c1cf48f427abca8e9cf32cc19c15f, 'suppliesLog_create'),
 (0x019c1cf48f427abca8e9cf33ff8ac7e4, 'suppliesLog_delete'),
 (0x019c1cf48f437abcb2fe04b4619fca4a, 'suppliesLog_read'),
 (0x019c1cf48f437abcb2fe04b4d924df25, 'suppliesLog_update'),
 (0x019c1cf48f427abca8e9cf33c6a0b80d, 'supply_create'),
+(0x019c1cf48f427abca8e9cf32f94ffcde, 'supply_delete'),
 (0x019c1cf48f437abcb2fe04b3bb9a6619, 'supply_read'),
 (0x019c1cf48f3a74f3b1407976bc709fbc, 'supply_update'),
-(0x019c1cf48f427abca8e9cf32f94ffcde, 'supply_delete'),
-(0x019c40fe24427ef480fe55107665e327, 'report_create'),
-(0x019c40fe24427ef480fe5510f6b948bb, 'report_delete'),
-(0x019c40fe24427ef480fe5511533a266c, 'report_read'),
-(0x019c40fe24427ef480fe550fed7b79c2, 'report_update'),
-(0x019c40fe24427ef480fe5511585a5852, 'reportType_create'),
-(0x019c40fe24427ef480fe5512542904e9, 'reportType_delete'),
-(0x019c40fe24427ef480fe55103544f417, 'reportType_read'),
-(0x019c40fe24427657a6e179fd612b3155, 'reportType_update');
+(0x019ba3ba5e897479850a65bc67eedbac, 'user_create'),
+(0x019ba3ba5e757aa1afdbdcb4efe4654d, 'user_delete'),
+(0x019ba3ba5e897479850a65bd7a7ce73a, 'user_read'),
+(0x019ba3ba5e87747ebe3d630d6635fa0e, 'user_update');
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
+(0x019ba2676db67541a1714f0524691e73, 0x019c7529f2d8744a99ea6c7af76a4564), -- personnelRole_create
+(0x019ba2676db67541a1714f0524691e73, 0x019c7529f2df74caa54615ee3e2224f9), -- personnelRole_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c7529f2df74caa54615eeedabf717), -- personnelRole_read
+(0x019ba2676db67541a1714f0524691e73, 0x019c7529f2df74caa54615ed5b9ff2b8), -- personnelRole_update
 (0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf77bf2a490bbc1b6327a8d), -- invoice_create
 (0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf870739e96d9f9125cd9ee), -- invoice_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019bded9eaf870739e96d9f81fb0543a), -- invoice_read
@@ -276,10 +284,14 @@ INSERT INTO `branch` (`id`, `name`, `address`, `longitude`, `latitude`, `status`
 (0x019ba297802d78e4804acbed3a77e6ce, 'Matinaa', 'Shrine', '125.57942199490718', '7.066796997635181', 'ACTIVE', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 11:49:56.427355', '2026-01-09 11:49:56.427355'),
 (0x019ba2b747f57a9e862da61d2fc30ee6, 'Matinaaa', 'Lanang', '125.62899620875633', '7.099976731994823', 'ACTIVE', NULL, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-01-09 12:24:39.197351', '2026-01-09 12:24:39.197351');
 
-INSERT INTO `branch_personnel` (`id`, `actor_id`, `branch_id`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019ba2b8df68779199d6d4181d6c2950, 0x8b31746166d1489085a665ae7c6a92d9, 0x019ba279a6e67271893cffab220040a2, 'ACTIVE', 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:26:23.464473', '2026-01-09 12:28:13.213085'),
-(0x019ba2bcf8cc74199f9d50c3e2ee9c3d, 0x4489e6a55bc74126884233613e7bcfe0, 0x019ba279a6e67271893cffab220040a2, 'ACTIVE', 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:30:52.108775', '2026-01-09 12:30:52.108775'),
-(0x019c1bfae7e177f5bf7fc344d7680e77, 0x71334a2138eb424983024eac34f17568, 0x019ba279a6e67271893cffab220040a2, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-02 01:32:34.146019', '2026-02-02 01:32:34.146019');
+INSERT INTO `personnel_roles` (`id`, `name`, `description`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019eeee76db67541a1714f0524691e73, 'Manager', 'Responsible for being a manager', 0x8b31746166d1489085a665ae7c6a92d9, 0x8b31746166d1489085a665ae7c6a92d9, '2026-01-09 10:57:25.942328', '2026-01-09 10:57:25.942328'),
+(0x019eeeeecb087221bbf328a31a517376, 'Test', 'No Access', 0x8b31746166d1489085a665ae7c6a92d9, 0x8b31746166d1489085a665ae7c6a92d9, '2026-01-09 10:57:25.942328', '2026-01-09 10:57:25.942328');
+
+INSERT INTO `branch_personnel` (`id`, `actor_id`, `branch_id`, `personnel_role_id`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019ba2b8df68779199d6d4181d6c2950, 0x8b31746166d1489085a665ae7c6a92d9, 0x019ba279a6e67271893cffab220040a2, 0x019eeee76db67541a1714f0524691e73, 'ACTIVE', 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:26:23.464473', '2026-01-09 12:28:13.213085'),
+(0x019ba2bcf8cc74199f9d50c3e2ee9c3d, 0x4489e6a55bc74126884233613e7bcfe0, 0x019ba279a6e67271893cffab220040a2, 0x019eeee76db67541a1714f0524691e73, 'ACTIVE', 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:30:52.108775', '2026-01-09 12:30:52.108775'),
+(0x019c1bfae7e177f5bf7fc344d7680e77, 0x71334a2138eb424983024eac34f17568, 0x019ba279a6e67271893cffab220040a2, 0x019eeee76db67541a1714f0524691e73, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-02 01:32:34.146019', '2026-02-02 01:32:34.146019');
 
 INSERT INTO `billing_cycles` (`id`, `name`, `intervals`, `interval_count`, `grace_period_days`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019bd4716bcc799c89953f5e7b76cabf, 'Bi-weekly', 'WEEKLY', 2, 7, 0x7b8bed31a74a4ea5ade4a60b42170062, 0x7b8bed31a74a4ea5ade4a60b42170062, '2026-01-19 04:09:21.621513', '2026-01-19 04:09:21.621513'),

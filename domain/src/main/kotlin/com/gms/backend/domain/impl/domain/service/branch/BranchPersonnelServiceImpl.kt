@@ -4,6 +4,7 @@ import com.gms.backend.domain.application.mapper.branch.BranchPersonnelMapper
 import com.gms.backend.domain.application.rest.branch.BranchPersonnelController
 import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
+import com.gms.backend.domain.domain.repository.branch.PersonnelRoleRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.branch.BranchPersonnelService
 import org.springframework.data.domain.Page
@@ -19,6 +20,7 @@ class BranchPersonnelServiceImpl(
     private val branchPersonnelRepository: BranchPersonnelRepository,
     private val actorRepository: ActorRepository,
     private val branchRepository: BranchRepository,
+    private val personnelRoleRepository: PersonnelRoleRepository,
     private val branchPersonnelMapper: BranchPersonnelMapper
 ) : BranchPersonnelService {
 
@@ -30,11 +32,13 @@ class BranchPersonnelServiceImpl(
 
         val actorRef = actorRepository.getReferenceById(body.actorId)
         val branchRef = branchRepository.getReferenceById(body.branchId)
+        val personnelRoleRef = personnelRoleRepository.getReferenceById(body.personnelRoleId)
         val actionActorRef = actorRepository.getReferenceById(body.createdById)
 
         val branchPersonnel = branchPersonnelMapper.branchPersonnelDTOToBranchPersonnel(body).apply {
             actor = actorRef
             branch = branchRef
+            personnelRole = personnelRoleRef
             createdBy = actionActorRef
             updatedBy = actionActorRef
         }
@@ -55,6 +59,7 @@ class BranchPersonnelServiceImpl(
             branchPersonnelMapper.branchPersonnelPutDTOToBranchPersonnel(body, this)
             actor = actorRepository.getReferenceById(body.actorId)
             branch = branchRepository.getReferenceById(body.branchId)
+            personnelRole = personnelRoleRepository.getReferenceById(body.personnelRoleId)
             updatedBy = actorRepository.getReferenceById(body.updatedById)
         }
 
