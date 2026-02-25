@@ -20,7 +20,7 @@ class AssetCategory {
     lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
-    @field: NotBlank(message = "Category name is required")
+    @field: NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
     @CreationTimestamp

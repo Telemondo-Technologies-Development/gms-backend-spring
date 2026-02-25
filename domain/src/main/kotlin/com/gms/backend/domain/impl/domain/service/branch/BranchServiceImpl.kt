@@ -3,6 +3,7 @@ package com.gms.backend.domain.impl.domain.service.branch
 import com.gms.backend.domain.application.mapper.branch.BranchMapper
 import com.gms.backend.domain.application.rest.branch.BranchController
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
+import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
@@ -84,51 +85,22 @@ class BranchServiceImpl(
     @PreAuthorize("hasAuthority('branch_read') and hasAuthority('branchPersonnel_read')")
     override fun getBranchEmployees(
         branchId: UUID,
-        status: BranchPersonnel.BranchPersonnelStatus?
-    ): BranchController.BranchEmployeesDTO {
+        branchPersonnelStatus: BranchPersonnel.BranchPersonnelStatus?,
+        employeeStatus: Employee.EmployeeStatus?,
+        pageable: Pageable
+    ): Page<BranchController.EmployeeInBranchDTO> {
 
-        val branch = branchRepository.findById(branchId).orElseThrow {
-            NoSuchElementException("Branch not found with ID: $branchId")
-        }
+        // Default values if the parameters are not set:
+        val finalBpStatus = branchPersonnelStatus ?: BranchPersonnel.BranchPersonnelStatus.ACTIVE
+        val finalEStatus = employeeStatus ?: Employee.EmployeeStatus.IN
 
-        val statusToUse = status ?: BranchPersonnel.BranchPersonnelStatus.ACTIVE
-
-        // Load branch personnel rows for this branch that match the status filter, if there is no status param provided, then returns all employees
-        val rows = if (status == null) {
-            branchPersonnelRepository.findAllByBranchId(branchId)
-        } else {
-            branchPersonnelRepository.findAllByBranchIdAndStatus(branchId, status)
-        }
-        // if there is no employee under the branch, returns null
-        if (rows.isEmpty()) {
-            return BranchController.BranchEmployeesDTO(
-                branch = branchMapper.branchToSummaryDTO(branch),
-                employees = null
-            )
-        }
-
-        // Collect actors from personnel
-        val actorIds = rows.map { it.actorId!! }
-
-        // load employees by actor ids
-        val employees = employeeRepository.findAllByActorIdIn(actorIds)
-        val employeeByActorId = employees.associateBy { e -> e.actorId }
-
-        // Build response
-        val result = rows.map { bp ->
-            val actorId = bp.actorId!!
-            val employee = employeeByActorId.getValue(actorId)
-
-            BranchController.EmployeeInBranchDTO(
-                actorId = actorId,
-                employee = employee.let(branchMapper::employeeToSummaryDTO)
-            )
-        }
-
-        return BranchController.BranchEmployeesDTO(
-            branch = branchMapper.branchToSummaryDTO(branch),
-            employees = result
+        val branchEmployees = branchPersonnelRepository.findAllEmployeesByBranchIdAndStatus(
+            branchId = branchId,
+            bpStatus = finalBpStatus,
+            eStatus = finalEStatus,
+            pageable = pageable
         )
-    }
 
+        return branchEmployees
+    }
 }

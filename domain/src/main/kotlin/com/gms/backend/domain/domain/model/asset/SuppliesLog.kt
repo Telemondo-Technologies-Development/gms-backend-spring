@@ -4,6 +4,7 @@ import com.gms.backend.domain.domain.model.expense.SuppliesExpense
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.hibernate.annotations.CreationTimestamp
@@ -23,11 +24,11 @@ class SuppliesLog {
     lateinit var id: UUID
 
     @Column(nullable = false)
-    @field:NotBlank(message = "Name is required")
+    @field:NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
-    @Column(nullable = false)
     @field:NotNull(message = "Quantity is required")
+    @Column(nullable = false)
     var quantity: Int = 0
 
     @Column
@@ -72,4 +73,7 @@ class SuppliesLog {
         inverseJoinColumns = [JoinColumn(name = "object_id")]
     )
     var suppliesLogObjects = mutableSetOf<ObjectStorage>()
+
+    @AssertTrue(message = "Quantity cannot be zero")
+    fun isQuantityValid(): Boolean = quantity != 0
 }

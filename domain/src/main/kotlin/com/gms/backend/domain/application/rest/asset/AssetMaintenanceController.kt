@@ -31,9 +31,12 @@ class AssetMaintenanceController(
         val description: String?,
         val objectIds: List<UUID> = emptyList(),
         val createdById: UUID?,
-        val updatedById: UUID?
+        val updatedById: UUID?,
+        val createdAt: Instant,
+        val updatedAt: Instant
     )
 
+    @Schema(description = "Format for Asset Maintenance Log patch")
     data class AssetMaintenancePatchDTO(
         val status: AssetMaintenance.AssetMaintenanceStatus,
         val description: String?,
@@ -42,18 +45,19 @@ class AssetMaintenanceController(
         val updatedById: UUID
     )
 
+    // Basic CRUD
     @GetMapping
-    @Operation(summary = "Get all maintenance logs (paginated)")
+    @Operation(summary = "Get all Asset Maintenances")
     fun getAllMaintenance(pageable: Pageable) =
         maintenanceService.getMaintenanceLogs(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a maintenance log by id")
+    @Operation(summary = "Get an Asset Maintenance by id")
     fun getMaintenanceById(@PathVariable id: UUID) =
         maintenanceService.getMaintenanceLogById(id).toOkResponse()
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Update maintenance status, description, files, and completion date")
+    @Operation(summary = "Update an Asset Maintenance status, description, files, and completion date by id")
     fun updateMaintenanceStatus(
         @PathVariable id: UUID,
         @RequestBody request: AssetMaintenancePatchDTO

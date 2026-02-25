@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.service.asset
 
+import com.gms.backend.domain.application.rest.asset.SuppliesLogController
 import com.gms.backend.domain.application.rest.asset.SupplyController
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -11,5 +12,5 @@ interface SupplyService {
     fun getSupplies(pageable: Pageable): Page<SupplyController.SupplyTableDTO>
     fun getSupplyById(id: UUID): SupplyController.SupplyTableDTO
     fun deleteSupply(id: UUID)
-    fun getSupplyLogs(supplyId: UUID, pageable: Pageable): SupplyController.SupplyWithLogsDTO
+    fun getSupplyLogs(supplyId: UUID, pageable: Pageable): Page<SuppliesLogController.SuppliesLogTableDTO>
 }

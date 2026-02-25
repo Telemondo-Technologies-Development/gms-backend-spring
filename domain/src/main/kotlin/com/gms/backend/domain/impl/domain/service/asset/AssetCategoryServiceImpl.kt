@@ -25,7 +25,7 @@ class AssetCategoryServiceImpl (
             updatedBy = actorRepository.getReferenceById(body.createdById)
         }
 
-        val saved = assetCategoryRepository.save(assetCategory)
+        val saved = assetCategoryRepository.saveAndFlush(assetCategory)
         return assetCategoryMapper.assetCategoryToDTO(saved)
     }
 
@@ -40,18 +40,18 @@ class AssetCategoryServiceImpl (
             updatedBy = actorRepository.getReferenceById(body.updatedById)
         }
 
-        assetCategoryRepository.save(assetCategory)
+        assetCategoryRepository.saveAndFlush(assetCategory)
         return assetCategoryMapper.assetCategoryToDTO(assetCategory)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('assetCategory_read')")
     override fun getAssetCategories(): List<AssetCategoryController.AssetCategoryTableDTO>{
         val assetCategories = assetCategoryRepository.findAll()
         return assetCategoryMapper.assetCategoriesToDTO(assetCategories)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('assetCategory_read')")
     override fun getAssetCategoryById(id: UUID): AssetCategoryController.AssetCategoryTableDTO{
         val assetCategory = assetCategoryRepository.findById(id).orElseThrow {

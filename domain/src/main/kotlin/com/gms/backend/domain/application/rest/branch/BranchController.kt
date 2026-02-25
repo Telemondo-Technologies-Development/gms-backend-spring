@@ -5,6 +5,7 @@ import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
+import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.service.branch.BranchService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
@@ -92,37 +93,21 @@ class BranchController (
             private const val serialVersionUID: Long = 1L
         }
     }
-
     // for branch's list of employees
-    @Schema(description = "Format for Branch read summary")
-    data class BranchSummaryDTO(
-        val id: UUID,
-        val name: String,
-        val address: String,
-        val longitude: String,
-        val latitude: String,
-        val status: Branch.BranchStatus
-    )
-
-    data class EmployeeSummaryDTO(
-        val id: UUID,
-        val surname: String?,
-        val firstName: String?,
-        val middleName: String?,
-        val suffix: String?
-    )
-
     data class EmployeeInBranchDTO(
         val actorId: UUID,
-        val employee: EmployeeSummaryDTO?
+        val employeeId: UUID?,
+        val employeeSurname: String?,
+        val employeeFirstName: String?,
+        val employeeMiddleName: String?,
+        val employeeSuffix: String?,
+        val employeeContactNo: String?,
+        val personnelRoleId: UUID?,
+        val personnelRoleName: String?,
+        val personnelRoleDescription: String?
     )
 
-    @Schema(description = "Format for Branch with Personnel read")
-    data class BranchEmployeesDTO(
-        val branch: BranchSummaryDTO,
-        val employees: List<EmployeeInBranchDTO>?
-    )
-
+    // Basic CRUD
     @PostMapping
     @Operation(summary = "Create a new Branch")
     fun createBranch(@Valid @RequestBody body: BranchPostDTO) =
@@ -148,10 +133,13 @@ class BranchController (
     fun deleteBranch(@PathVariable id: UUID) =
         branchService.deleteBranch(id).toOkResponse("Branch Deleted")
 
-    @GetMapping("/{id}/employees")
+    // Extended endpoints
+    @GetMapping("/{id}/employee")
     @Operation(summary = "Get all Personnel per Branch by id")
     fun getBranchEmployees(
         @PathVariable id: UUID,
-        @RequestParam(required = false) status: BranchPersonnel.BranchPersonnelStatus?
-    ) = branchService.getBranchEmployees(id, status).toOkResponse()
+        @RequestParam(required = false) branchPersonnelStatus: BranchPersonnel.BranchPersonnelStatus?,
+        @RequestParam(required = false) employeeStatus: Employee.EmployeeStatus?,
+        pageable: Pageable
+    ) = branchService.getBranchEmployees(id, branchPersonnelStatus,employeeStatus, pageable).toPaginatedResponse()
 }

@@ -550,7 +550,7 @@ CREATE TABLE supplies_logs (
   supplies_id 	binary(16) NOT NULL,
   name 			varchar(255) NOT NULL,
   remarks		text NULL,
-  quantity 		int NOT NULL DEFAULT 0,
+  quantity 		int NOT NULL,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),

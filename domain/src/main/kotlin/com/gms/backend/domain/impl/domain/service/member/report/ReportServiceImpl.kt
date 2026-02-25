@@ -64,12 +64,35 @@ class ReportServiceImpl(
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('report_read')")
-    override fun getReports(pageable: Pageable): Page<ReportController.ReportTableDTO> =
-        reportRepository.findAll(pageable).map { reportMapper.reportToDTO(it) }
+    override fun getReports(pageable: Pageable): Page<ReportController.ReportTableDTO> {
+        val reports = reportRepository.findAllProjectedBy(pageable)
+
+        val reportIds = reports.content.map { it.id }
+        if (reportIds.isEmpty()) return reports
+
+        // Get object ids
+        val objectMappings = reportRepository.findAllObjectIdsByReportIds(reportIds)
+        val objectsByReportId = objectMappings.groupBy(
+            { it.reportId },
+            { it.objectId }
+        )
+
+        return reports.map { report ->
+            report.apply {
+                objectIds = objectsByReportId.getOrDefault(report.id, emptyList())
+            }
+        }
+    }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('report_read')")
-    override fun getReportById(id: UUID) = reportMapper.reportToDTO(reportRepository.findById(id).get())
+    override fun getReportById(id: UUID): ReportController.ReportTableDTO {
+        val report = reportRepository.findProjectedBy(id).orElseThrow()
+
+        // get all object ids
+        report.objectIds = reportRepository.findObjectIdsByReportId(reportId = report.id)
+        return report
+    }
 
     @Transactional
     @PreAuthorize("hasAuthority('report_delete')")

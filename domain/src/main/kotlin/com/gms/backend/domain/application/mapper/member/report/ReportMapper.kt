@@ -13,9 +13,5 @@ import java.util.*
 interface ReportMapper {
     fun reportPostDTOToReport(dto: ReportController.ReportPostDTO): Report
     fun reportPutDTOToReport(dto: ReportController.ReportPutDTO, @MappingTarget report: Report): Report
-    @Mapping(target = "objectIds", source = "reportsObjects")
     fun reportToDTO(report: Report): ReportController.ReportTableDTO
-    fun mapObjectsToIds(objects: Set<ObjectStorage>?): List<UUID> {
-        return objects?.map { it.id } ?: emptyList()
-    }
 }

@@ -1,9 +1,15 @@
 package com.gms.backend.domain.impl.domain.service.asset
 
+import com.gms.backend.domain.application.mapper.asset.AssetMaintenanceMapper
 import com.gms.backend.domain.application.mapper.asset.AssetMapper
+import com.gms.backend.domain.application.mapper.asset.MaintenanceScheduleMapper
 import com.gms.backend.domain.application.rest.asset.AssetController
+import com.gms.backend.domain.application.rest.asset.AssetMaintenanceController
+import com.gms.backend.domain.application.rest.asset.MaintenanceScheduleController
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
+import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
+import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
@@ -23,7 +29,11 @@ class AssetServiceImpl(
     private val branchRepository: BranchRepository,
     private val categoryRepository: AssetCategoryRepository,
     private val objectStorageRepository: ObjectStorageRepository,
-    private val assetMapper: AssetMapper
+    private val assetMapper: AssetMapper,
+    private val maintenanceRepository: AssetMaintenanceRepository,
+    private val maintenanceScheduleRepository: MaintenanceScheduleRepository,
+    private val maintenanceScheduleMapper: MaintenanceScheduleMapper,
+    private val maintenanceMapper: AssetMaintenanceMapper
 ) : AssetService {
 
     @Transactional
@@ -82,5 +92,18 @@ class AssetServiceImpl(
             NoSuchElementException("Asset not found with ID: $id")
         }
         assetRepository.delete(asset)
+    }
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('asset_read') and hasAuthority('assetMaintenance_read')")
+    override fun getAssetMaintenance(assetId: UUID, pageable: Pageable): Page<AssetMaintenanceController.AssetMaintenanceTableDTO> {
+        return maintenanceRepository.findAllByAssetId(assetId, pageable)
+            .map { maintenanceMapper.assetMaintenanceToDTO(it) }
+    }
+
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('asset_read') and hasAuthority('maintenanceSchedule_read')")
+    override fun getAssetSchedules(assetId: UUID, pageable: Pageable): Page<MaintenanceScheduleController.ScheduleTableDTO> {
+        return maintenanceScheduleRepository.findAllByAssetId(assetId, pageable)
+            .map { maintenanceScheduleMapper.scheduleToDTO(it) }
     }
 }
