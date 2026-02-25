@@ -4,19 +4,23 @@ import com.gms.backend.domain.application.rest.branch.BranchController
 import org.springframework.security.core.CredentialsContainer
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import java.util.UUID
+import java.util.*
 
 class CustomUserDetails(
     val email: String,
     val branches: List<BranchController.BranchListDTO>,
     val actorId: UUID,
     val roles: List<String>,
-    val compactPermissions: Map<String, List<Char>>,
     private var password: String?,
-    private val authorities: Collection<GrantedAuthority>
+    @Transient
+    private var authorities: Collection<GrantedAuthority> = emptyList()
 ) : UserDetails, CredentialsContainer {
 
     override fun getAuthorities() = authorities
+    fun setAuthorities(auths: Collection<GrantedAuthority>) {
+        this.authorities = auths
+    }
+
     override fun getPassword() = password
     override fun getUsername() = email
 

@@ -3,7 +3,7 @@ package com.gms.backend.domain.domain.service.billing
 import com.gms.backend.domain.application.rest.billing.PaymentMethodController
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.UUID
+import java.util.*
 
 interface PaymentMethodService {
     fun createPaymentMethod(body: PaymentMethodController.PaymentMethodPostDTO): PaymentMethodController.PaymentMethodTableDTO

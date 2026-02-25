@@ -4,8 +4,7 @@ import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.member.MemberSubscription
-import com.gms.backend.domain.domain.model.subscription.SubscriptionAvailed
-import com.gms.backend.domain.impl.domain.service.member.MemberSubscriptionServiceImpl
+import com.gms.backend.domain.domain.service.member.MemberSubscriptionService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -17,15 +16,19 @@ import java.util.*
 @RestController
 @RequestMapping("/api/member/subscription")
 @Tag(name = "Member Subscription")
-class MemberSubscriptionController(private val memberService: MemberSubscriptionServiceImpl) {
+class MemberSubscriptionController(private val memberService: MemberSubscriptionService) {
 
     @Schema(description = "Format for MemberSubscription read")
     data class MemberSubscriptionTableDTO(
         val id: UUID,
         val actorId: UUID,
-//         val subscriptionAvailed: SubscriptionAvailed?,
+        val firstName: String?,
+        val surname: String?,
+        val middleName: String?,
         val subscriptionAvailedId: UUID?,
+        val subscriptionName: String?,
         val branchId: UUID,
+        val branchName: String?,
         val startDate: Instant,
         val endDate: Instant?,
         val status: MemberSubscription.MemberSubscriptionStatus,
@@ -64,7 +67,8 @@ class MemberSubscriptionController(private val memberService: MemberSubscription
 
     @GetMapping
     @Operation(summary = "Get all MemberSubscriptions")
-    fun getAllMemberSubscriptions(pageable: Pageable) = memberService.getMemberSubscriptions(pageable).toPaginatedResponse()
+    fun getAllMemberSubscriptions(pageable: Pageable) =
+        memberService.getMemberSubscriptions(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a MemberSubscription by id")

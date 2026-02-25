@@ -157,34 +157,35 @@ CREATE TABLE member_objects (
   CONSTRAINT member_objects_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
-CREATE TABLE progress (
-  id 		binary(16) PRIMARY KEY,
-  name 		varchar(255) UNIQUE NOT NULL,
-  created_by 		binary(16) NOT NULL,
-  updated_by 		binary(16) NOT NULL,
-  created_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  updated_at 		datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  CONSTRAINT progress_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT progress_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
-);
-
 CREATE TABLE progress_options (
   id 			binary(16) PRIMARY KEY,
-  progress_id 	binary(16) NOT NULL,
   name 			varchar(255) UNIQUE NOT NULL,
   created_by 	binary(16) NOT NULL,
   updated_by 	binary(16) NOT NULL,
   created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  CONSTRAINT progress_options_ibfk_1 FOREIGN KEY (progress_id) REFERENCES progress (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT progress_options_ibfk_2 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT progress_options_ibfk_3 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT progress_options_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT progress_options_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE progress (
+  id 					binary(16) PRIMARY KEY,
+  name 					varchar(255) UNIQUE NOT NULL,
+  progress_option_id	binary(16) NOT NULL,
+  created_by 			binary(16) NOT NULL,
+  updated_by 			binary(16) NOT NULL,
+  created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  CONSTRAINT progress_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT progress_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT progress_ibfk_3 FOREIGN KEY (progress_option_id) REFERENCES progress_options (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE member_progress (
   id 					binary(16) PRIMARY KEY,
   actor_id 				binary(16) NOT NULL,
   progress_option_id 	binary(16) NOT NULL,
+  progress_id		 	binary(16) NOT NULL,
   branch_id 			binary(16) NOT NULL,
   remarks 				text NULL,
   -- Not yet final
@@ -194,10 +195,25 @@ CREATE TABLE member_progress (
   created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   completed_at 			datetime(6) DEFAULT NULL,
+  -- Does not include branch as it is just an indicator of initial creation
+  -- Might include when logic requires it
+  CONSTRAINT uk_actor_progress UNIQUE (actor_id, progress_option_id),
   CONSTRAINT member_progress_ibfk_1 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT member_progress_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT member_progress_ibfk_3 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT member_progress_ibfk_4 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT member_progress_ibfk_4 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT member_progress_ibfk_5 FOREIGN KEY (progress_option_id) REFERENCES progress_options (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT member_progress_ibfk_6 FOREIGN KEY (progress_id) REFERENCES progress (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE member_progress_history (
+  id 					binary(16) PRIMARY KEY,
+  member_progress_id	binary(16) NOT NULL,
+  progress_id			binary(16) NOT NULL,
+  changed_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  INDEX changed_at (changed_at),
+  CONSTRAINT member_progress_history_ibfk_1 FOREIGN KEY (member_progress_id) REFERENCES member_progress (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT member_progress_history_ibfk_2 FOREIGN KEY (progress_id) REFERENCES progress (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 
@@ -205,13 +221,18 @@ CREATE TABLE attendance (
   id 					binary(16) PRIMARY KEY,
   actor_id 				binary(16) NOT NULL,
   branch_id 			binary(16) NOT NULL,
-  attendance_type 		varchar(255) NOT NULL,
+  source 				varchar(255) NOT NULL,
+  type 					varchar(255) NOT NULL,
   remarks 				varchar(255) NULL,
   -- Not yet final
-  type 					varchar(255) NOT NULL,
+  created_by 			binary(16) NOT NULL,
+  updated_by 			binary(16) NOT NULL,
   created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   CONSTRAINT attendance_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT attendance_ibfk_2 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT attendance_ibfk_2 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT attendance_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT attendance_ibfk_4 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE billing_cycles (

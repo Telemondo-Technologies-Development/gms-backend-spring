@@ -2,6 +2,7 @@ package com.gms.backend.domain.domain.model.member
 
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -19,6 +20,7 @@ class ProgressOption {
     lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
+    @NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
     @CreationTimestamp
@@ -42,8 +44,4 @@ class ProgressOption {
 
     @Column(name = "updated_by", insertable = false, updatable = false)
     var updatedById: UUID? = null
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "progress_id", nullable = false)
-    var progress: Progress? = null
 }

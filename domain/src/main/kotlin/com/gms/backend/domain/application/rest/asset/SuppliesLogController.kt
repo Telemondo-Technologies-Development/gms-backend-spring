@@ -3,7 +3,6 @@ package com.gms.backend.domain.application.rest.asset
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.application.rest.asset.SupplyController.SupplyPutDTO
 import com.gms.backend.domain.domain.service.asset.SuppliesLogService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema

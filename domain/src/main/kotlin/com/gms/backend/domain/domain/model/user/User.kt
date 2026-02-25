@@ -3,7 +3,6 @@ package com.gms.backend.domain.domain.model.user
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
@@ -50,7 +49,12 @@ class User {
     @JsonIgnore
     var userEmployees = mutableSetOf<Employee>()
 
-    @ManyToMany(mappedBy = "userRoleUsers")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "role_id")],
+    )
     @JsonIgnore
-    var userRoleRoles = mutableSetOf<Role>()
+    var userRoles = mutableSetOf<Role>()
 }

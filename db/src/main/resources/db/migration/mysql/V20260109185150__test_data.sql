@@ -113,7 +113,7 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bd458aafa7f34bf419ca0dfa1bddd, 'objectStorage_delete'),
 (0x019bd460624e79238c67993a76d64e78, 'objectStorage_read'),
 (0x019bd458aaf0749e8723c6e9ace4c91c, 'objectStorage_update'),
-(0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_upload'),
+(0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_create'),
 (0x019c51293e1f75b1a64eecaa4f91bbb4, 'otherExpense_create'),
 (0x019c51293e1f75b1a64eecaaf4214ac2, 'otherExpense_delete'),
 (0x019c51293e1e7d6f94de1b35401dc7fe, 'otherExpense_read'),
@@ -190,6 +190,10 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019c51290894791e80e8874cee3625b6, 'utilityExpense_update');
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaf07975009778b92857da58b4), -- attendance_create
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaf07975009778b9293fdfc819), -- attendance_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaf0787c83832caeaa986c720d), -- attendance_read
+(0x019ba2676db67541a1714f0524691e73, 0x019bdedaf07975009778b927276aed54), -- attendance_update
 (0x019ba2676db67541a1714f0524691e73, 0x019c7529f2d8744a99ea6c7af76a4564), -- personnelRole_create
 (0x019ba2676db67541a1714f0524691e73, 0x019c7529f2df74caa54615ee3e2224f9), -- personnelRole_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019c7529f2df74caa54615eeedabf717), -- personnelRole_read
@@ -368,6 +372,23 @@ INSERT INTO `payment_methods` (`id`, `name`, `created_by`, `updated_by`, `create
 
 INSERT INTO `payments` (`id`, `invoice_id`, `reference_num`, `status`, `payment_method_id`, `amount`, `paid_at`, `failure_reason`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019c748e57dd71cc8ad301923aa45f12, 0x019c716e86d47aeba8d2517c464a9eab, NULL, 'OUT', 0x019c748b4b927982a8d041ebfa856dd8, 1000.00, NULL, NULL, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:20:11.614664', '2026-02-19 06:20:11.614664');
+
+INSERT INTO `progress_options` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c75eda9f87b539ff5376498e646b8, 'Workout Progression', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 12:43:55.768708', '2026-02-19 12:43:55.768708'),
+(0x019c75edc467797da79b938091385e88, 'Test', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 12:44:02.535593', '2026-02-19 12:44:02.535593');
+
+INSERT INTO `progress` (`id`, `name`, `progress_option_id`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019c75eea5ad7936b3917fd0de59a2cc, 'Beginner', 0x019c75eda9f87b539ff5376498e646b8, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 12:45:00.206087', '2026-02-19 12:45:00.206087'),
+(0x019c75eeb58b7056983bcea71ce5b596, 'Advanced', 0x019c75eda9f87b539ff5376498e646b8, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 12:45:04.267021', '2026-02-19 12:45:04.267021'),
+(0x019c75eed938718f8243ee2d7fd1443f, 'Pro', 0x019c75eda9f87b539ff5376498e646b8, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 12:45:13.400618', '2026-02-19 12:45:13.400618');
+
+INSERT INTO `member_progress` (`id`, `actor_id`, `progress_option_id`, `progress_id`, `branch_id`, `remarks`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`, `completed_at`) VALUES
+(0x019c76489e297f86b68c3557330445ea, 0x8140f50da33f4569b76a20c348b77222, 0x019c75eda9f87b539ff5376498e646b8, 0x019c75eea5ad7936b3917fd0de59a2cc, 0x019ba279a6e67271893cffab220040a2, NULL, 'IN', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 14:23:16.530807', '2026-02-19 14:23:16.530807', NULL);
+
+INSERT INTO `member_progress_history` (`id`, `member_progress_id`, `progress_id`, `changed_at`) VALUES
+(0x019c7e5b866e799f914e0c8b7077fd97, 0x019c76489e297f86b68c3557330445ea, 0x019c75eea5ad7936b3917fd0de59a2cc, '2026-02-21 04:00:53.353805'),
+(0x019c7e5bd661744daf9dc7888ceb6cf5, 0x019c76489e297f86b68c3557330445ea, 0x019c75eeb58b7056983bcea71ce5b596, '2026-02-21 04:01:13.825269'),
+(0x019c7e5be2ab7c7ba7f8a2087239e34b, 0x019c76489e297f86b68c3557330445ea, 0x019c75eea5ad7936b3917fd0de59a2cc, '2026-02-21 04:01:16.971780');
 
 
 INSERT INTO `asset_categories` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES

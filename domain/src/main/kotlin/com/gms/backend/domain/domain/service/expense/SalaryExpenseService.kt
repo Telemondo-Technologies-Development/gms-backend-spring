@@ -2,7 +2,7 @@ package com.gms.backend.domain.domain.service.expense
 
 import com.gms.backend.domain.application.rest.expense.SalaryExpenseController
 import org.springframework.data.domain.Page
-import java.util.UUID
+import java.util.*
 
 interface SalaryExpenseService {
     fun createSalaryExpense(body: SalaryExpenseController.SalaryExpenseCreateDTO): SalaryExpenseController.SalaryExpenseReadDTO

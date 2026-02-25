@@ -5,7 +5,10 @@ import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
-import io.minio.*
+import io.minio.GetPresignedObjectUrlArgs
+import io.minio.MinioClient
+import io.minio.PutObjectArgs
+import io.minio.RemoveObjectArgs
 import io.minio.http.Method
 import jakarta.transaction.Transactional
 import org.springframework.security.access.prepost.PreAuthorize
@@ -22,7 +25,7 @@ class ObjectStorageServiceImpl (
     private val actorRepository: ActorRepository
 ) : ObjectStorageService {
     @Transactional
-    @PreAuthorize("hasAuthority('objectStorage_upload')")
+    @PreAuthorize("hasAuthority('objectStorage_create')")
     override fun uploadFile(
         file: MultipartFile,
         bucket: String,

@@ -3,7 +3,7 @@ package com.gms.backend.domain.application.rest.subscription
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.impl.domain.service.subscription.SubscriptionServiceImpl
+import com.gms.backend.domain.domain.service.subscription.SubscriptionService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -19,7 +19,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/subscription")
 @Tag(name = "Subscription")
-class SubscriptionController(private val subscriptionService: SubscriptionServiceImpl) {
+class SubscriptionController(private val subscriptionService: SubscriptionService) {
 
     @Schema(description = "Format for Subscription read")
     data class SubscriptionTableDTO(

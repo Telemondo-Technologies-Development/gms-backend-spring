@@ -3,7 +3,7 @@ package com.gms.backend.domain.domain.service.member.report
 import com.gms.backend.domain.application.rest.member.report.ReportTypeController
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.UUID
+import java.util.*
 
 interface ReportTypeService {
     fun createReportType(body: ReportTypeController.ReportTypePostDTO): ReportTypeController.ReportTypeTableDTO

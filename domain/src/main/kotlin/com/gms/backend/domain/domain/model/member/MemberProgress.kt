@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.model.member
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
@@ -27,10 +28,19 @@ class MemberProgress {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "progress_option_id", nullable = false)
+    @JsonIgnore
     lateinit var progressOption: ProgressOption
 
     @Column(name = "progress_option_id", insertable = false, updatable = false)
     var progressOptionId: UUID? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "progress_id", nullable = false)
+    @JsonIgnore
+    lateinit var progress: Progress
+
+    @Column(name = "progress_id", insertable = false, updatable = false)
+    var progressId: UUID? = null
 
     @Column
     var remarks: String? = null

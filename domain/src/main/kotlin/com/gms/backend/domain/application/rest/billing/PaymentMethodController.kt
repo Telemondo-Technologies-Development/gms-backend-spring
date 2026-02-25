@@ -3,7 +3,7 @@ package com.gms.backend.domain.application.rest.billing
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.impl.domain.service.billing.PaymentMethodServiceImpl
+import com.gms.backend.domain.domain.service.billing.PaymentMethodService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -16,7 +16,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/payment/method")
 @Tag(name = "Payment")
-class PaymentMethodController(private val paymentMethodService: PaymentMethodServiceImpl) {
+class PaymentMethodController(private val paymentMethodService: PaymentMethodService) {
 
     @Schema(description = "Format for Payment Method read")
     data class PaymentMethodTableDTO(
@@ -28,21 +28,22 @@ class PaymentMethodController(private val paymentMethodService: PaymentMethodSer
 
     @Schema(description = "Format for Payment Method create")
     data class PaymentMethodPostDTO(
-        @field:NotBlank
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         val createdById: UUID
     )
 
     @Schema(description = "Format for Payment Method update")
     data class PaymentMethodPutDTO(
-        @field:NotBlank
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         val updatedById: UUID
     )
 
     @GetMapping
     @Operation(summary = "Get all Payment Methods")
-    fun getAllPaymentMethods(pageable: Pageable) = paymentMethodService.getPaymentMethods(pageable).toPaginatedResponse()
+    fun getAllPaymentMethods(pageable: Pageable) =
+        paymentMethodService.getPaymentMethods(pageable).toPaginatedResponse()
 
 
     @GetMapping("/{id}")

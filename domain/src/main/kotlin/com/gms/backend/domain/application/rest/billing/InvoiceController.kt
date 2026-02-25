@@ -4,29 +4,22 @@ import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.billing.Invoice
-import com.gms.backend.domain.impl.domain.service.billing.InvoiceServiceImpl
+import com.gms.backend.domain.domain.service.billing.InvoiceService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.PositiveOrZero
 import org.springframework.data.domain.Pageable
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/api/invoice")
 @Tag(name = "Invoice")
-class InvoiceController(private val invoiceService: InvoiceServiceImpl) {
+class InvoiceController(private val invoiceService: InvoiceService) {
 
     @Schema(description = "Format for Invoice read")
     data class InvoiceTableDTO(
@@ -92,4 +85,4 @@ class InvoiceController(private val invoiceService: InvoiceServiceImpl) {
     @Operation(summary = "Delete an Invoice by id")
     fun deleteInvoice(@PathVariable id: UUID) =
         invoiceService.deleteInvoice(id).toOkResponse("Invoice Deleted")
-    }
+}

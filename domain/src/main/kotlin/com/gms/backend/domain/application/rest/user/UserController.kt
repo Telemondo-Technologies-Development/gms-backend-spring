@@ -3,7 +3,7 @@ package com.gms.backend.domain.application.rest.user
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.impl.domain.service.user.UserServiceImpl
+import com.gms.backend.domain.domain.service.user.UserService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -17,26 +17,41 @@ import java.util.*
 @RestController
 @RequestMapping("/api/user")
 @Tag(name = "User")
-class UserController(private val userService: UserServiceImpl) {
+class UserController(private val userService: UserService) {
 
     data class UserTableDTO(
         val id: UUID,
         val email: String,
         val createdAt: Instant,
         val updatedAt: Instant,
-        val actorId: UUID?
+        val actorId: UUID?,
+    ) {
+        var userRoles: List<UserRoleBriefDTO> = emptyList()
+    }
+
+    data class UserRoleWithUserId(
+        val userId: UUID,
+        val id: UUID,
+        val name: String
+    )
+
+    data class UserRoleBriefDTO(
+        val id: UUID,
+        val name: String
     )
 
     data class UserPostDTO(
         @field:Email(message = "Email should be valid")
         val email: String,
         @field:Size(min = 8, max = 64)
-        val password: String
+        val password: String,
+        val roles: List<UUID> = emptyList()
     )
 
     data class UserPutDTO(
         @field:Email(message = "Email should be valid")
-        val email: String
+        val email: String,
+        val roles: List<UUID> = emptyList()
     )
 
     @GetMapping
