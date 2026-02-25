@@ -1,7 +1,12 @@
 package com.gms.backend.domain.domain.repository.member
 
+import com.gms.backend.domain.application.rest.member.ProgressController
 import com.gms.backend.domain.domain.model.member.Progress
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
-interface ProgressRepository : JpaRepository<Progress, UUID>
+interface ProgressRepository : JpaRepository<Progress, UUID>{
+    fun findAllProjectedBy(pageable: Pageable): Page<ProgressController.ProgressTableDTO>
+}
