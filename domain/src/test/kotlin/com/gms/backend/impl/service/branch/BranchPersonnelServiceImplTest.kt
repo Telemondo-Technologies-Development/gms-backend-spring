@@ -58,10 +58,12 @@ class BranchPersonnelServiceImplTest
         val actorId = UUID.fromString("e79d0924-2c4c-49dd-b2df-bbfad0fae629")
         val branchId = UUID.fromString("019ba279-a6e6-7271-893c-ffab220040a2")
         val adminId = UUID.fromString("f520a8fb-3824-4339-8bb4-3732c8a3f617")
+        val roleId = UUID.fromString("019eeee7-6db6-7541-a171-4f0524691e73")
 
         val body = BranchPersonnelController.BranchPersonnelPostDTO(
             actorId = actorId,
             branchId = branchId,
+            personnelRoleId = roleId,
             status = BranchPersonnel.BranchPersonnelStatus.ACTIVE,
             createdById = adminId
         )
@@ -82,10 +84,12 @@ class BranchPersonnelServiceImplTest
         val actorId = UUID.fromString("e79d0924-2c4c-49dd-b2df-bbfad0fae629")
         val branchId = UUID.fromString("019ba297-802d-78e4-804a-cbed3a77e6ce")
         val adminId = UUID.fromString("f520a8fb-3824-4339-8bb4-3732c8a3f617")
+        val roleId = UUID.fromString("019eeee7-6db6-7541-a171-4f0524691e73")
 
         val body = BranchPersonnelController.BranchPersonnelPutDTO(
             actorId = actorId,
             branchId = branchId,
+            personnelRoleId = roleId,
             status = BranchPersonnel.BranchPersonnelStatus.UNDECIDED,
             updatedById = adminId
         )

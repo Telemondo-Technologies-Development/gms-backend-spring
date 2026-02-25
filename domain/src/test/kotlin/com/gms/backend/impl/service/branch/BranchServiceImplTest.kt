@@ -116,7 +116,7 @@ class BranchServiceImplTest
         val branchId = UUID.fromString("019ba279-a6e6-7271-893c-ffab220040a2")
 
         // When
-        val result = branchServiceImpl.getBranchEmployees(branchId, BranchPersonnel.BranchPersonnelStatus.ACTIVE, Pageable.unpaged())
+        val result = branchServiceImpl.getBranchEmployees(branchId, BranchPersonnel.BranchPersonnelStatus.ACTIVE, null, Pageable.unpaged())
 
         // Then
         assertNotNull(result.content)

@@ -3,6 +3,7 @@ package com.gms.backend.domain.impl.domain.service.branch
 import com.gms.backend.domain.application.mapper.branch.BranchMapper
 import com.gms.backend.domain.application.rest.branch.BranchController
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
+import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
@@ -84,27 +85,22 @@ class BranchServiceImpl(
     @PreAuthorize("hasAuthority('branch_read') and hasAuthority('branchPersonnel_read')")
     override fun getBranchEmployees(
         branchId: UUID,
-        status: BranchPersonnel.BranchPersonnelStatus?,
+        branchPersonnelStatus: BranchPersonnel.BranchPersonnelStatus?,
+        employeeStatus: Employee.EmployeeStatus?,
         pageable: Pageable
     ): Page<BranchController.EmployeeInBranchDTO> {
 
-        val rowsPage: Page<BranchPersonnel> = if (status == null) {
-            branchPersonnelRepository.findAllByBranchId(branchId, pageable)
-        } else {
-            branchPersonnelRepository.findAllByBranchIdAndStatus(branchId, status, pageable)
-        }
+        // Default values if the parameters are not set:
+        val finalBpStatus = branchPersonnelStatus ?: BranchPersonnel.BranchPersonnelStatus.ACTIVE
+        val finalEStatus = employeeStatus ?: Employee.EmployeeStatus.IN
 
-        val actorIds = rowsPage.content.mapNotNull { it.actorId }
-        val employeeByActorId = employeeRepository.findAllByActorIdIn(actorIds).associateBy { it.actorId }
+        val branchEmployees = branchPersonnelRepository.findAllEmployeesByBranchIdAndStatus(
+            branchId = branchId,
+            bpStatus = finalBpStatus,
+            eStatus = finalEStatus,
+            pageable = pageable
+        )
 
-        return rowsPage.map { bp ->
-            val actorId = bp.actorId!!
-            val employee = employeeByActorId[actorId]
-
-            BranchController.EmployeeInBranchDTO(
-                actorId = actorId,
-                employee = employee?.let(branchMapper::employeeToSummaryDTO)
-            )
-        }
+        return branchEmployees
     }
 }

@@ -5,6 +5,7 @@ import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
+import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.service.branch.BranchService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
@@ -101,17 +102,17 @@ class BranchController (
         }
     }
     // for branch's list of employees
-    data class EmployeeSummaryDTO(
-        val id: UUID,
-        val surname: String?,
-        val firstName: String?,
-        val middleName: String?,
-        val suffix: String?
-    )
-
     data class EmployeeInBranchDTO(
         val actorId: UUID,
-        val employee: EmployeeSummaryDTO?
+        val employeeId: UUID?,
+        val employeeSurname: String?,
+        val employeeFirstName: String?,
+        val employeeMiddleName: String?,
+        val employeeSuffix: String?,
+        val employeeContactNo: String?,
+        val personnelRoleId: UUID?,
+        val personnelRoleName: String?,
+        val personnelRoleDescription: String?
     )
 
     // Basic CRUD
@@ -145,7 +146,8 @@ class BranchController (
     @Operation(summary = "Get all Personnel per Branch by id")
     fun getBranchEmployees(
         @PathVariable id: UUID,
-        @RequestParam(required = false) status: BranchPersonnel.BranchPersonnelStatus?,
+        @RequestParam(required = false) branchPersonnelStatus: BranchPersonnel.BranchPersonnelStatus?,
+        @RequestParam(required = false) employeeStatus: Employee.EmployeeStatus?,
         pageable: Pageable
-    ) = branchService.getBranchEmployees(id, status, pageable).toPaginatedResponse()
+    ) = branchService.getBranchEmployees(id, branchPersonnelStatus,employeeStatus, pageable).toPaginatedResponse()
 }

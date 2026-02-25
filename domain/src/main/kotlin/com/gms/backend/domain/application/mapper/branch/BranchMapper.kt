@@ -15,9 +15,6 @@ interface BranchMapper {
 
     fun branchToDTO(branch: Branch): BranchController.BranchTableDTO
     fun branchesToDTO(branches: List<Branch>): List<BranchController.BranchTableDTO>
-
-    // For branch's list of employee
-    fun employeeToSummaryDTO(employee: Employee): BranchController.EmployeeSummaryDTO
 }
 
 

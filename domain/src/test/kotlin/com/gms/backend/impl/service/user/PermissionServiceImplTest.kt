@@ -27,7 +27,7 @@ class PermissionServiceImplTest
         // When
         val permissions = permissionServiceImpl.getPermissions(Pageable.unpaged())
         // Then
-        assertEquals(116, permissions.size)
+        assertEquals(120, permissions.size)
     }
 
     @Test
