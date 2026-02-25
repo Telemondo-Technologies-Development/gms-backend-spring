@@ -2,9 +2,9 @@ package com.gms.backend.domain.impl.domain.service.member.report
 
 import com.gms.backend.domain.application.mapper.member.report.ReportMapper
 import com.gms.backend.domain.application.rest.member.report.ReportController
+import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.member.report.ReportRepository
 import com.gms.backend.domain.domain.repository.member.report.ReportTypeRepository
-import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import org.springframework.data.domain.Page

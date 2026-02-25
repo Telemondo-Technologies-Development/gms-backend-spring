@@ -3,7 +3,7 @@ package com.gms.backend.domain.domain.service.branch
 import com.gms.backend.domain.application.rest.branch.BranchPersonnelController
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.UUID
+import java.util.*
 
 interface BranchPersonnelService {
     fun createBranchPersonnel(body: BranchPersonnelController.BranchPersonnelPostDTO): BranchPersonnelController.BranchPersonnelTableDTO

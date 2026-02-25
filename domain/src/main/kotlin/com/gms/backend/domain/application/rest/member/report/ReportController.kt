@@ -3,11 +3,10 @@ package com.gms.backend.domain.application.rest.member.report
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.impl.domain.service.member.report.ReportServiceImpl
+import com.gms.backend.domain.impl.domain.service.member.report.ReportService
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
@@ -16,7 +15,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/report")
 @Tag(name = "Report")
-class ReportController(private val reportService: ReportServiceImpl) {
+class ReportController(private val reportService: ReportService) {
 
     @Schema(description = "Format for Report read")
     data class ReportTableDTO(

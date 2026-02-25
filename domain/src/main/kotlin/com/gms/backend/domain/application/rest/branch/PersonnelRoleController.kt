@@ -3,7 +3,7 @@ package com.gms.backend.domain.application.rest.branch
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.impl.domain.service.branch.PersonnelRoleServiceImpl
+import com.gms.backend.domain.domain.service.branch.PersonnelRoleService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -17,7 +17,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/branch/personnel/role")
 @Tag(name = "Branch Personnel Roles")
-class PersonnelRoleController(private val personnelRoleService: PersonnelRoleServiceImpl) {
+class PersonnelRoleController(private val personnelRoleService: PersonnelRoleService) {
 
     @Schema(description = "Format for Personnel Role read")
     data class PersonnelRoleTableDTO(
@@ -30,7 +30,7 @@ class PersonnelRoleController(private val personnelRoleService: PersonnelRoleSer
 
     @Schema(description = "Format for Personnel Role create")
     data class PersonnelRolePostDTO(
-        @field:NotBlank
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:Size(min = 1, message = "Description cannot be blank if provided")
         val description: String?,
@@ -39,7 +39,7 @@ class PersonnelRoleController(private val personnelRoleService: PersonnelRoleSer
 
     @Schema(description = "Format for Personnel Role update")
     data class PersonnelRolePutDTO(
-        @field:NotBlank
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:Size(min = 1, message = "Description cannot be blank if provided")
         val description: String?,
@@ -48,7 +48,8 @@ class PersonnelRoleController(private val personnelRoleService: PersonnelRoleSer
 
     @GetMapping
     @Operation(summary = "Get all Personnel Roles")
-    fun getAllPersonnelRoles(pageable: Pageable) = personnelRoleService.getPersonnelRoles(pageable).toPaginatedResponse()
+    fun getAllPersonnelRoles(pageable: Pageable) =
+        personnelRoleService.getPersonnelRoles(pageable).toPaginatedResponse()
 
 
     @GetMapping("/{id}")

@@ -1,6 +1,5 @@
 package com.gms.backend.domain.domain.model.asset
 
-import com.gms.backend.domain.domain.model.expense.AssetMaintenanceExpense
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*

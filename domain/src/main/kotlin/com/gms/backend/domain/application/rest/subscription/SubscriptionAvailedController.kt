@@ -4,7 +4,7 @@ import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.subscription.BillingCycle
-import com.gms.backend.domain.impl.domain.service.subscription.SubscriptionAvailedServiceImpl
+import com.gms.backend.domain.domain.service.subscription.SubscriptionAvailedService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -16,7 +16,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/subscription-availed")
 @Tag(name = "Subscription Availed")
-class SubscriptionAvailedController(private val subscriptionAvailedService: SubscriptionAvailedServiceImpl) {
+class SubscriptionAvailedController(private val subscriptionAvailedService: SubscriptionAvailedService) {
 
     @Schema(description = "Format for Subscription Availed read")
     data class SubscriptionAvailedTableDTO(
@@ -35,7 +35,8 @@ class SubscriptionAvailedController(private val subscriptionAvailedService: Subs
 
     @GetMapping
     @Operation(summary = "Get all Subscription Availed")
-    fun getAllSubscriptionAvailed(pageable: Pageable) = subscriptionAvailedService.getSubscriptionAvailed(pageable).toPaginatedResponse()
+    fun getAllSubscriptionAvailed(pageable: Pageable) =
+        subscriptionAvailedService.getSubscriptionAvailed(pageable).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Subscription Availed by id")

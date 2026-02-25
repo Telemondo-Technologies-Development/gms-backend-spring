@@ -1,21 +1,14 @@
 package com.gms.backend.domain.application.rest.asset
 
-import com.gms.backend.domain.application.response.ApiResponse
-import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.application.rest.storage.ObjectStorageController
 import com.gms.backend.domain.domain.model.asset.AssetMaintenance
-import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.service.asset.AssetMaintenanceService
-import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Pageable
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
 import java.time.Instant
 import java.util.*
 

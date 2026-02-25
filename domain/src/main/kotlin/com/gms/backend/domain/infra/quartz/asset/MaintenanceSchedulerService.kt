@@ -1,7 +1,6 @@
 package com.gms.backend.domain.infra.quartz.asset
 
 import com.gms.backend.domain.domain.model.asset.AssetMaintenance
-import com.gms.backend.domain.domain.model.asset.MaintenanceSchedule
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
@@ -14,7 +13,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import java.util.UUID
+import java.util.*
 
 @Service
 @PreAuthorize("denyAll()")

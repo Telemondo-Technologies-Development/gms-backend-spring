@@ -1,6 +1,7 @@
 package com.gms.backend.domain.application.rest.storage
 
-import com.gms.backend.domain.application.response.*
+import com.gms.backend.domain.application.response.toCreatedResponse
+import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import io.swagger.v3.oas.annotations.Operation
@@ -9,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/api/storage")

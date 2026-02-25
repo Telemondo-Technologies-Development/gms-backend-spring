@@ -2,7 +2,6 @@ package com.gms.backend.domain.impl.domain.service.asset
 
 import com.gms.backend.domain.application.mapper.asset.SuppliesLogMapper
 import com.gms.backend.domain.application.mapper.asset.SupplyMapper
-import com.gms.backend.domain.application.rest.asset.SuppliesLogController
 import com.gms.backend.domain.application.rest.asset.SupplyController
 import com.gms.backend.domain.domain.repository.asset.SuppliesLogRepository
 import com.gms.backend.domain.domain.repository.asset.SupplyRepository

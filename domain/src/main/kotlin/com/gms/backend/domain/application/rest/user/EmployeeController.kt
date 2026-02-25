@@ -1,6 +1,5 @@
 package com.gms.backend.domain.application.rest.user
 
-import com.gms.backend.domain.application.mapper.user.EmployeeMapper
 import com.gms.backend.domain.application.response.ApiResponse
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
@@ -9,7 +8,7 @@ import com.gms.backend.domain.application.rest.storage.ObjectStorageController
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
-import com.gms.backend.domain.impl.domain.service.user.EmployeeServiceImpl
+import com.gms.backend.domain.domain.service.user.EmployeeService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -26,8 +25,7 @@ import java.util.*
 @RequestMapping("/api/employee")
 @Tag(name = "Employee")
 class EmployeeController(
-    private val employeeService: EmployeeServiceImpl,
-    private val employeeMapper: EmployeeMapper,
+    private val employeeService: EmployeeService,
     private val storageService: ObjectStorageService,
     private val bucketConfig: ObjectStorageController.MinioBucketConfig
 ) {
@@ -100,7 +98,8 @@ class EmployeeController(
     @PostMapping("/picture")
     @Operation(summary = "Upload an employee profile picture into the object storage (public)")
     fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
-        storageService.uploadFile(file, bucketConfig.public, "profiles/employees", storageService.getCurrentActor()).toCreatedResponse("Employee profile picture uploaded successfully")
+        storageService.uploadFile(file, bucketConfig.public, "profiles/employees", storageService.getCurrentActor())
+            .toCreatedResponse("Employee profile picture uploaded successfully")
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an Employee by id")

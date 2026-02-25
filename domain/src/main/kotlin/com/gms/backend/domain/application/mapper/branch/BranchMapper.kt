@@ -3,7 +3,9 @@ package com.gms.backend.domain.application.mapper.branch
 import com.gms.backend.domain.application.rest.branch.BranchController
 import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.domain.model.user.Employee
-import org.mapstruct.*
+import org.mapstruct.Mapper
+import org.mapstruct.MappingTarget
+import org.mapstruct.ReportingPolicy
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface BranchMapper {

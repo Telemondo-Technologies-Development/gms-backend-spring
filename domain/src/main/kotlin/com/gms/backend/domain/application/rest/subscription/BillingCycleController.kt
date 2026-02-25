@@ -4,7 +4,7 @@ import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.subscription.BillingCycle
-import com.gms.backend.domain.impl.domain.service.subscription.BillingCycleServiceImpl
+import com.gms.backend.domain.domain.service.subscription.BillingCycleService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -14,13 +14,12 @@ import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
-import java.time.Instant
 import java.util.*
 
 @RestController
 @RequestMapping("/api/billing-cycle")
 @Tag(name = "Billing Cycle")
-class BillingCycleController(private val billingCycleService: BillingCycleServiceImpl) {
+class BillingCycleController(private val billingCycleService: BillingCycleService) {
 
     @Schema(description = "Format for Billing Cycle read")
     data class BillingCycleTableDTO(

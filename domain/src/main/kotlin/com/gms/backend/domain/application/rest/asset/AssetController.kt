@@ -1,32 +1,18 @@
 package com.gms.backend.domain.application.rest.asset
 
-import com.gms.backend.domain.application.response.ApiResponse
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
-import com.gms.backend.domain.domain.service.asset.AssetService
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.application.rest.storage.ObjectStorageController
-import com.gms.backend.domain.domain.model.storage.ObjectStorage
-import com.gms.backend.domain.domain.service.storage.ObjectStorageService
+import com.gms.backend.domain.domain.service.asset.AssetService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.NotBlank
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import org.springframework.data.domain.Pageable
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/api/asset")
