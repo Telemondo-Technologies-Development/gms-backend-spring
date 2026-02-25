@@ -76,12 +76,16 @@ enum class ApiErrorType(val code: String, val description: String) {
     DATATYPE_MISMATCH("VAL_002", "The data type provided does not match the expected format for this field."),
     MALFORMED_JSON("VAL_003", "The request body contains invalid JSON syntax."),
     INVALID_CASE("VAL_007", "The data provided does not meet validation requirements"),
+    RESOURCE_ALREADY_EXISTS("VAL_008", "A resource with the same unique identifiers already exists."),
+    DUPLICATE_ENTRY("VAL_009", "The action resulted in a duplicate entry that violates database constraints."),
+    CONCURRENT_MODIFICATION("VAL_010", "The resource was modified by another process. Please refresh and try again."),
+    FK_VIOLATION("VAL_011", "This action is restricted because this record is linked to other data."),
 
     // Create
     MISSING_UPDATE("VAL_004", "The updated failed as some of the data provided do not exist."),
 
     // Delete
-    NO_DELETE("VAL_005", "No entry was sent to be deleted."),
+    NO_MODIFICATION("VAL_005", "No entry was sent to be modified."),
     MISSING_DELETE("VAL_006", "The delete failed as some of the data provided does not exist."),
 
     // 401 Unauthorized (Authentication)

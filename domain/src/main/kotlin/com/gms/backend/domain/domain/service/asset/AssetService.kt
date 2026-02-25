@@ -3,10 +3,9 @@ package com.gms.backend.domain.domain.service.asset
 import com.gms.backend.domain.application.rest.asset.AssetController
 import com.gms.backend.domain.application.rest.asset.AssetMaintenanceController
 import com.gms.backend.domain.application.rest.asset.MaintenanceScheduleController
-import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.UUID
+import java.util.*
 
 interface AssetService {
     fun createAsset(body: AssetController.AssetPostDTO): AssetController.AssetTableDTO

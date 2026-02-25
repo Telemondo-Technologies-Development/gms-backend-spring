@@ -6,7 +6,7 @@ import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.domain.model.member.Member
 import com.gms.backend.domain.domain.model.user.Actor
-import com.gms.backend.domain.impl.domain.service.member.report.ReportServiceImpl
+import com.gms.backend.domain.impl.domain.service.member.report.ReportService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -19,7 +19,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/report")
 @Tag(name = "Report")
-class ReportController(private val reportService: ReportServiceImpl) {
+class ReportController(private val reportService: ReportService) {
 
     @Schema(description = "Format for Report read")
     data class ReportTableDTO(

@@ -2,11 +2,7 @@ package com.gms.backend.domain.application.mapper.member
 
 import com.gms.backend.domain.application.rest.member.MemberSubscriptionController
 import com.gms.backend.domain.domain.model.member.MemberSubscription
-import org.mapstruct.Mapper
-import org.mapstruct.Mapping
-import org.mapstruct.MappingTarget
-import org.mapstruct.NullValuePropertyMappingStrategy
-import org.mapstruct.ReportingPolicy
+import org.mapstruct.*
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface MemberSubscriptionMapper {

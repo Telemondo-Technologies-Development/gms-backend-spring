@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
-import java.util.UUID
+import java.util.*
 
 class PermissionServiceImplTest
 @Autowired constructor(
@@ -27,7 +27,7 @@ class PermissionServiceImplTest
         // When
         val permissions = permissionServiceImpl.getPermissions(Pageable.unpaged())
         // Then
-        assertEquals(120, permissions.size)
+        assertEquals(144, permissions.size)
     }
 
     @Test

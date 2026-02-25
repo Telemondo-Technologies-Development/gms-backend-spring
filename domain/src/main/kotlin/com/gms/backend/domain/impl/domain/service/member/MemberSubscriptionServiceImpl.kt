@@ -44,6 +44,7 @@ class MemberSubscriptionServiceImpl(
         val subscriptionAvailedId = subscriptionAvailedServiceImpl.insertSubscriptionAvailed(body.subscriptionId)
         // not sure if we will create member separately or the same time as this one
         val memberSubscription = memberSubscriptionMapper.memberSubscriptionPostDTOToMemberSubscription(body).apply {
+            // For now the type of actor is not verified (implied that the data sent is right)
             actor = actorRepository.getReferenceById(body.actorId)
             branch = branchRepository.getReferenceById(body.branchId)
             subscriptionAvailed = subscriptionAvailedRepository.findById(subscriptionAvailedId).orElseThrow()
@@ -64,8 +65,7 @@ class MemberSubscriptionServiceImpl(
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('memberSubscription_read')")
     override fun getMemberSubscriptionById(id: UUID): MemberSubscriptionController.MemberSubscriptionTableDTO {
-        val entity = memberSubscriptionRepository.findById(id).orElseThrow()
-        return memberSubscriptionMapper.memberSubscriptionToMemberSubscriptionTableDTO(entity)
+        return memberSubscriptionRepository.findByMemberId(id).orElseThrow()
     }
 
     @Transactional

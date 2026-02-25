@@ -12,14 +12,12 @@ import jakarta.validation.constraints.NotBlank
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/api/report/type")
 @Tag(name = "Report Type")
-class ReportTypeController(
-    private val reportTypeService: ReportTypeService
-) {
+class ReportTypeController(private val reportTypeService: ReportTypeService) {
 
     @Schema(description = "Format for Report Type read")
     data class ReportTypeTableDTO(

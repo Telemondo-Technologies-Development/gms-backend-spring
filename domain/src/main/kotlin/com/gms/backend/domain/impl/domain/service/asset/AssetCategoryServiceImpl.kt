@@ -8,8 +8,7 @@ import com.gms.backend.domain.domain.service.asset.AssetCategoryService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.NoSuchElementException
-import java.util.UUID
+import java.util.*
 
 @Service
 @PreAuthorize("denyAll()")

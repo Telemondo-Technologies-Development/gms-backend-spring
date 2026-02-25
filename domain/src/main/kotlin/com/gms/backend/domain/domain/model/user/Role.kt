@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.model.user
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -57,11 +58,7 @@ class Role {
     )
     var permissions: MutableSet<Permission> = mutableSetOf()
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = [JoinColumn(name = "role_id")],
-        inverseJoinColumns = [JoinColumn(name = "user_id")],
-    )
-    var userRoleUsers = mutableSetOf<User>()
+    @ManyToMany(mappedBy = "userRoles")
+    @JsonIgnore
+    var userRoles = mutableSetOf<User>()
 }

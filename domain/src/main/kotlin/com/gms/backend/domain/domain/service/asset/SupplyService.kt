@@ -1,10 +1,9 @@
 package com.gms.backend.domain.domain.service.asset
 
-import com.gms.backend.domain.application.rest.asset.SuppliesLogController
 import com.gms.backend.domain.application.rest.asset.SupplyController
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.UUID
+import java.util.*
 
 interface SupplyService {
     fun createSupply(body: SupplyController.SupplyPostDTO): SupplyController.SupplyTableDTO
