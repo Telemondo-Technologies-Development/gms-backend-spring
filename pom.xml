@@ -59,6 +59,8 @@
         <com.tngtech.archunit.version>1.2.1</com.tngtech.archunit.version>
         <io.minio.version>8.6.0</io.minio.version>
         <com.squareup.okhttp3.version>4.12.0</com.squareup.okhttp3.version>
+        <com.github.ben-manes.caffeine.version>3.2.3</com.github.ben-manes.caffeine.version>
+
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>

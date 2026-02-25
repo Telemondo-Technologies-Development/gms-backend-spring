@@ -4,6 +4,7 @@ import io.minio.errors.ErrorResponseException
 import io.minio.errors.MinioException
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authorization.AuthorizationDeniedException
@@ -90,7 +91,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    // 2. Handle validation errors at the Entity/JPA level
+    // Handle validation errors at the Entity/JPA level
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolationException(ex: ConstraintViolationException): ResponseEntity<ApiResponse<Nothing>> {
         val errors = ex.constraintViolations.map { violation ->
@@ -107,6 +108,51 @@ class GlobalExceptionHandler {
             status = HttpStatus.BAD_REQUEST,
             errors = errors
         )
+    }
+
+    // Handles Data Integrity / Constraint Errors
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    fun handleDataIntegrityViolation(ex: DataIntegrityViolationException): ResponseEntity<ApiResponse<Nothing>> {
+        val rootMessage = ex.mostSpecificCause.message ?: "Unknown integrity violation"
+        val constraint  = findConstraintName(rootMessage)
+
+        return when {
+            // Case: Duplicate Entry (Unique Constraint)
+            rootMessage.contains("Duplicate entry", ignoreCase = true) -> {
+                log.warn("Duplicate entry detected: {}", constraint)
+                ApiResponse.error(
+                    message = "The record already exists.",
+                    status = HttpStatus.CONFLICT,
+                    errors = listOf(ApiErrorType.DUPLICATE_ENTRY.toApiError("Conflict on: $constraint"))
+                )
+            }
+
+            // Case: Foreign Key Failure (Delete/Update Restrict)
+            rootMessage.contains("foreign key constraint fails", ignoreCase = true) -> {
+                log.warn("Foreign key violation: {}", rootMessage)
+                ApiResponse.error(
+                    message = "This record cannot be deleted or changed because it is currently in use.",
+                    status = HttpStatus.CONFLICT,
+                    errors = listOf(ApiErrorType.FK_VIOLATION.toApiError("Restricted by: $constraint"))
+                )
+            }
+
+            // Fallback for other Database Constraints (e.g. NOT NULL)
+            else -> {
+                log.error("Database constraint violation: {}", rootMessage)
+                ApiResponse.error(
+                    message = "Database operation rejected due to data rules.",
+                    status = HttpStatus.BAD_REQUEST,
+                    errors = listOf(ApiErrorType.INVALID_CASE.toApiError("Integrity failure"))
+                )
+            }
+        }
+    }
+
+    private fun findConstraintName(message: String): String? {
+        // Matches patterns like [member_progress.uk_actor_progress] or key 'PRIMARY'
+        val regex = Regex("""(?:constraint [\[`]|key [']|CONSTRAINT [`])([^\]`']+)""")
+        return regex.find(message)?.groupValues?.get(1)
     }
 
     // Handle MinIO Server Errors

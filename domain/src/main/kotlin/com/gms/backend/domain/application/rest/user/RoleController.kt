@@ -4,7 +4,7 @@ import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
 import com.gms.backend.domain.domain.model.user.Permission
-import com.gms.backend.domain.impl.domain.service.user.RoleServiceImpl
+import com.gms.backend.domain.domain.service.user.RoleService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -18,7 +18,7 @@ import java.util.*
 @RestController
 @RequestMapping("/api/role")
 @Tag(name = "Access Control")
-class RoleController(private val roleService: RoleServiceImpl) {
+class RoleController(private val roleService: RoleService) {
 
     @Schema(description = "Format for Role read")
     data class RoleTableDTO(
@@ -42,7 +42,7 @@ class RoleController(private val roleService: RoleServiceImpl) {
 
     @Schema(description = "Format for Role create")
     data class RolePostDTO(
-        @field:NotBlank
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:Size(min = 1, message = "Description cannot be blank if provided")
         val description: String,
@@ -51,7 +51,7 @@ class RoleController(private val roleService: RoleServiceImpl) {
 
     @Schema(description = "Format for Role update")
     data class RolePutDTO(
-        @field:NotBlank
+        @field:NotBlank(message = "Name must not be empty")
         val name: String,
         @field:Size(min = 1, message = "Description cannot be blank if provided")
         val description: String,
@@ -60,7 +60,8 @@ class RoleController(private val roleService: RoleServiceImpl) {
 
     @Schema(description = "Format for Role Permission's update & delete")
     data class RolePermissionDTO(
-        val permissionIds: MutableSet<UUID>
+        val permissionIds: MutableSet<UUID>,
+        val updatedById: UUID
     )
 
     @GetMapping
@@ -92,6 +93,11 @@ class RoleController(private val roleService: RoleServiceImpl) {
     @Operation(summary = "Update a Role's Permission by id")
     fun updateRolePermissions(@PathVariable id: UUID, @RequestBody body: RolePermissionDTO) =
         roleService.updateRolePermissions(id, body).toOkResponse()
+
+    @PostMapping("/{id}/permission")
+    @Operation(summary = "Update a Role's Permission by id")
+    fun addRolePermissions(@PathVariable id: UUID, @RequestBody body: RolePermissionDTO) =
+        roleService.addRolePermissions(id, body).toOkResponse()
 
     @DeleteMapping("/{id}/permission")
     @Operation(summary = "Delete a Role's Permission by id")

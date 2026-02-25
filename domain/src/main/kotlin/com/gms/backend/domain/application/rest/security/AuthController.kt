@@ -1,5 +1,6 @@
 package com.gms.backend.domain.application.rest.security
 
+import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.rest.branch.BranchController
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
@@ -7,16 +8,15 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.context.DelegatingSecurityContextRepository
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository
 import org.springframework.security.web.context.SecurityContextRepository
 import org.springframework.security.web.csrf.CsrfToken
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
@@ -38,6 +38,39 @@ class AuthController(
         val permissions: Map<String, List<Char>>
     )
 
+    fun convertPermissions(authorities: Collection<GrantedAuthority>): Map<String, List<Char>> {
+        val stringPermissions: List<String> = authorities.map { it.authority.toString() }
+        val mapping = mapOf(
+            "create" to 'c',
+            "read" to 'r',
+            "update" to 'u',
+            "delete" to 'd'
+        )
+
+        return stringPermissions
+            .filter { it.contains("_") && !it.startsWith("ROLE_") } // Removes "ROLE_ADMIN" and malformed strings
+            .map { it.split("_") }
+            .groupBy(
+                keySelector = { it[0] },      // Resource (e.g., "member")
+                valueTransform = { it[1] }    // Action (e.g., "create")
+            )
+            .mapValues { (_, actions) ->
+                actions.mapNotNull { mapping[it] }
+                    .distinct()
+                    .sorted() // Optional: keeps output as [c, d, r, u]
+            }
+            .toSortedMap()
+    }
+
+    @GetMapping("/me")
+    fun getMyDetails(@AuthenticationPrincipal principal: CustomUserDetails) = LogInResponse(
+        principal.email,
+        principal.actorId,
+        principal.branches,
+        principal.roles,
+        convertPermissions(principal.authorities)
+    ).toOkResponse()
+
     @PostMapping("/login")
     fun login(
         @RequestBody body: LogInDTO, request: HttpServletRequest, response: HttpServletResponse
@@ -56,6 +89,9 @@ class AuthController(
         // 4. PERSIST the context to the session/database
         securityContextRepository.saveContext(context, request, response)
 
+//        val session = request.getSession(true)
+//        session.setAttribute("LAST_ROLE_CHECK", Instant.now())
+
         val csrfToken = request.getAttribute(CsrfToken::class.java.name) as? CsrfToken
 
         val responseBuilder = ResponseEntity.ok()
@@ -66,7 +102,11 @@ class AuthController(
 
         val principal = authentication.principal as CustomUserDetails
         val response = LogInResponse(
-            principal.email, principal.actorId, principal.branches, principal.roles, principal.compactPermissions
+            principal.email,
+            principal.actorId,
+            principal.branches,
+            principal.roles,
+            convertPermissions(principal.authorities)
         )
         return responseBuilder.body(response)
     }
