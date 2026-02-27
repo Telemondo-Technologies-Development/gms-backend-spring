@@ -35,7 +35,7 @@ class MemberProgressServiceImplTest
         // When
         val memberProgress = memberProgressServiceImpl.getMemberProgress(Pageable.unpaged())
         // Then
-        assertEquals(1, memberProgress.size)
+        assertEquals(2, memberProgress.size)
     }
 
     @Test
@@ -86,7 +86,7 @@ class MemberProgressServiceImplTest
     @Test
     fun testDeleteMemberProgress() {
         // Given
-        val id = UUID.fromString("019c7648-9e29-7f86-b68c-3557330445ea")
+        val id = UUID.fromString("c4f0f20d-4fc8-420b-bab8-dfc0b4c00ffc")
         val count = memberProgressRepository.count()
         // When
         val memberProgress = memberProgressServiceImpl.deleteMemberProgress(id)

@@ -383,7 +383,8 @@ INSERT INTO `progress` (`id`, `name`, `progress_option_id`, `created_by`, `updat
 (0x019c75eed938718f8243ee2d7fd1443f, 'Pro', 0x019c75eda9f87b539ff5376498e646b8, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 12:45:13.400618', '2026-02-19 12:45:13.400618');
 
 INSERT INTO `member_progress` (`id`, `actor_id`, `progress_option_id`, `progress_id`, `branch_id`, `remarks`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`, `completed_at`) VALUES
-(0x019c76489e297f86b68c3557330445ea, 0x8140f50da33f4569b76a20c348b77222, 0x019c75eda9f87b539ff5376498e646b8, 0x019c75eea5ad7936b3917fd0de59a2cc, 0x019ba279a6e67271893cffab220040a2, NULL, 'IN', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 14:23:16.530807', '2026-02-19 14:23:16.530807', NULL);
+(0x019c76489e297f86b68c3557330445ea, 0x8140f50da33f4569b76a20c348b77222, 0x019c75eda9f87b539ff5376498e646b8, 0x019c75eea5ad7936b3917fd0de59a2cc, 0x019ba279a6e67271893cffab220040a2, NULL, 'IN', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 14:23:16.530807', '2026-02-19 14:23:16.530807', NULL),
+(0xc4f0f20d4fc8420bbab8dfc0b4c00ffc, 0x4382e175404d4bd797f0b379bd95f64a, 0x019c75eda9f87b539ff5376498e646b8, 0x019c75eea5ad7936b3917fd0de59a2cc, 0x019ba279a6e67271893cffab220040a2, NULL, 'IN', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 14:23:16.530807', '2026-02-19 14:23:16.530807', NULL);
 
 INSERT INTO `member_progress_history` (`id`, `member_progress_id`, `progress_id`, `changed_at`) VALUES
 (0x019c7e5b866e799f914e0c8b7077fd97, 0x019c76489e297f86b68c3557330445ea, 0x019c75eea5ad7936b3917fd0de59a2cc, '2026-02-21 04:00:53.353805'),

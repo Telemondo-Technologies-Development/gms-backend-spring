@@ -1,4 +1,4 @@
-package com.gms.backend.domain.domain.service.user
+package com.gms.backend.domain.domain.service.security
 
 import org.springframework.security.core.GrantedAuthority
 

@@ -7,7 +7,7 @@ import com.gms.backend.domain.application.rest.user.RoleController
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.repository.user.PermissionRepository
 import com.gms.backend.domain.domain.repository.user.RoleRepository
-import com.gms.backend.domain.domain.service.user.PermissionCacheService
+import com.gms.backend.domain.domain.service.security.PermissionCacheService
 import com.gms.backend.domain.domain.service.user.RoleService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

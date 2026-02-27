@@ -1,9 +1,9 @@
-package com.gms.backend.domain.impl.domain.service.user
+package com.gms.backend.domain.impl.domain.service.security
 
 import com.gms.backend.domain.application.rest.security.CustomUserDetails
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.user.UserRepository
-import com.gms.backend.domain.domain.service.user.PermissionCacheService
+import com.gms.backend.domain.domain.service.security.PermissionCacheService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

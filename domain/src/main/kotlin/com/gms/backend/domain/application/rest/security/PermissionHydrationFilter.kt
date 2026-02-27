@@ -1,6 +1,6 @@
 package com.gms.backend.domain.application.rest.security
 
-import com.gms.backend.domain.domain.service.user.PermissionCacheService
+import com.gms.backend.domain.domain.service.security.PermissionCacheService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

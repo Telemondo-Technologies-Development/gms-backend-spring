@@ -2,6 +2,7 @@ package com.gms.backend.domain.application.response
 
 import io.minio.errors.ErrorResponseException
 import io.minio.errors.MinioException
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
@@ -45,6 +46,23 @@ class GlobalExceptionHandler {
             message = ex.message ?: "Action failed",
             status = ex.status,
             errors = listOf(ex.error.toApiError(ex.description, ex.field))
+        )
+    }
+
+    @ExceptionHandler(RateLimitException::class)
+    fun handleRateLimitException(ex: RateLimitException, response: HttpServletResponse): ResponseEntity<ApiResponse<Nothing>> {
+        log.warn("Rate limit exceeded. Wait time: {}s", ex.waitTimeInSeconds)
+
+        response.setHeader("Retry-After", ex.waitTimeInSeconds.toString())
+
+        return ApiResponse.error(
+            message = "Too Many Requests",
+            status = HttpStatus.TOO_MANY_REQUESTS,
+            errors = listOf(
+                ApiErrorType.RATE_LIMIT_EXCEEDED.toApiError(
+                    "Rate limit exceeded. You may retry in ${ex.waitTimeInSeconds} seconds."
+                )
+            )
         )
     }
 
@@ -232,4 +250,9 @@ class DomainException(
     message: String? = null,
     val field: String? = null,
     val status: HttpStatus = HttpStatus.BAD_REQUEST
+) : RuntimeException(message)
+
+class RateLimitException(
+    val waitTimeInSeconds: Long,
+    message: String = "Too many requests. Please try again later."
 ) : RuntimeException(message)

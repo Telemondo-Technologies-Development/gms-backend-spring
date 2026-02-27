@@ -1,7 +1,7 @@
 //package com.gms.backend.domain.application.rest.security
 //
 //import com.gms.backend.domain.domain.repository.user.UserRepository
-//import com.gms.backend.domain.impl.domain.service.user.CustomUserDetailService
+//import com.gms.backend.domain.impl.domain.service.security.CustomUserDetailService
 //import jakarta.servlet.FilterChain
 //import jakarta.servlet.http.HttpServletRequest
 //import jakarta.servlet.http.HttpServletResponse

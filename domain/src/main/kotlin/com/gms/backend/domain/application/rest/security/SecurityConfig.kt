@@ -1,6 +1,6 @@
 package com.gms.backend.domain.application.rest.security
 
-import com.gms.backend.domain.impl.domain.service.user.CustomUserDetailService
+import com.gms.backend.domain.impl.domain.service.security.CustomUserDetailService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -20,6 +20,7 @@ import org.springframework.security.web.context.*
 //@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 @EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
+    private val rateLimitFilter: RateLimitFilter,
     private val customUserDetailsService: CustomUserDetailService,
     private val permissionHydrationFilter: PermissionHydrationFilter
 ) {
@@ -50,6 +51,7 @@ class SecurityConfig(
         @Bean
         fun filterChain(http: HttpSecurity): SecurityFilterChain {
             http
+                .addFilterBefore(rateLimitFilter, SecurityContextHolderFilter::class.java)
                 .addFilterAfter(permissionHydrationFilter, SecurityContextHolderFilter::class.java)
 //                .addFilterAfter(sessionUpdateFilter, SecurityContextHolderFilter::class.java)
                 .csrf { csrf -> csrf.disable() } // TODO: Enable for protection

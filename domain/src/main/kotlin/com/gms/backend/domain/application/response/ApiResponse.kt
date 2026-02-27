@@ -94,6 +94,9 @@ enum class ApiErrorType(val code: String, val description: String) {
     // 403 Forbidden (Authorization)
     INSUFFICIENT_PERMISSIONS("SEC_002", "You do not have the required authorities to perform this action."),
 
+    // 429 Too many request
+    RATE_LIMIT_EXCEEDED("SEC_003", "You have exceeded the allowed number of requests. Please slow down."),
+
     // 404 Not Found Errors
     RESOURCE_NOT_FOUND("VAL_401", "The requested resource could not be located."),
     NO_SUCH_ELEMENT("VAL_402", "The specific item you are looking for is missing or has been deleted."),
