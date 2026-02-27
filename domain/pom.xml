@@ -99,6 +99,11 @@
             <artifactId>caffeine</artifactId>
             <version>${com.github.ben-manes.caffeine.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j_jdk17-core</artifactId>
+            <version>${com.bucket4j.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.gms</groupId>
