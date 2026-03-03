@@ -14,10 +14,36 @@ interface UserRepository : JpaRepository<User, UUID> {
     // Projection function needs to end with By to work properly (JPA Convention)
     fun findByEmail(email: String): User?
 
-    @Query("SELECT u FROM User u ORDER BY u.createdAt DESC")
+    @Query(
+        value = $$"""
+        SELECT new com.gms.backend.domain.application.rest.user.UserController$UserTableDTO(
+        u.id,
+        u.email as username,
+        u.createdAt,
+        u.updatedAt,
+        u.actorId
+        )
+        FROM User u
+        ORDER BY u.createdAt DESC
+        """,
+        countQuery = "SELECT COUNT(u) FROM User u"
+    )
     fun findAllProjectedBy(pageable: Pageable): Page<UserController.UserTableDTO>
 
-    @Query("SELECT u FROM User u WHERE u.id = :id ORDER BY u.createdAt DESC")
+    @Query(
+        value = $$"""
+        SELECT new com.gms.backend.domain.application.rest.user.UserController$UserTableDTO(
+        u.id,
+        u.email as username,
+        u.createdAt,
+        u.updatedAt,
+        u.actorId
+        )
+        FROM User u
+        WHERE id = :id
+        ORDER BY u.createdAt DESC
+        """
+    )
     fun findByUserId(@Param("id") id: UUID): Optional<UserController.UserTableDTO>
 
     @Query(
@@ -30,8 +56,7 @@ interface UserRepository : JpaRepository<User, UUID> {
         FROM Role r
         JOIN r.userRoles u
         WHERE u.id IN :userIds
-        """,
-        countQuery = "SELECT COUNT(m) FROM Member m"
+        """
     )
     fun findAllUserRole(@Param("userIds") userIds: List<UUID>): List<UserController.UserRoleWithUserId>
 

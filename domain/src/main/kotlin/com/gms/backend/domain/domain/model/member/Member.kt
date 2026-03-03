@@ -16,9 +16,9 @@ import java.util.*
 class Member {
 
     enum class MemberStatus {
-        IN,
-        OUT,
         UNDECIDED,
+        ACTIVE,
+        DEACTIVATED,
     }
 
     @Id
@@ -79,6 +79,9 @@ class Member {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_picture", nullable = true)
     var profilePicture: ObjectStorage? = null
+
+    @Column(name = "profile_picture", insertable = false, updatable = false)
+    var profilePictureId: UUID? = null
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

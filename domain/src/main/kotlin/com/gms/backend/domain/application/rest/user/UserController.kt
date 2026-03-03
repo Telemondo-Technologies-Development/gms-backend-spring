@@ -21,7 +21,7 @@ class UserController(private val userService: UserService) {
 
     data class UserTableDTO(
         val id: UUID,
-        val email: String,
+        val username: String,
         val createdAt: Instant,
         val updatedAt: Instant,
         val actorId: UUID?,
@@ -42,7 +42,7 @@ class UserController(private val userService: UserService) {
 
     data class UserPostDTO(
         @field:Email(message = "Email should be valid")
-        val email: String,
+        val username: String,
         @field:Size(min = 8, max = 64)
         val password: String,
         val roles: List<UUID> = emptyList()
@@ -50,7 +50,7 @@ class UserController(private val userService: UserService) {
 
     data class UserPutDTO(
         @field:Email(message = "Email should be valid")
-        val email: String,
+        val username: String,
         val roles: List<UUID> = emptyList()
     )
 

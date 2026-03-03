@@ -49,7 +49,8 @@ class MemberServiceImpl(
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('member_read')")
     override fun getMemberById(id: UUID): MemberController.MemberTableDTO {
-        return memberRepository.findProjectedBy(id).orElseThrow()
+        val member = memberRepository.findProjectedBy(id).orElseThrow()
+        return member
     }
 
     @Transactional
