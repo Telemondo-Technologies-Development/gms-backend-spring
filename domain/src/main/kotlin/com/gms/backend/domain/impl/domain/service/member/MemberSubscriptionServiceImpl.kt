@@ -3,15 +3,19 @@ package com.gms.backend.domain.impl.domain.service.member
 import com.gms.backend.domain.application.mapper.member.MemberSubscriptionMapper
 import com.gms.backend.domain.application.response.ApiErrorType
 import com.gms.backend.domain.application.response.DomainException
+import com.gms.backend.domain.application.rest.billing.InvoiceController
 import com.gms.backend.domain.application.rest.member.MemberSubscriptionController
+import com.gms.backend.domain.domain.model.billing.Invoice
 import com.gms.backend.domain.domain.model.member.MemberSubscription
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.member.MemberSubscriptionRepository
 import com.gms.backend.domain.domain.repository.subscription.SubscriptionAvailedRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
+import com.gms.backend.domain.domain.service.billing.InvoiceService
 import com.gms.backend.domain.domain.service.member.MemberSubscriptionService
-import com.gms.backend.domain.impl.domain.service.subscription.SubscriptionAvailedServiceImpl
+import com.gms.backend.domain.domain.service.subscription.SubscriptionAvailedService
+import org.springframework.core.env.Environment
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -28,7 +32,9 @@ class MemberSubscriptionServiceImpl(
     private val actorRepository: ActorRepository,
     private val branchRepository: BranchRepository,
     private val subscriptionAvailedRepository: SubscriptionAvailedRepository,
-    private val subscriptionAvailedServiceImpl: SubscriptionAvailedServiceImpl
+    private val subscriptionAvailedService: SubscriptionAvailedService,
+    private val invoiceService: InvoiceService,
+    private val environment: Environment
 ) : MemberSubscriptionService {
     @Transactional
     @PreAuthorize("hasAuthority('memberSubscription_create')")
@@ -41,18 +47,35 @@ class MemberSubscriptionServiceImpl(
             ApiErrorType.INVALID_CASE,
             "Member has an Active Subscription, you might want to edit/cancel existing subscription"
         )
-        val subscriptionAvailedId = subscriptionAvailedServiceImpl.insertSubscriptionAvailed(body.subscriptionId)
+        val subscriptionAvailedId = subscriptionAvailedService.insertSubscriptionAvailed(body.subscriptionId)
         // not sure if we will create member separately or the same time as this one
         val memberSubscription = memberSubscriptionMapper.memberSubscriptionPostDTOToMemberSubscription(body).apply {
             // For now the type of actor is not verified (implied that the data sent is right)
             actor = actorRepository.getReferenceById(body.actorId)
             branch = branchRepository.getReferenceById(body.branchId)
-            subscriptionAvailed = subscriptionAvailedRepository.findById(subscriptionAvailedId).orElseThrow()
+            subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(subscriptionAvailedId)
+            this.subscriptionAvailedId = subscriptionAvailedId
             createdBy = actorRepository.getReferenceById(body.createdById)
             updatedBy = actorRepository.getReferenceById(body.createdById)
         }
 
         val saved = memberSubscriptionRepository.saveAndFlush(memberSubscription)
+
+
+        val systemId = UUID.fromString(environment.getProperty("system.id"))
+            ?: throw DomainException(ApiErrorType.INTERNAL_SERVER_ERROR, "System ID configuration missing")
+
+        val invoice = InvoiceController.InvoicePostDTO(
+            actorId = body.actorId,
+            memberSubscriptionId = saved.id,
+            dueDate = null,
+            status = Invoice.InvoiceStatus.PENDING,
+            systemGenerated = true,
+            createdById = systemId
+        )
+
+        invoiceService.createInvoice(invoice)
+
         return memberSubscriptionMapper.memberSubscriptionToMemberSubscriptionTableDTO(saved)
     }
 
@@ -78,11 +101,12 @@ class MemberSubscriptionServiceImpl(
         val memberSubscriptionIds = memberSubscriptionRepository.findMemberSubscriptionById(id).orElseThrow()
 
         // Check whether the subscription is changed or still the same
-        val subscriptionAvailedId = if (memberSubscriptionIds.subscriptionId == body.subscriptionId && !body.updateCurrentSubscription) {
-            memberSubscription.subscriptionAvailedId!!
-        } else {
-            subscriptionAvailedServiceImpl.insertSubscriptionAvailed(memberSubscriptionIds.subscriptionId)
-        }
+        val subscriptionAvailedId =
+            if (memberSubscriptionIds.subscriptionId == body.subscriptionId && !body.updateCurrentSubscription) {
+                memberSubscription.subscriptionAvailedId!!
+            } else {
+                subscriptionAvailedService.insertSubscriptionAvailed(memberSubscriptionIds.subscriptionId)
+            }
 
         memberSubscription.apply {
             memberSubscriptionMapper.memberSubscriptionPutDTOToMemberSubscription(body, this)

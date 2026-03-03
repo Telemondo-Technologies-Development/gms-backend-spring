@@ -224,11 +224,13 @@ CREATE TABLE attendance (
   source 				varchar(255) NOT NULL,
   type 					varchar(255) NOT NULL,
   remarks 				varchar(255) NULL,
+  recorded_at 			datetime(6) NOT NULL,
   -- Not yet final
   created_by 			binary(16) NOT NULL,
   updated_by 			binary(16) NOT NULL,
   created_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at 			datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX recorded_at (recorded_at),
   CONSTRAINT attendance_ibfk_1 FOREIGN KEY (actor_id) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT attendance_ibfk_2 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT attendance_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
