@@ -48,7 +48,6 @@ class RateLimitFilter(
         val uri = request.requestURI
         val ip = getRemoteIp(request)
         val userAgent = request.getHeader("User-Agent") ?: "unknown"
-        println(userAgent)
 
         if (uri.contains("/auth/login")) return RequestIdentity.LoginPath(ip, userAgent)
 

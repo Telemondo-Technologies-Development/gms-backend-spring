@@ -22,7 +22,8 @@ class Payment {
         PENDING,
         MISSED,
         CANCELLED,
-        WAITING
+        WAITING,
+        FAILED
     }
 
     @Id
