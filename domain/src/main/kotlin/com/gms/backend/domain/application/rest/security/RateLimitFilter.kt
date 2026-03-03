@@ -46,8 +46,11 @@ class RateLimitFilter(
 
     private fun resolveIdentity(request: HttpServletRequest): RequestIdentity {
         val uri = request.requestURI
+        val ip = getRemoteIp(request)
+        val userAgent = request.getHeader("User-Agent") ?: "unknown"
+        println(userAgent)
 
-        if (uri.contains("/auth/login")) return RequestIdentity.LoginPath
+        if (uri.contains("/auth/login")) return RequestIdentity.LoginPath(ip, userAgent)
 
         // 2. Try to find the user in the session
         val session = request.getSession(false)
@@ -58,7 +61,7 @@ class RateLimitFilter(
         return if (auth != null && auth.isAuthenticated && auth !is AnonymousAuthenticationToken) {
             RequestIdentity.Authenticated(auth.name)
         } else {
-            RequestIdentity.Guest(getRemoteIp(request))
+            RequestIdentity.Guest(ip)
         }
     }
 

@@ -1,6 +1,7 @@
 package com.gms.backend.domain.domain.repository.member
 
 import com.gms.backend.domain.application.rest.member.MemberSubscriptionController
+import com.gms.backend.domain.domain.model.member.Member
 import com.gms.backend.domain.domain.model.member.MemberSubscription
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -97,4 +98,13 @@ interface MemberSubscriptionRepository : JpaRepository<MemberSubscription, UUID>
     fun findMemberSubscriptionById(
         @Param("id") id: UUID,
     ): Optional<MemberSubscriptionController.MemberSubscriptionIdsDTO>
+
+    @Query(
+        """
+            SELECT m
+            FROM MemberSubscription ms
+            LEFT JOIN Member m on ms.actor = m.actor
+        """
+    )
+    fun findMemberByMemberSubscriptionId(id: UUID): Optional<Member>
 }

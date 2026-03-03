@@ -33,14 +33,28 @@ class EmployeeController(
     @Schema(description = "Format for Employee read")
     data class EmployeeTableDTO(
         val id: UUID,
-        val user: UserController.UserTableDTO?,
         val actorId: UUID?,
+        val userId: UUID?,
+        val username: String?,
         val surname: String,
         val firstName: String,
         val middleName: String?,
         val suffix: String?, // Might set to enum
         val contactNo: String,
         val status: Employee.EmployeeStatus,
+    ) {
+        var branches: List<BranchesBriefDTO> = emptyList()
+    }
+
+    data class BranchesWithEmployeeId(
+        val actorId: UUID,
+        val id: UUID,
+        val name: String
+    )
+
+    data class BranchesBriefDTO(
+        val id: UUID,
+        val name: String
     )
 
     @Schema(description = "Format for Employee create")

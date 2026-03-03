@@ -16,9 +16,13 @@ import java.util.*
 class Payment {
 
     enum class PaymentStatus {
-        IN,
-        OUT,
-        UNDECIDED,
+        // Not final
+        FULL,
+        PARTIAL,
+        PENDING,
+        MISSED,
+        CANCELLED,
+        WAITING
     }
 
     @Id

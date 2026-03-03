@@ -43,6 +43,9 @@ class Attendance {
     @Enumerated(EnumType.STRING)
     lateinit var source: AttendanceSource
 
+    @Column(nullable = false)
+    lateinit var recordedAt: Instant
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     lateinit var createdAt: Instant

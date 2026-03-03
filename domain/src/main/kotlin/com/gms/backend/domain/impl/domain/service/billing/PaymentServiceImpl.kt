@@ -2,11 +2,14 @@ package com.gms.backend.domain.impl.domain.service.billing
 
 import com.gms.backend.domain.application.mapper.billing.PaymentMapper
 import com.gms.backend.domain.application.rest.billing.PaymentController
+import com.gms.backend.domain.domain.model.billing.Invoice
+import com.gms.backend.domain.domain.model.billing.Payment
 import com.gms.backend.domain.domain.repository.billing.InvoiceRepository
 import com.gms.backend.domain.domain.repository.billing.PaymentMethodRepository
 import com.gms.backend.domain.domain.repository.billing.PaymentRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.billing.PaymentService
+import com.gms.backend.domain.infra.quartz.billing.InvoiceScheduleService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -21,6 +24,7 @@ class PaymentServiceImpl(
     private val paymentMapper: PaymentMapper,
     private val actorRepository: ActorRepository,
     private val invoiceRepository: InvoiceRepository,
+    private val invoiceScheduleService: InvoiceScheduleService,
     private val paymentMethodRepository: PaymentMethodRepository
 ) : PaymentService {
     @Transactional
@@ -34,6 +38,22 @@ class PaymentServiceImpl(
         }
 
         val saved = paymentRepository.saveAndFlush(payment)
+        val invoice = invoiceRepository.findById(body.invoiceId).orElseThrow()
+        when (saved.status) {
+            Payment.PaymentStatus.FULL -> {
+                invoice.apply { status = Invoice.InvoiceStatus.PAID }
+                invoiceRepository.save(invoice)
+                invoiceScheduleService.createPendingInvoice(invoice.id)
+            }
+            Payment.PaymentStatus.PARTIAL -> {
+                invoice.apply { status = Invoice.InvoiceStatus.PARTIAL }
+                invoiceRepository.save(invoice)
+            }
+            else -> {
+                // Optional: handle other statuses (e.g., PENDING, FAILED)
+            }
+        }
+
         return paymentMapper.paymentToPaymentTableDTO(saved)
     }
 

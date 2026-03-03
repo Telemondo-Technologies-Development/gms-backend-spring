@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import java.time.Instant
 import java.util.*
 
 @RestController
@@ -25,6 +26,7 @@ class AttendanceController(private val attendanceService: AttendanceService) {
         val branchId: UUID?,
         val source: Attendance.AttendanceSource,
         val type: Attendance.AttendanceType,
+        val recordedAt: Instant,
         val createdById: UUID?,
         val updatedById: UUID?
     )
@@ -35,6 +37,7 @@ class AttendanceController(private val attendanceService: AttendanceService) {
         val branchId: UUID,
         val source: Attendance.AttendanceSource,
         val type: Attendance.AttendanceType,
+        val recordedAt: Instant,
         val createdById: UUID
     )
 
@@ -42,6 +45,7 @@ class AttendanceController(private val attendanceService: AttendanceService) {
     data class AttendancePutDTO(
         val source: Attendance.AttendanceSource,
         val type: Attendance.AttendanceType,
+        val recordedAt: Instant,
         val updatedById: UUID
     )
 

@@ -37,6 +37,7 @@ class MemberController(
         val middleName: String?,
         val suffix: String?,
         val status: Member.MemberStatus,
+        val profilePictureId: UUID?,
         val createdById: UUID?,
         val createdByType: Actor.ActorType?,
         val createdByEmail: String?,
@@ -47,7 +48,9 @@ class MemberController(
         val updatedByEmail: String?,
         val updatedBySurname: String?,
         val updatedByFirstName: String?
-    )
+    ) {
+        var profilePictureUrl: String = ""
+    }
 
     @Schema(description = "Format for Member create")
     data class MemberPostDTO(

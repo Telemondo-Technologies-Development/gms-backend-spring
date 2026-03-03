@@ -44,10 +44,9 @@ class InvoiceController(private val invoiceService: InvoiceService) {
         val actorId: UUID,
         val memberSubscriptionId: UUID,
         // TODO: Check whether subtotal will be based subscription amount
-        @field:PositiveOrZero(message = "Subtotal must not be negative")
-        val subtotal: BigDecimal,
-        val dueDate: Instant,
-        val gracePeriodDate: Instant,
+//        @field:PositiveOrZero(message = "Subtotal must not be negative")
+//        val subtotal: BigDecimal,
+        var dueDate: Instant?,
         val status: Invoice.InvoiceStatus,
         val systemGenerated: Boolean? = false,
         val createdById: UUID
