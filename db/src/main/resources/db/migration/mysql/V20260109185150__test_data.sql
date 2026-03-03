@@ -32,9 +32,9 @@ INSERT INTO `employees` (`id`, `user_id`, `actor_id`, `surname`, `first_name`, `
 (0x019c1bfa305b7bf5a2d7d880b0351e08, 0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0x71334a2138eb424983024eac34f17568, 'Sipes', 'Emile', NULL, 'A', '09154520999', 'IN', NULL, '2026-02-02 01:31:47.188027', '2026-02-02 01:31:47.188027');
 
 INSERT INTO `members` (`id`, `actor_id`, `surname`, `first_name`, `middle_name`, `suffix`, `status`, `profile_picture`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019ba2c9e74574b98e0519c19ba1fcde, 0x8140f50da33f4569b76a20c348b77222, 'Dare', 'Terrence', NULL, NULL, 'IN', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:44:59.632457', '2026-01-09 12:44:59.632457'),
-(0x019ba2c9eb9f720e9987a3bfc0780a93, 0xcd950aff5baa4eeab5de2cd1365e5657, 'Schultz', 'Katarina', NULL, NULL, 'IN', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:45:00.707411', '2026-01-09 12:45:00.707940'),
-(0x019ba2c9ef0f7c2f848345ca1d5a42f5, 0xd594bb1121f44511a3fb184b9b557410, 'Connelly', 'Odessa', NULL, NULL, 'IN', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:45:01.587466', '2026-01-09 12:45:01.587466');
+(0x019ba2c9e74574b98e0519c19ba1fcde, 0x8140f50da33f4569b76a20c348b77222, 'Dare', 'Terrence', NULL, NULL, 'ACTIVE', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:44:59.632457', '2026-01-09 12:44:59.632457'),
+(0x019ba2c9eb9f720e9987a3bfc0780a93, 0xcd950aff5baa4eeab5de2cd1365e5657, 'Schultz', 'Katarina', NULL, NULL, 'ACTIVE', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:45:00.707411', '2026-01-09 12:45:00.707940'),
+(0x019ba2c9ef0f7c2f848345ca1d5a42f5, 0xd594bb1121f44511a3fb184b9b557410, 'Connelly', 'Odessa', NULL, NULL, 'ACTIVE', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 12:45:01.587466', '2026-01-09 12:45:01.587466');
 
 INSERT INTO `roles` (`id`, `name`, `description`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 'ADMIN', 'Full Access', 0x8b31746166d1489085a665ae7c6a92d9, 0x8b31746166d1489085a665ae7c6a92d9, '2026-01-09 10:57:25.942328', '2026-01-09 10:57:25.942328'),
@@ -362,8 +362,8 @@ INSERT INTO `member_subscriptions` (`id`, `actor_id`, `subscription_availed_id`,
 (0x019bd47aeacd7d478140f50da33f4569, 0x8140f50da33f4569b76a20c348b77222, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, '2026-01-19 04:19:44.000000', NULL, 'ACTIVE', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-01-19 04:19:43.951676', '2026-01-19 04:19:43.951676');
 
 INSERT INTO `invoices` (`id`, `actor_id`, `subscription_availed_id`, `branch_id`, `member_subscription_id`, `status`, `subtotal`, `discount`, `convenience_fee`, `total`, `due_date`, `grace_period_date`, `issued_at`, `system_generated`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019c716e86d47aeba8d2517c464a9eab, 0xcd950aff5baa4eeab5de2cd1365e5657, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, 0x019bd47aeacd7d4789afe3f9285da33a, 'DRAFT', 1000.00, NULL, NULL, 1000.00, '2026-02-18 15:46:35.000000', '2026-02-18 15:46:35.000000', '2026-02-18 15:46:34.835682', 1, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-18 15:46:34.837189', '2026-02-18 15:46:34.837189'),
-(0x019c716e86d47aeba8d2517c7982a8d0, 0xcd950aff5baa4eeab5de2cd1365e5657, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, 0x019bd47aeacd7d4789afe3f9285da33a, 'DRAFT', 1000.00, NULL, NULL, 1000.00, '2026-02-18 15:46:35.000000', '2026-02-18 15:46:35.000000', '2026-02-18 15:46:34.835682', 1, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-18 15:46:34.837189', '2026-02-18 15:46:34.837189');
+(0x019c716e86d47aeba8d2517c464a9eab, 0xcd950aff5baa4eeab5de2cd1365e5657, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, 0x019bd47aeacd7d4789afe3f9285da33a, 'PENDING', 1000.00, NULL, NULL, 1000.00, '2026-03-2 10:50:43.000000', '2026-03-2 15:46:35.000000', '2026-03-2 15:46:34.835682', 1, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-03-2 15:46:34.837189', '2026-03-2 15:46:34.837189'),
+(0x019c716e86d47aeba8d2517c7982a8d0, 0xcd950aff5baa4eeab5de2cd1365e5657, 0x019bd47aea9279f584c8224f9cca1972, 0x019ba279a6e67271893cffab220040a2, 0x019bd47aeacd7d4789afe3f9285da33a, 'PENDING', 1000.00, NULL, NULL, 1000.00, '2026-03-3 15:46:35.000000', '2026-03-3 15:46:35.000000', '2026-03-3 15:46:34.835682', 1, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-03-3 15:46:34.837189', '2026-03-3 15:46:34.837189');
 
 INSERT INTO `payment_methods` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019c748b4b927982a8d041ebfa856dd8, 'G-Cash', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:16:51.859124', '2026-02-19 06:16:51.859124'),
@@ -371,7 +371,7 @@ INSERT INTO `payment_methods` (`id`, `name`, `created_by`, `updated_by`, `create
 (0x019c748b848f79ac82df9cd6fa601a45, 'Card', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:17:06.448128', '2026-02-19 06:17:06.448128');
 
 INSERT INTO `payments` (`id`, `invoice_id`, `reference_num`, `status`, `payment_method_id`, `amount`, `paid_at`, `failure_reason`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019c748e57dd71cc8ad301923aa45f12, 0x019c716e86d47aeba8d2517c464a9eab, NULL, 'OUT', 0x019c748b4b927982a8d041ebfa856dd8, 1000.00, NULL, NULL, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:20:11.614664', '2026-02-19 06:20:11.614664');
+(0x019c748e57dd71cc8ad301923aa45f12, 0x019c716e86d47aeba8d2517c464a9eab, NULL, 'FULL', 0x019c748b4b927982a8d041ebfa856dd8, 1000.00, NULL, NULL, 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 06:20:11.614664', '2026-02-19 06:20:11.614664');
 
 INSERT INTO `progress_options` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019c75eda9f87b539ff5376498e646b8, 'Workout Progression', 0x75a6a919bfcb427c9ede78e2f49c960d, 0x75a6a919bfcb427c9ede78e2f49c960d, '2026-02-19 12:43:55.768708', '2026-02-19 12:43:55.768708'),

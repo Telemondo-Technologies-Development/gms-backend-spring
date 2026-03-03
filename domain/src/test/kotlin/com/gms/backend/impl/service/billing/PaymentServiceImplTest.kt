@@ -47,7 +47,7 @@ class PaymentServiceImplTest
         val paymentMethodId = UUID.fromString("019c748b-6dd7-7f57-8135-c86b077d7f77")
         val payment = PaymentController.PaymentPostDTO(
             invoiceId = invoiceId,
-            status = Payment.PaymentStatus.UNDECIDED,
+            status = Payment.PaymentStatus.WAITING,
             paymentMethodId = paymentMethodId,
             amount = BigDecimal(100),
             paidAt = Instant.now(),
@@ -68,7 +68,7 @@ class PaymentServiceImplTest
         val updatedById = UUID.fromString("16868948-705e-4011-9f42-bcc324c01ce0")
         val paymentMethodId = UUID.fromString("019c748b-6dd7-7f57-8135-c86b077d7f77")
         val payment = PaymentController.PaymentPutDTO(
-            status = Payment.PaymentStatus.UNDECIDED,
+            status = Payment.PaymentStatus.WAITING,
             paymentMethodId = paymentMethodId,
             amount = BigDecimal(200),
             paidAt = Instant.now(),

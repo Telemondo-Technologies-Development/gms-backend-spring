@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Service
@@ -30,14 +31,25 @@ class InvoiceServiceImpl(
     @PreAuthorize("hasAuthority('invoice_create')")
     override fun createInvoice(body: InvoiceController.InvoicePostDTO): InvoiceController.InvoiceTableDTO {
         val memberSubscription = memberSubscriptionRepository.findById(body.memberSubscriptionId).orElseThrow()
+        val dueDate = body.dueDate ?: memberSubscription.startDate
+        val gracePeriod = memberSubscription.startDate.plus(
+            memberSubscription.subscriptionAvailed.gracePeriodDays.toLong(),
+            ChronoUnit.DAYS
+        )
+        body.apply { this.dueDate = dueDate }
+
         val invoice = invoiceMapper.invoicePostDTOToInvoice(body).apply {
             actor = actorRepository.getReferenceById(body.actorId)
             branch = branchRepository.getReferenceById(memberSubscription.branchId!!)
-            subscriptionAvailed = subscriptionAvailedRepository.getReferenceById(memberSubscription.subscriptionAvailedId!!)
             this.memberSubscription = memberSubscription
+            subscriptionAvailed =
+                subscriptionAvailedRepository.getReferenceById(memberSubscription.subscriptionAvailedId!!)
+            // Could be changed in the future
             issuedAt = Instant.now()
+            gracePeriodDate = gracePeriod
             // Currently has no discount
-            total = body.subtotal
+            subtotal = memberSubscription.subscriptionAvailed.amount
+            total = memberSubscription.subscriptionAvailed.amount
             createdBy = actorRepository.getReferenceById(body.createdById)
             updatedBy = actorRepository.getReferenceById(body.createdById)
         }

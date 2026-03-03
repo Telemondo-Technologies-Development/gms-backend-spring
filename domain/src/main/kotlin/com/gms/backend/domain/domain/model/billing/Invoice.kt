@@ -20,8 +20,11 @@ class Invoice {
 
     enum class InvoiceStatus {
         DRAFT,
+        PENDING,
         ISSUED,
         PAID,
+        PARTIAL, // Next time
+        DUE,
         OVERDUE
     }
 
