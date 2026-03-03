@@ -42,13 +42,29 @@ class EmployeeServiceImpl(
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('employee_read')")
     override fun getEmployees(pageable: Pageable): Page<EmployeeController.EmployeeTableDTO> {
-        return employeeRepository.findAll(pageable).map {branch -> employeeMapper.employeeToEmployeeTableDTO(branch)}
+        val employees = employeeRepository.findAllProjectedBy(pageable)
+
+        val employeeIds = employees.content.map { it.actorId!! }
+        if (employeeIds.isEmpty()) return Page.empty(pageable)
+
+        val branchesByEmployeeIds: Map<UUID, List<EmployeeController.BranchesBriefDTO>> =
+            employeeRepository.findAllBranchesByIds(employeeIds)
+                .groupBy({ it.actorId }, { employeeMapper.branchesToBranchesBriefDTO(it) })
+
+        // 3. Map to DTO using O(1) lookups
+        return employees.map { employee ->
+            employee.apply {
+                branches = branchesByEmployeeIds.getOrDefault(employee.actorId, emptyList())
+            }
+        }
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('employee_read') and hasAuthority('user_read')")
     override fun getEmployeeById(id: UUID): EmployeeController.EmployeeTableDTO {
-        return employeeRepository.findById(id).orElseThrow().let(employeeMapper::employeeToEmployeeTableDTO)
+        val employee = employeeRepository.findByEmployeeId(id).orElseThrow()
+        val branches = employeeRepository.findAllBranchesByIds(listOf(employee.actorId!!))
+        return employee.apply { this.branches = branches.map { employeeMapper.branchesToBranchesBriefDTO(it) } }
     }
 
     @Transactional
