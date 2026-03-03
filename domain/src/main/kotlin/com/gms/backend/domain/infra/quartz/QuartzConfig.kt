@@ -1,5 +1,6 @@
 package com.gms.backend.domain.infra.quartz
 
+import com.gms.backend.domain.infra.quartz.analytics.RefreshBranchSummaryJob
 import com.gms.backend.domain.infra.quartz.asset.MaintenanceJob
 import com.gms.backend.domain.infra.quartz.billing.InvoiceStatusJob
 import org.quartz.*
@@ -40,6 +41,20 @@ class QuartzConfig {
         .withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?"))
         .build()
 
+    @Bean
+    fun refreshBranchSummaryJobDetail(): JobDetail = JobBuilder.newJob(RefreshBranchSummaryJob::class.java)
+        .withIdentity("refreshBranchSummaryJob")
+        .storeDurably()
+        .build()
+
+
+    @Bean
+    fun refreshBranchSummaryTrigger(): Trigger = TriggerBuilder.newTrigger()
+        .forJob(refreshBranchSummaryJobDetail())
+        .withIdentity("refreshBranchSummaryJob")
+        .withSchedule(CronScheduleBuilder.cronSchedule("0 0 * * * ?"))
+        .build()
+
 }
 
 // main job runs everytime the app starts
@@ -48,7 +63,7 @@ class QuartzConfig {
 class MaintenanceStartupRunner(private val scheduler: Scheduler) {
     @EventListener(ApplicationReadyEvent::class)
     fun runJobOnStartup() {
-        val jobs = listOf("invoiceStatusUpdateJob", "maintenanceJob")
+        val jobs = listOf("invoiceStatusUpdateJob", "maintenanceJob", "refreshBranchSummaryJob")
         val jobKeys = jobs.map { job -> JobKey(job) }
 
         jobKeys.forEach {
