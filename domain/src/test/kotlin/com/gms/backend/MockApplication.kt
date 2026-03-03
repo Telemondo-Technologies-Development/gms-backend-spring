@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.format.support.DefaultFormattingConversionService
 import org.springframework.format.support.FormattingConversionService
+import org.springframework.web.servlet.HandlerExceptionResolver
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver
 
 @SpringBootApplication(scanBasePackages = ["com.gms.backend"])
 @EnableJpaRepositories(basePackages = ["com.gms.backend.domain.domain.repository"])
@@ -37,5 +39,10 @@ class MockApplication {
     @Bean
     fun mvcConversionService(): FormattingConversionService {
         return DefaultFormattingConversionService()
+    }
+
+    @Bean
+    fun handlerExceptionResolver(): HandlerExceptionResolver {
+        return DefaultHandlerExceptionResolver()
     }
 }
