@@ -46,7 +46,7 @@ class MemberServiceImplTest
         val member = MemberController.MemberPostDTO(
             surname = "Ford",
             firstName = "Michaela",
-            status = Member.MemberStatus.IN,
+            status = Member.MemberStatus.UNDECIDED,
             createdById = createdById,
             middleName = null,
             suffix = null,
@@ -56,7 +56,7 @@ class MemberServiceImplTest
         val saved = memberServiceImpl.createMember(member)
         // Then
         assertEquals("Ford", saved.surname)
-        assertEquals(Member.MemberStatus.IN, saved.status)
+        assertEquals(Member.MemberStatus.UNDECIDED, saved.status)
         assertThrows<DataIntegrityViolationException>({
             memberServiceImpl.createMember(member)
             entityManager.flush()
@@ -70,7 +70,7 @@ class MemberServiceImplTest
         val member = MemberController.MemberPutDTO(
             surname = "Ford",
             firstName = "Michaela",
-            status = Member.MemberStatus.IN,
+            status = Member.MemberStatus.UNDECIDED,
             updatedById = updatedById,
             middleName = null,
             suffix = null,
@@ -82,7 +82,7 @@ class MemberServiceImplTest
         // Then
         assertNotNull(updated.actorId)
         assertEquals("Ford", updated.surname)
-        assertEquals(Member.MemberStatus.IN, updated.status)
+        assertEquals(Member.MemberStatus.UNDECIDED, updated.status)
     }
 
     @Test

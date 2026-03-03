@@ -45,7 +45,7 @@ class UserServiceImplTest
         // When
         val saved = userServiceImpl.createUser(user)
         // Then
-        assertEquals("test@email.com", saved.email)
+        assertEquals("test@email.com", saved.username)
         assertThrows<DataIntegrityViolationException>({
             userServiceImpl.createUser(user)
             entityManager.flush()
@@ -61,7 +61,7 @@ class UserServiceImplTest
         val updated = userServiceImpl.updateUser(id, user)
         // Then
         assertNotNull(updated.actorId)
-        assertEquals("new@email.com", updated.email)
+        assertEquals("new@email.com", updated.username)
     }
 
     @Test
