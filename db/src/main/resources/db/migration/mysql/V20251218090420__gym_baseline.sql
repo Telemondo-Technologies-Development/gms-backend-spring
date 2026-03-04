@@ -846,4 +846,82 @@ CREATE TABLE report_objects (
   CONSTRAINT reports_object_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
+-- Analytics
+
+CREATE TABLE branch_financial_summary (
+    branch_id 			binary(16) NOT NULL,
+    report_year 		int NOT NULL,
+    report_quarter 		int NOT NULL,
+    report_month 		date NOT NULL,
+    total_revenue 		decimal(10,2) DEFAULT 0,
+    avg_invoice 		decimal(10,2) DEFAULT 0,
+    total_expenses 		decimal(10,2) DEFAULT 0,
+    avg_expense 		decimal(10,2) DEFAULT 0,
+    PRIMARY KEY (branch_id, report_month),
+    INDEX year_quarter (report_year, report_quarter),
+    CONSTRAINT branch_financial_summary_ibfk_1 FOREIGN KEY (branch_id) REFERENCES branch (id) ON DELETE CASCADE ON UPDATE RESTRICT
+);
+
+CREATE TABLE analytics_metadata (
+    report_name 		varchar(255) PRIMARY KEY,
+    last_refreshed_at	datetime(6) NOT NULL
+);
+
+DELIMITER //
+
+CREATE PROCEDURE refresh_branch_financial_summary()
+BEGIN
+    DECLARE current_refresh_time DATETIME DEFAULT NOW();
+
+    START TRANSACTION;
+
+    DELETE FROM branch_financial_summary;
+
+    INSERT INTO branch_financial_summary (
+        branch_id, report_year, report_quarter, report_month,
+        total_revenue, avg_invoice, total_expenses, avg_expense
+    )
+    SELECT
+        combined.branch_id,
+        combined.r_year,
+        combined.r_quarter,
+        combined.r_month,
+        COALESCE(SUM(combined.rev), 0) as total_revenue,
+        COALESCE(AVG(combined.rev), 0) as avg_invoice,
+        COALESCE(SUM(combined.exp), 0) as total_expenses,
+        COALESCE(AVG(combined.exp), 0) as avg_expense
+    FROM (
+        -- 1. Invoices (Revenue)
+        SELECT i.branch_id, YEAR(p.paid_at) as r_year, QUARTER(p.paid_at) as r_quarter,
+               DATE_FORMAT(p.paid_at, '%Y-%m-01') as r_month, p.amount as rev, NULL as exp
+        FROM payments as p
+        JOIN invoices as i on p.invoice_id = i.id
+        WHERE p.status IN ('PARTIAL', 'PAID')
+
+        UNION ALL
+
+        -- 2. Consolidate All Expenses
+        SELECT branch_id, YEAR(paid_at), QUARTER(paid_at), DATE_FORMAT(paid_at, '%Y-%m-01'), NULL, amount FROM asset_maintenance_expenses
+        UNION ALL
+        SELECT branch_id, YEAR(paid_at), QUARTER(paid_at), DATE_FORMAT(paid_at, '%Y-%m-01'), NULL, amount FROM salary_expenses
+        UNION ALL
+        SELECT branch_id, YEAR(paid_at), QUARTER(paid_at), DATE_FORMAT(paid_at, '%Y-%m-01'), NULL, amount FROM utility_expenses
+        UNION ALL
+        SELECT branch_id, YEAR(paid_at), QUARTER(paid_at), DATE_FORMAT(paid_at, '%Y-%m-01'), NULL, amount FROM other_expenses
+        UNION ALL
+        SELECT branch_id, YEAR(paid_at), QUARTER(paid_at), DATE_FORMAT(paid_at, '%Y-%m-01'), NULL, amount FROM asset_expenses
+        UNION ALL
+        SELECT branch_id, YEAR(paid_at), QUARTER(paid_at), DATE_FORMAT(paid_at, '%Y-%m-01'), NULL, amount FROM supplies_expenses
+    ) AS combined
+    GROUP BY combined.branch_id, combined.r_year, combined.r_quarter, combined.r_month;
+
+    -- Update Metadata
+    INSERT INTO analytics_metadata (report_name, last_refreshed_at)
+    VALUES ('FINANCIAL_SUMMARY', current_refresh_time)
+    ON DUPLICATE KEY UPDATE last_refreshed_at = current_refresh_time;
+
+    COMMIT;
+END //
+DELIMITER ;
+
 COMMIT;

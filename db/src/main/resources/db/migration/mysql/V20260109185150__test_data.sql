@@ -43,19 +43,20 @@ INSERT INTO `roles` (`id`, `name`, `description`, `created_by`, `updated_by`, `c
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (0x019bafe2f4ee72e7b1271d6b9d09b8d7, 0x019ba2676db67541a1714f0524691e73);
 
+
 INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bd58eff7473009e875069c52f54be, 'asset_create'),
 (0x019bd58eff637c2b87b654e7a15ea030, 'asset_delete'),
 (0x019bd58eff7473009e87506608bff869, 'asset_read'),
 (0x019bd58eff7473009e875066f42d80fd, 'asset_update'),
-(0x019c51285db9751685c0f8be9b1dd94b, 'assetExpense_create'),
-(0x019c51285db9751685c0f8bfa0a4c5dd, 'assetExpense_delete'),
-(0x019c51285db9751685c0f8bf1e96aef9, 'assetExpense_read'),
-(0x019c51285db87cafa229772bd81f307e, 'assetExpense_update'),
 (0x019bd58eff7473009e875067d60e0bbb, 'assetCategory_create'),
 (0x019bd58eff7473009e875068df8c0ad0, 'assetCategory_delete'),
 (0x019bd58eff7473009e875067619b5653, 'assetCategory_read'),
 (0x019bd58eff7473009e875068320448af, 'assetCategory_update'),
+(0x019c51285db9751685c0f8be9b1dd94b, 'assetExpense_create'),
+(0x019c51285db9751685c0f8bfa0a4c5dd, 'assetExpense_delete'),
+(0x019c51285db9751685c0f8bf1e96aef9, 'assetExpense_read'),
+(0x019c51285db87cafa229772bd81f307e, 'assetExpense_update'),
 (0x019be4458174715e9ad763f4040e7013, 'assetMaintenance_read'),
 (0x019be479605678fbb10f3f64f56ae528, 'assetMaintenance_update'),
 (0x019c5128a4fe7838ab3f9f35022bdf7a, 'assetMaintenanceExpense_create'),
@@ -82,6 +83,8 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019ba3ba5e87747ebe3d6310ab9d34ac, 'branchPersonnel_delete'),
 (0x019ba3ba5e88747b836acfaa7633d68c, 'branchPersonnel_read'),
 (0x019ba3ba5e87747ebe3d631170d2aa2c, 'branchPersonnel_update'),
+(0x019cb2ad3354769c907f4abc4da35282, 'branchSummary_read'),
+(0x019cb2ad3354769c907f4abcea168dc4, 'branchSummary_update'),
 (0x019ba3ba5e897479850a65bfed2e0453, 'employee_create'),
 (0x019ba3ba5e87747ebe3d630f9c04b5f2, 'employee_delete'),
 (0x019ba3ba5e88747b836acfacb4481e30, 'employee_read'),
@@ -110,10 +113,10 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019bbcda0fe373488f9675faf01731f4, 'memberSubscription_delete'),
 (0x019bbcda0fda771e87dcc1b0bfa69f06, 'memberSubscription_read'),
 (0x019bbcda0fe373488f9675f9d50d9d60, 'memberSubscription_update'),
+(0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_create'),
 (0x019bd458aafa7f34bf419ca0dfa1bddd, 'objectStorage_delete'),
 (0x019bd460624e79238c67993a76d64e78, 'objectStorage_read'),
 (0x019bd458aaf0749e8723c6e9ace4c91c, 'objectStorage_update'),
-(0x019bd458aafa7f34bf419ca0a74ebb71, 'objectStorage_create'),
 (0x019c51293e1f75b1a64eecaa4f91bbb4, 'otherExpense_create'),
 (0x019c51293e1f75b1a64eecaaf4214ac2, 'otherExpense_delete'),
 (0x019c51293e1e7d6f94de1b35401dc7fe, 'otherExpense_read'),
@@ -190,6 +193,8 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019c51290894791e80e8874cee3625b6, 'utilityExpense_update');
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
+(0x019ba2676db67541a1714f0524691e73, 0x019cb2ad3354769c907f4abc4da35282), -- branchSummary_read
+(0x019ba2676db67541a1714f0524691e73, 0x019cb2ad3354769c907f4abcea168dc4), -- branchSummary_updated
 (0x019ba2676db67541a1714f0524691e73, 0x019bdedaf07975009778b92857da58b4), -- attendance_create
 (0x019ba2676db67541a1714f0524691e73, 0x019bdedaf07975009778b9293fdfc819), -- attendance_delete
 (0x019ba2676db67541a1714f0524691e73, 0x019bdedaf0787c83832caeaa986c720d), -- attendance_read
