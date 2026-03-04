@@ -1,11 +1,13 @@
 package com.gms.backend.domain.infra.quartz.asset
 
+import com.gms.backend.domain.application.response.ApiErrorType
+import com.gms.backend.domain.application.response.DomainException
 import com.gms.backend.domain.domain.model.asset.AssetMaintenance
-import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
 import com.gms.backend.domain.domain.repository.asset.ScheduleWithLatestMaintenanceDTO
 import com.gms.backend.domain.domain.repository.user.ActorRepository
+import org.springframework.core.env.Environment
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,7 +23,8 @@ class MaintenanceSchedulerService(
     private val scheduleRepository: MaintenanceScheduleRepository,
     private val maintenanceRepository: AssetMaintenanceRepository,
     private val actorRepository: ActorRepository,
-    private val scheduler: org.quartz.Scheduler
+    private val scheduler: org.quartz.Scheduler,
+    private val environment: Environment
 ) {
     // logic for the main job (runs every 12 AM)
     @Transactional
@@ -104,7 +107,12 @@ class MaintenanceSchedulerService(
     @Transactional
     @PreAuthorize("hasAuthority('maintenanceSchedule_update')")
     fun executeWorkerTask(scheduleId: UUID, targetDate: Instant, action: String) {
-        val systemActor = actorRepository.findByType(Actor.ActorType.SYSTEM).get()
+        val systemId = UUID.fromString(environment.getProperty("system.id"))
+            ?: throw DomainException(ApiErrorType.INTERNAL_SERVER_ERROR, "System ID configuration missing")
+
+        val systemActor = actorRepository.findById(systemId).orElseThrow {
+            DomainException(ApiErrorType.RESOURCE_NOT_FOUND, "System Actor not found for ID: $systemId")
+        }
 
         when (action) {
             "CREATE" -> {

@@ -20,7 +20,7 @@ class Brand {
     lateinit var id: UUID
 
     @Column(nullable = false, unique = true)
-    @field:NotBlank(message = "Brand name must not be empty")
+    @field:NotBlank(message = "Name must not be empty")
     lateinit var name: String
 
     @CreationTimestamp
