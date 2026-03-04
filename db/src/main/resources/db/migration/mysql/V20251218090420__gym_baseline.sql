@@ -444,6 +444,15 @@ CREATE TABLE asset_categories (
   CONSTRAINT asset_categories_ibfk_2 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
+CREATE TABLE brands (
+  id            binary(16) PRIMARY KEY,
+  name          varchar(255) UNIQUE NOT NULL,
+  created_by 	binary(16) NOT NULL,
+  updated_by 	binary(16) NOT NULL,
+  created_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+);
+
 CREATE TABLE assets (
   id 						binary(16) PRIMARY KEY,
   branch_id 				binary(16) NOT NULL,
@@ -451,6 +460,8 @@ CREATE TABLE assets (
   name 						varchar(255) NOT NULL,
   manufactured_date 		datetime(6) NULL,
   end_of_life 				datetime(6) NULL,
+  acquisition_date          datetime(6) NULL,
+  status                    varchar(255) NOT NULL,
   remarks 					text NULL,
   -- Not final
   created_by 				binary(16) NOT NULL,
@@ -461,6 +472,14 @@ CREATE TABLE assets (
   CONSTRAINT assets_ibfk_2 FOREIGN KEY (asset_category_id) REFERENCES asset_categories (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT assets_ibfk_3 FOREIGN KEY (created_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT assets_ibfk_4 FOREIGN KEY (updated_by) REFERENCES actors (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE asset_brands (
+  asset_id  binary(16) NOT NULL,
+  brand_id  binary(16) NOT NULL,
+  PRIMARY KEY (asset_id, brand_id),
+  CONSTRAINT asset_brands_ibfk_1 FOREIGN KEY (asset_id) REFERENCES assets (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT asset_brands_ibfk_2 FOREIGN KEY (brand_id) REFERENCES brands (id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 CREATE TABLE maintenance_schedules (

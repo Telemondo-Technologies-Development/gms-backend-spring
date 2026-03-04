@@ -13,9 +13,5 @@ import java.util.*
 interface AssetMapper {
     fun assetPostDTOToAsset(dto: AssetController.AssetPostDTO): Asset
     fun assetPutDTOToAsset(dto: AssetController.AssetPutDTO, @MappingTarget asset: Asset): Asset
-    @Mapping(target = "objectIds", source = "assetObjects")
     fun assetToDTO(asset: Asset): AssetController.AssetTableDTO
-    fun mapObjectsToIds(objects: Set<ObjectStorage>?): List<UUID> {
-        return objects?.map { it.id } ?: emptyList()
-    }
 }

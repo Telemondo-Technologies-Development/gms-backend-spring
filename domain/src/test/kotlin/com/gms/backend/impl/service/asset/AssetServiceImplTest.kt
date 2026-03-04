@@ -1,6 +1,7 @@
 package com.gms.backend.impl.service.asset
 
 import com.gms.backend.domain.application.rest.asset.AssetController
+import com.gms.backend.domain.domain.model.asset.Asset
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
 import com.gms.backend.domain.impl.domain.service.asset.AssetServiceImpl
 import com.gms.backend.impl.service.BaseTest
@@ -56,8 +57,11 @@ class AssetServiceImplTest @Autowired constructor(
             assetCategoryId = categoryId,
             manufacturedDate = Instant.parse("2025-01-01T10:00:00Z"),
             endOfLife = Instant.parse("2026-01-01T00:00:00Z"),
+            acquisitionDate = Instant.parse("2025-03-01T00:00:00Z"),
+            status = Asset.AssetStatus.OPERATIONAL,
             remarks = "Asset Remarks",
             createdById = adminId,
+            brandIds = emptyList(),
             objectIds = emptyList()
         )
 
@@ -80,8 +84,11 @@ class AssetServiceImplTest @Autowired constructor(
             assetCategoryId = categoryId,
             manufacturedDate = Instant.parse("2025-01-01T10:00:00Z"),
             endOfLife = Instant.parse("2026-01-01T00:00:00Z"),
+            acquisitionDate = Instant.parse("2025-03-01T00:00:00Z"),
+            status = Asset.AssetStatus.DOWN,
             remarks = "Updated Asset Remarks",
             updatedById = adminId,
+            brandIds = emptyList(),
             objectIds = emptyList()
         )
 
