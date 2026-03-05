@@ -190,7 +190,11 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 (0x019c51290894791e80e8874d9904c851, 'utilityExpense_create'),
 (0x019c51290894791e80e8874e02879afc, 'utilityExpense_delete'),
 (0x019c51290894791e80e8874c4acf781e, 'utilityExpense_read'),
-(0x019c51290894791e80e8874cee3625b6, 'utilityExpense_update');
+(0x019c51290894791e80e8874cee3625b6, 'utilityExpense_update'),
+(0x019cb75b5b157030975c6f14ea6ec7a2, 'brand_create'),
+(0x019cb75b5b0e7dbbb57aa2e4f25a0180, 'brand_delete'),
+(0x019cb75b5b157030975c6f149756f338, 'brand_read'),
+(0x019cb75b5b157030975c6f159fb938f6, 'brand_update');
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019cb2ad3354769c907f4abc4da35282), -- branchSummary_read
@@ -334,7 +338,11 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427657a6e179fd612b3155), -- reportType_update
 (0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe55103544f417), -- reportType_read
 (0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe5511585a5852), -- reportType_create
-(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe5512542904e9); -- reportType_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019c40fe24427ef480fe5512542904e9), -- reportType_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019cb75b5b0e7dbbb57aa2e4f25a0180), -- brand_delete
+(0x019ba2676db67541a1714f0524691e73, 0x019cb75b5b157030975c6f149756f338), -- brand_read
+(0x019ba2676db67541a1714f0524691e73, 0x019cb75b5b157030975c6f14ea6ec7a2), -- brand_create
+(0x019ba2676db67541a1714f0524691e73, 0x019cb75b5b157030975c6f159fb938f6); -- brand_update
 
 INSERT INTO `branch` (`id`, `name`, `address`, `longitude`, `latitude`, `status`, `profile_picture`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (0x019ba279a6e67271893cffab220040a2, 'Matina', 'Bangkal', '125.55602001850568', '7.060337505872085', 'ACTIVE', NULL, 0x5bd6a420e3ab43eb80a8a4d993fc331b, 0x5bd6a420e3ab43eb80a8a4d993fc331b, '2026-01-09 11:17:20.268658', '2026-01-09 11:17:20.268658'),
@@ -402,10 +410,19 @@ INSERT INTO `asset_categories` (`id`, `name`, `created_by`, `updated_by`, `creat
 (0x019ba2f1a6e67271893cffab220040a2, 'Strength Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244'),
 (0x019ba2f1a6e67271893cffab220040a3, 'Yoga Equipment', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244');
 
-INSERT INTO `assets` (`id`, `branch_id`, `asset_category_id`, `name`, `manufactured_date`, `end_of_life`, `remarks`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(0x019ba2f5b6e67271893cffab220055b1, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Treadmill', '2025-06-01 00:00:00.000000', NULL, 'Located near the window section.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
-(0x019ba2f5b6e67271893cffab220055b2, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a2, 'Leg Press Machine', '2025-08-15 00:00:00.000000', NULL, 'Located near the entrance.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
-(0x019ba2f5b6e67271893cffab220055b3, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Stationary Bike', '2025-07-20 00:00:00.000000', NULL, 'Next to the treadmills.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-12 16:43:00.000000', '2026-02-12 16:43:00.000000');
+INSERT INTO `brands` (`id`, `name`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x0195574c878e79c09939e6a0d6323c2a, 'Life Fitness', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244'),
+(0x0195574c878e718b93540d41ca454c0e, 'Precor', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244'),
+(0x0195574c878e734394f79435f9927951, 'Technogym', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:21.278244', '2026-01-20 07:13:21.278244');
+
+INSERT INTO `assets` (`id`, `branch_id`, `asset_category_id`, `name`, `manufactured_date`, `end_of_life`, `acquisition_date`, `status`, `remarks`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(0x019ba2f5b6e67271893cffab220055b1, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Treadmill', '2025-06-01', '2025-07-15', '2025-06-05', 'OPERATIONAL', 'Located near the window section.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
+(0x019ba2f5b6e67271893cffab220055b2, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a2, 'Leg Press Machine', '2025-08-15', '2025-09-01', '2025-08-16', 'DOWN', 'Located near the entrance.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-01-20 07:13:36.305837', '2026-01-20 07:13:36.305837'),
+(0x019ba2f5b6e67271893cffab220055b3, 0x019ba279a6e67271893cffab220040a2, 0x019ba2f1a6e67271893cffab220040a1, 'Stationary Bike', '2025-07-20', NULL, NULL, 'DECOMMISSIONED', 'Next to the treadmills.', 0xf520a8fb382443398bb43732c8a3f617, 0xf520a8fb382443398bb43732c8a3f617, '2026-02-12 16:43:00.000000', '2026-02-12 16:43:00.000000');
+
+INSERT INTO `asset_brands` (`asset_id`, `brand_id`) VALUES
+(0x019ba2f5b6e67271893cffab220055b1, 0x0195574c878e79c09939e6a0d6323c2a),
+(0x019ba2f5b6e67271893cffab220055b2, 0x0195574c878e718b93540d41ca454c0e);
 
 SET @now_minute = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:00');
 SET @cur_week_rank = IF(MONTH(DATE_ADD(NOW(), INTERVAL 7 DAY)) <> MONTH(NOW()), -1, (DAYOFMONTH(NOW()) + 6) DIV 7);

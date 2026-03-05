@@ -3,6 +3,8 @@ package com.gms.backend.domain.application.rest.asset
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
+import com.gms.backend.domain.domain.model.asset.Asset
+import com.gms.backend.domain.domain.model.asset.AssetMaintenance
 import com.gms.backend.domain.domain.service.asset.AssetService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
@@ -31,12 +33,21 @@ class AssetController(
         val assetCategoryId: UUID,
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
+        val acquisitionDate: Instant?,
+        val status: Asset.AssetStatus,
         val remarks: String?,
-        val objectIds: List<UUID> = emptyList(),
         val createdById: UUID?,
         val updatedById: UUID?,
         val createdAt: Instant,
         val updatedAt: Instant
+    ){
+        var brandIds: List<UUID> = emptyList()
+        var objectIds: List<UUID> = emptyList()
+    }
+
+    data class AssetMappingDTO(
+        val assetId: UUID,
+        val relatedId: UUID,
     )
 
     @Schema(description = "Format for Asset create")
@@ -48,14 +59,29 @@ class AssetController(
         @field:PastOrPresent(message = "Manufactured date cannot be in the future")
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
+        val acquisitionDate: Instant?,
+        val status: Asset.AssetStatus,
         val remarks: String?,
+        val brandIds: List<UUID> = emptyList(),
         val objectIds: List<UUID> = emptyList(),
         val createdById: UUID
     ){
         @get:AssertTrue(message = "End of Life date must be after the Manufactured date")
-        val isDateRangeValid: Boolean
-            get() = if (manufacturedDate == null || endOfLife == null) true
-            else endOfLife.isAfter(manufacturedDate)
+        val isEndOfLifeValid: Boolean
+            get() {
+                if (manufacturedDate == null || endOfLife == null) return true
+                return endOfLife!!.isAfter(manufacturedDate)
+            }
+
+        @get:AssertTrue(message = "Acquisition date must be on or after the manufactured date and before the end of life")
+        val isAcquisitionDateValid: Boolean
+            get() {
+                val currentAcquisition = acquisitionDate ?: return true
+                val isAfterManufactured = manufacturedDate?.let { !currentAcquisition.isBefore(it) } ?: true
+                val isBeforeEndOfLife = endOfLife?.let { currentAcquisition.isBefore(it) } ?: true
+
+                return isAfterManufactured && isBeforeEndOfLife
+            }
     }
 
     @Schema(description = "Format for Asset update")
@@ -67,14 +93,29 @@ class AssetController(
         @field:PastOrPresent(message = "Manufactured date cannot be in the future")
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
+        val acquisitionDate: Instant?,
+        val status: Asset.AssetStatus,
         val remarks: String?,
+        val brandIds: List<UUID> = emptyList(),
         val objectIds: List<UUID> = emptyList(),
         val updatedById: UUID,
     ){
         @get:AssertTrue(message = "End of Life date must be after the Manufactured date")
-        val isDateRangeValid: Boolean
-            get() = if (manufacturedDate == null || endOfLife == null) true
-            else endOfLife.isAfter(manufacturedDate)
+        val isEndOfLifeValid: Boolean
+            get() {
+                if (manufacturedDate == null || endOfLife == null) return true
+                return endOfLife!!.isAfter(manufacturedDate)
+            }
+
+        @get:AssertTrue(message = "Acquisition date must be on or after the manufactured date and before the end of life")
+        val isAcquisitionDateValid: Boolean
+            get() {
+                val currentAcquisition = acquisitionDate ?: return true
+                val isAfterManufactured = manufacturedDate?.let { !currentAcquisition.isBefore(it) } ?: true
+                val isBeforeEndOfLife = endOfLife?.let { currentAcquisition.isBefore(it) } ?: true
+
+                return isAfterManufactured && isBeforeEndOfLife
+            }
     }
 
     // Basic CRUD

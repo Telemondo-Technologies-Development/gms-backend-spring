@@ -6,9 +6,11 @@ import com.gms.backend.domain.application.mapper.asset.MaintenanceScheduleMapper
 import com.gms.backend.domain.application.rest.asset.AssetController
 import com.gms.backend.domain.application.rest.asset.AssetMaintenanceController
 import com.gms.backend.domain.application.rest.asset.MaintenanceScheduleController
+import com.gms.backend.domain.application.rest.member.report.ReportController
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
+import com.gms.backend.domain.domain.repository.asset.BrandRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
@@ -33,7 +35,8 @@ class AssetServiceImpl(
     private val maintenanceRepository: AssetMaintenanceRepository,
     private val maintenanceScheduleRepository: MaintenanceScheduleRepository,
     private val maintenanceScheduleMapper: MaintenanceScheduleMapper,
-    private val maintenanceMapper: AssetMaintenanceMapper
+    private val maintenanceMapper: AssetMaintenanceMapper,
+    private val brandRepository: BrandRepository
 ) : AssetService {
 
     @Transactional
@@ -48,6 +51,11 @@ class AssetServiceImpl(
             if (body.objectIds.isNotEmpty()) {
                 val objects = objectStorageRepository.findAllById(body.objectIds)
                 assetObjects.addAll(objects)
+            }
+
+            if (body.brandIds.isNotEmpty()) {
+                val brands = brandRepository.findAllById(body.brandIds)
+                this.brands.addAll(brands)
             }
         }
         return assetMapper.assetToDTO(assetRepository.saveAndFlush(asset))
@@ -70,20 +78,57 @@ class AssetServiceImpl(
                 val objects = objectStorageRepository.findAllById(body.objectIds)
                 assetObjects.addAll(objects)
             }
+
+            brands.clear()
+            if (body.brandIds.isNotEmpty()) {
+                val brandList = brandRepository.findAllById(body.brandIds)
+                brands.addAll(brandList)
+            }
         }
         return assetMapper.assetToDTO(assetRepository.saveAndFlush(asset))
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('asset_read')")
-    override fun getAssets(pageable: Pageable): Page<AssetController.AssetTableDTO> =
-        assetRepository.findAll(pageable).map { asset ->
-            assetMapper.assetToDTO(asset)
+    override fun getAssets(pageable: Pageable): Page<AssetController.AssetTableDTO> {
+        val assets = assetRepository.findAllProjectedBy(pageable)
+
+        val assetIds = assets.content.map { it.id }
+        if (assetIds.isEmpty()) return assets
+
+        // fetch Brands
+        val brandMappings = assetRepository.findAllBrandIdsByAssetIds(assetIds)
+        val brandsByAssetId = brandMappings.groupBy(
+            { it.assetId },
+            { it.relatedId }
+        )
+
+        // fetch Objects
+        val objectMappings = assetRepository.findAllObjectIdsByAssetIds(assetIds)
+        val objectsByAssetId = objectMappings.groupBy(
+            { it.assetId },
+            { it.relatedId }
+        )
+
+        return assets.map { asset ->
+            asset.apply {
+                brandIds = brandsByAssetId.getOrDefault(id, emptyList())
+                objectIds = objectsByAssetId.getOrDefault(id, emptyList())
+            }
         }
+    }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('asset_read')")
-    override fun getAssetById(id: UUID) = assetMapper.assetToDTO(assetRepository.findById(id).get())
+    override fun getAssetById(id: UUID): AssetController.AssetTableDTO {
+        val asset = assetRepository.findProjectedBy(id).orElseThrow()
+
+        // Get all object ids
+        asset.brandIds = assetRepository.findBrandIdsByAssetId(id)
+        asset.objectIds = assetRepository.findObjectIdsByAssetId(id)
+
+        return asset
+    }
 
     @Transactional
     @PreAuthorize("hasAuthority('asset_delete')")

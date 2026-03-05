@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.model.asset
 
+import com.gms.backend.domain.domain.model.asset.AssetMaintenance.AssetMaintenanceStatus
 import com.gms.backend.domain.domain.model.branch.Branch
 import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
@@ -16,6 +17,12 @@ import java.util.*
 @Entity
 @Table(name = "assets")
 class Asset {
+
+    enum class AssetStatus {
+        OPERATIONAL,
+        DOWN,
+        DECOMMISSIONED
+    }
 
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
@@ -40,6 +47,23 @@ class Asset {
             if (manufacturedDate == null || endOfLife == null) return true
             return endOfLife!!.isAfter(manufacturedDate)
         }
+
+    @Column
+    var acquisitionDate: Instant? = null
+
+    @get:AssertTrue(message = "Acquisition date must be on or after the manufactured date and before the end of life")
+    val isAcquisitionDateValid: Boolean
+        get() {
+            val currentAcquisition = acquisitionDate ?: return true
+            val isAfterManufactured = manufacturedDate?.let { !currentAcquisition.isBefore(it) } ?: true
+            val isBeforeEndOfLife = endOfLife?.let { currentAcquisition.isBefore(it) } ?: true
+
+            return isAfterManufactured && isBeforeEndOfLife
+        }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    lateinit var status: AssetStatus
 
     @Column(columnDefinition = "text")
     var remarks: String? = null
@@ -87,6 +111,14 @@ class Asset {
         inverseJoinColumns = [JoinColumn(name = "object_id")],
     )
     var assetObjects = mutableSetOf<ObjectStorage>()
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "asset_brands",
+        joinColumns = [JoinColumn(name = "asset_id")],
+        inverseJoinColumns = [JoinColumn(name = "brand_id")],
+    )
+    var brands = mutableSetOf<Brand>()
 
     @OneToMany(mappedBy = "asset", cascade = [CascadeType.ALL])
     var maintenanceSchedules = mutableSetOf<MaintenanceSchedule>()
