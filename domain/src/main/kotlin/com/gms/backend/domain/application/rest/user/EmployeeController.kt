@@ -1,11 +1,9 @@
 package com.gms.backend.domain.application.rest.user
 
-import com.gms.backend.domain.application.response.ApiResponse
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.application.rest.storage.ObjectStorageController
-import com.gms.backend.domain.domain.model.storage.ObjectStorage
+import com.gms.backend.domain.application.rest.storage.ObjectStorageController.ObjectStorageUploadDTO
 import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.service.storage.ObjectStorageService
 import com.gms.backend.domain.domain.service.user.EmployeeService
@@ -16,7 +14,6 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.springframework.data.domain.Pageable
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
@@ -26,8 +23,7 @@ import java.util.*
 @Tag(name = "Employee")
 class EmployeeController(
     private val employeeService: EmployeeService,
-    private val storageService: ObjectStorageService,
-    private val bucketConfig: ObjectStorageController.MinioBucketConfig
+    private val storageService: ObjectStorageService
 ) {
 
     @Schema(description = "Format for Employee read")
@@ -111,9 +107,8 @@ class EmployeeController(
 
     @PostMapping("/picture")
     @Operation(summary = "Upload an employee profile picture into the object storage (public)")
-    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile): ResponseEntity<ApiResponse<ObjectStorage>> =
-        storageService.uploadFile(file, bucketConfig.public, "profiles/employees", storageService.getCurrentActor())
-            .toCreatedResponse("Employee profile picture uploaded successfully")
+    fun uploadEmployeeProfile(@RequestParam("file") file: MultipartFile, @RequestParam("actorId") actorId: String, ) =
+        storageService.uploadFile(ObjectStorageUploadDTO.public(file = file, actorId = actorId, folder = "employee")).toCreatedResponse("Employee profile picture uploaded successfully")
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an Employee by id")

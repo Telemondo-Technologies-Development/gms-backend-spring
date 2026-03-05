@@ -3,7 +3,7 @@ package com.gms.backend.domain.application.rest.member
 import com.gms.backend.domain.application.response.toCreatedResponse
 import com.gms.backend.domain.application.response.toOkResponse
 import com.gms.backend.domain.application.response.toPaginatedResponse
-import com.gms.backend.domain.application.rest.storage.ObjectStorageController
+import com.gms.backend.domain.application.rest.storage.ObjectStorageController.ObjectStorageUploadDTO
 import com.gms.backend.domain.domain.model.member.Member
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.service.member.MemberService
@@ -24,8 +24,7 @@ import java.util.*
 @Tag(name = "Member")
 class MemberController(
     private val memberService: MemberService,
-    private val storageService: ObjectStorageService,
-    private val bucketConfig: ObjectStorageController.MinioBucketConfig
+    private val storageService: ObjectStorageService
 ) {
 
     @Schema(description = "Format for Member read")
@@ -102,10 +101,8 @@ class MemberController(
 
     @PostMapping("/picture")
     @Operation(summary = "Upload a member profile picture into the object storage (public)")
-    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile) =
-        storageService.uploadFile(file, bucketConfig.public, "profiles/members", storageService.getCurrentActor())
-            .toCreatedResponse("Member profile picture uploaded successfully")
-
+    fun uploadMemberProfile(@RequestParam("file") file: MultipartFile, @RequestParam("actorId") actorId: String) =
+        storageService.uploadFile(ObjectStorageUploadDTO.public(file = file, actorId = actorId, folder = "member")).toCreatedResponse("Member profile picture uploaded successfully")
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a Member by id")
