@@ -453,6 +453,14 @@ CREATE TABLE brands (
   updated_at 	datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
 );
 
+CREATE TABLE brand_objects (
+  brand_id 	            binary(16) NOT NULL,
+  object_id 			binary(16) NOT NULL,
+  PRIMARY KEY (brand_id,object_id),
+  CONSTRAINT brand_objects_ibfk_1 FOREIGN KEY (brand_id) REFERENCES brands (id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT brand_objects_ibfk_2 FOREIGN KEY (object_id) REFERENCES object_storage (id) ON DELETE CASCADE ON UPDATE RESTRICT
+);
+
 CREATE TABLE assets (
   id 						binary(16) PRIMARY KEY,
   branch_id 				binary(16) NOT NULL,

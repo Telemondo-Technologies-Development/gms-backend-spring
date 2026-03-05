@@ -28,12 +28,20 @@ class BrandController (
         val updatedById: UUID?,
         val createdAt: Instant,
         val updatedAt: Instant
+    ){
+        var objectIds: List<UUID> = emptyList()
+    }
+
+    data class BrandMappingDTO(
+        val brandId: UUID,
+        val relatedId: UUID,
     )
 
     @Schema(description = "Format for Brand create")
     data class BrandPostDTO(
         @field: NotBlank(message = "Name must not be empty")
         val name: String,
+        val objectIds: List<UUID> = emptyList(),
         val createdById: UUID
     )
 
@@ -41,6 +49,7 @@ class BrandController (
     data class BrandPutDTO(
         @field:NotBlank(message = "Name must not be empty")
         val name: String,
+        val objectIds: List<UUID> = emptyList(),
         val updatedById: UUID
     )
 

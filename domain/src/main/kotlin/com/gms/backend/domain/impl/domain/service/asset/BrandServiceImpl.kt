@@ -1,12 +1,10 @@
 package com.gms.backend.domain.impl.domain.service.asset
 
 import com.gms.backend.domain.domain.service.asset.BrandService
-import com.gms.backend.domain.application.mapper.asset.AssetCategoryMapper
 import com.gms.backend.domain.application.mapper.asset.BrandMapper
-import com.gms.backend.domain.application.rest.asset.AssetCategoryController
 import com.gms.backend.domain.application.rest.asset.BrandController
-import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.asset.BrandRepository
+import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,7 +18,8 @@ import java.util.*
 class BrandServiceImpl (
     private val brandMapper: BrandMapper,
     private val brandRepository: BrandRepository,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val objectStorageRepository: ObjectStorageRepository,
 ): BrandService {
     @Transactional
     @PreAuthorize("hasAuthority('brand_create')")
@@ -28,6 +27,11 @@ class BrandServiceImpl (
         val brand = brandMapper.brandPostDTOToBrand(body).apply {
             createdBy = actorRepository.getReferenceById(body.createdById)
             updatedBy = actorRepository.getReferenceById(body.createdById)
+
+            if (body.objectIds.isNotEmpty()) {
+                val objects = objectStorageRepository.findAllById(body.objectIds)
+                brandObjects.addAll(objects)
+            }
         }
 
         val saved = brandRepository.saveAndFlush(brand)
@@ -43,6 +47,12 @@ class BrandServiceImpl (
             brandMapper.brandPutDTOToBrand(body, this)
             this.id = id
             updatedBy = actorRepository.getReferenceById(body.updatedById)
+
+            brandObjects.clear()
+            if (body.objectIds.isNotEmpty()) {
+                val objects = objectStorageRepository.findAllById(body.objectIds)
+                brandObjects.addAll(objects)
+            }
         }
 
         brandRepository.saveAndFlush(brand)
@@ -52,17 +62,33 @@ class BrandServiceImpl (
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('brand_read')")
     override fun getBrands(pageable: Pageable): Page<BrandController.BrandTableDTO> {
-        return brandRepository.findAll(pageable)
-            .map { supply -> brandMapper.brandToDTO(supply) }
+        val brands = brandRepository.findAllProjectedBy(pageable)
+
+        val brandIds = brands.content.map { it.id }
+        if(brandIds.isEmpty()) return brands
+
+        // fetch Objects
+        val objectMappings = brandRepository.findAllObjectIdsByBrandIds(brandIds)
+        val objectsByBrandId = objectMappings.groupBy(
+            { it.brandId },
+            { it.relatedId }
+        )
+
+        return brands.map { brand ->
+            brand.apply {
+                objectIds = objectsByBrandId.getOrDefault(id, emptyList())
+            }
+        }
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('brand_read')")
     override fun getBrandById(id: UUID): BrandController.BrandTableDTO{
-        val log = brandRepository.findById(id).orElseThrow {
-            NoSuchElementException("Brand not found with ID: $id")
-        }
-        return brandMapper.brandToDTO(log)
+        val brand = brandRepository.findProjectedBy(id).orElseThrow()
+
+        brand.objectIds = brandRepository.findObjectIdsByBrandId(id)
+
+        return brand
     }
 
     @Transactional

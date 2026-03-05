@@ -78,6 +78,11 @@ class ObjectStorageController(
     fun uploadMaintenanceRecord(@RequestParam("file") file: MultipartFile) =
         storageService.uploadFile(file, bucketConfig.private, "assets/maintenance", storageService.getCurrentActor()).toCreatedResponse("Maintenance record saved")
 
+    @PostMapping("/upload/brand/logo")
+    @Operation(summary = "(private)")
+    fun uploadBrandLogo(@RequestParam("file") file: MultipartFile) =
+        storageService.uploadFile(file, bucketConfig.private, "brand/logo", storageService.getCurrentActor()).toCreatedResponse("Brand logo uploaded")
+
     @PostMapping("/upload/supply/document")
     @Operation(summary = "(private)")
     fun uploadSupplyPhoto(@RequestParam("file") file: MultipartFile) =

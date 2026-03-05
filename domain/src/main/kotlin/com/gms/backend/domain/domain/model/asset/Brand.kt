@@ -1,5 +1,6 @@
 package com.gms.backend.domain.domain.model.asset
 
+import com.gms.backend.domain.domain.model.storage.ObjectStorage
 import com.gms.backend.domain.domain.model.user.Actor
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
@@ -44,6 +45,14 @@ class Brand {
 
     @Column(name = "updated_by", insertable = false, updatable = false)
     var updatedById: UUID? = null
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "brand_objects",
+        joinColumns = [JoinColumn(name = "brand_id")],
+        inverseJoinColumns = [JoinColumn(name = "object_id")],
+    )
+    var brandObjects = mutableSetOf<ObjectStorage>()
 
     @ManyToMany(mappedBy = "brands")
     var assets = mutableSetOf<Asset>()
