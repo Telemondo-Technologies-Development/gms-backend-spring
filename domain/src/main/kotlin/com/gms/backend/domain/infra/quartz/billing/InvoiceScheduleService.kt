@@ -89,6 +89,7 @@ class InvoiceScheduleService(
         val currentZonedDate = invoice.dueDate.atZone(ZoneId.systemDefault())
 
         val nextZonedDate = when (invoice.subscriptionAvailed.intervals) {
+            BillingCycle.Interval.MINUTES -> currentZonedDate.plusMinutes(invoice.subscriptionAvailed.intervalCount.toLong())
             BillingCycle.Interval.DAILY -> currentZonedDate.plusDays(invoice.subscriptionAvailed.intervalCount.toLong())
             BillingCycle.Interval.WEEKLY -> currentZonedDate.plusWeeks(invoice.subscriptionAvailed.intervalCount.toLong())
             BillingCycle.Interval.MONTHLY -> currentZonedDate.plusMonths(invoice.subscriptionAvailed.intervalCount.toLong())

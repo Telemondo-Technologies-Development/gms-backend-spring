@@ -16,6 +16,7 @@ import java.util.*
 class BillingCycle {
 
     enum class Interval {
+        MINUTES,
         DAILY,
         WEEKLY,
         MONTHLY,
