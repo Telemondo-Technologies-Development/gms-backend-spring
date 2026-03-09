@@ -29,6 +29,7 @@ class PaymentController(private val paymentService: PaymentService) {
         val referenceNum: String?,
         val status: Payment.PaymentStatus,
         val paymentMethodId: UUID,
+        val paymentMethodName: String,
         val amount: BigDecimal,
         val paidAt: Instant?,
         val failureReason: String?,
@@ -65,11 +66,23 @@ class PaymentController(private val paymentService: PaymentService) {
 
     @GetMapping
     @Operation(summary = "Get all Payments")
-    fun getAllPayments(pageable: Pageable) = paymentService.getPayments(pageable).toPaginatedResponse()
+    fun getAllPayments(
+        pageable: Pageable,
+        @RequestParam(required = false) status: Payment.PaymentStatus?,
+        @RequestParam(required = false) paymentMethodName: String?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) = paymentService.getPayments(pageable, status, paymentMethodName, dateFrom, dateTo).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Payment by id")
-    fun getPayment(@PathVariable id: UUID) = paymentService.getPaymentById(id).toOkResponse()
+    fun getPayment(
+        @PathVariable id: UUID,
+        @RequestParam(required = false) status: Payment.PaymentStatus?,
+        @RequestParam(required = false) paymentMethodName: String?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) = paymentService.getPaymentById(id, status, paymentMethodName, dateFrom, dateTo).toOkResponse()
 
     @PostMapping
     @Operation(summary = "Create a new Payment")

@@ -34,7 +34,13 @@ class MemberServiceImplTest
     fun testReadMembers() {
         // Given
         // When
-        val members = memberServiceImpl.getMembers(Pageable.unpaged())
+        val members = memberServiceImpl.getMembers(
+            Pageable.unpaged(),
+            fullName = null,
+            status = null,
+            dateFrom = null,
+            dateTo = null
+        )
         // Then
         assertEquals(3, members.size)
     }

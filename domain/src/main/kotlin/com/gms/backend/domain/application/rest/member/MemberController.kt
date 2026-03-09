@@ -17,6 +17,7 @@ import jakarta.validation.constraints.Size
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.time.Instant
 import java.util.*
 
 @RestController
@@ -84,11 +85,23 @@ class MemberController(
 
     @GetMapping
     @Operation(summary = "Get all Members")
-    fun getAllMembers(pageable: Pageable) = memberService.getMembers(pageable).toPaginatedResponse()
+    fun getAllMembers(
+        pageable: Pageable,
+        @RequestParam(required = false) fullName: String?,
+        @RequestParam(required = false) status: Member.MemberStatus?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) = memberService.getMembers(pageable, fullName, status, dateFrom, dateTo).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Member by id")
-    fun getMember(@PathVariable id: UUID) = memberService.getMemberById(id).toOkResponse()
+    fun getMember(
+        @PathVariable id: UUID,
+        @RequestParam(required = false) fullName: String?,
+        @RequestParam(required = false) status: Member.MemberStatus?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) = memberService.getMemberById(id, fullName, status, dateFrom, dateTo).toOkResponse()
 
     @PostMapping
     @Operation(summary = "Create a new Member")

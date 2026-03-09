@@ -51,14 +51,26 @@ class AttendanceController(private val attendanceService: AttendanceService) {
 
     @GetMapping
     @Operation(summary = "Get all Attendances")
-    fun getAllAttendances(pageable: Pageable) =
-        attendanceService.getAttendances(pageable).toPaginatedResponse()
+    fun getAllAttendances(
+        pageable: Pageable,
+        @RequestParam(required = false) source: Attendance.AttendanceSource?,
+        @RequestParam(required = false) type: Attendance.AttendanceType?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) =
+        attendanceService.getAttendances(pageable, source, type, dateFrom, dateTo).toPaginatedResponse()
 
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a Attendance by id")
-    fun getAttendance(@PathVariable id: UUID) =
-        attendanceService.getAttendanceById(id).toOkResponse()
+    fun getAttendance(
+        @PathVariable id: UUID,
+        @RequestParam(required = false) source: Attendance.AttendanceSource?,
+        @RequestParam(required = false) type: Attendance.AttendanceType?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) =
+        attendanceService.getAttendanceById(id, source, type, dateFrom, dateTo).toOkResponse()
 
     @PostMapping
     @Operation(summary = "Create a new Attendance")

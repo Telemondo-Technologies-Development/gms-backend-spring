@@ -34,7 +34,13 @@ class PaymentServiceImplTest
     fun testReadPayments() {
         // Given
         // When
-        val payments = paymentServiceImpl.getPayments(Pageable.unpaged())
+        val payments = paymentServiceImpl.getPayments(
+            Pageable.unpaged(),
+            status = null,
+            paymentMethodName =  null,
+            dateFrom =  null,
+            dateTo =  null
+        )
         // Then
         assertEquals(1, payments.size)
     }
