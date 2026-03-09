@@ -2,6 +2,7 @@ package com.gms.backend.domain.impl.domain.service.member
 
 import com.gms.backend.domain.application.mapper.member.AttendanceMapper
 import com.gms.backend.domain.application.rest.member.AttendanceController
+import com.gms.backend.domain.domain.model.member.Attendance
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
 import com.gms.backend.domain.domain.repository.member.AttendanceRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -37,14 +39,26 @@ class AttendanceServiceImpl(
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('attendance_read')")
-    override fun getAttendances(pageable: Pageable): Page<AttendanceController.AttendanceTableDTO> {
-        return attendanceRepository.findAllProjectedBy(pageable)
+    override fun getAttendances(
+        pageable: Pageable,
+        source: Attendance.AttendanceSource?,
+        type: Attendance.AttendanceType?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): Page<AttendanceController.AttendanceTableDTO> {
+        return attendanceRepository.findAllProjectedBy(pageable, source, type, dateFrom, dateTo)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('attendance_read') and hasAuthority('permission_read')")
-    override fun getAttendanceById(id: UUID): AttendanceController.AttendanceTableDTO {
-        return attendanceRepository.findById(id).orElseThrow().let(attendanceMapper::attendanceToAttendanceTableDTO)
+    override fun getAttendanceById(
+        id: UUID,
+        source: Attendance.AttendanceSource?,
+        type: Attendance.AttendanceType?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): AttendanceController.AttendanceTableDTO {
+        return attendanceRepository.findByAttendanceId(id, source, type, dateFrom, dateTo).orElseThrow()
     }
 
     @Transactional
