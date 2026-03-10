@@ -41,7 +41,7 @@ class AssetServiceImpl(
 
     @Transactional
     @PreAuthorize("hasAuthority('asset_create')")
-    override fun createAsset(body: AssetController.AssetPostDTO): AssetController.AssetTableDTO {
+    override fun createAsset(body: AssetController.AssetPostDTO): AssetController.AssetSummaryDTO {
         val asset = assetMapper.assetPostDTOToAsset(body).apply {
             branch = branchRepository.getReferenceById(body.branchId)
             assetCategory = categoryRepository.getReferenceById(body.assetCategoryId)
@@ -63,7 +63,7 @@ class AssetServiceImpl(
 
     @Transactional
     @PreAuthorize("hasAuthority('asset_update')")
-    override fun updateAsset(id: UUID, body: AssetController.AssetPutDTO): AssetController.AssetTableDTO {
+    override fun updateAsset(id: UUID, body: AssetController.AssetPutDTO): AssetController.AssetSummaryDTO {
         val asset = assetRepository.findById(id).orElseThrow { NoSuchElementException("Asset not found") }
         assetMapper.assetPutDTOToAsset(body, asset)
 

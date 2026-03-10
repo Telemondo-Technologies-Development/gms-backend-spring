@@ -76,6 +76,9 @@ class Branch {
     @JoinColumn(name = "profile_picture", nullable = true)
     var profilePicture: ObjectStorage? = null
 
+    @Column(name = "profile_picture", insertable = false, updatable = false)
+    var profilePictureId: UUID? = null
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
     lateinit var createdBy: Actor

@@ -13,5 +13,5 @@ import java.util.*
 interface AssetMapper {
     fun assetPostDTOToAsset(dto: AssetController.AssetPostDTO): Asset
     fun assetPutDTOToAsset(dto: AssetController.AssetPutDTO, @MappingTarget asset: Asset): Asset
-    fun assetToDTO(asset: Asset): AssetController.AssetTableDTO
+    fun assetToDTO(asset: Asset): AssetController.AssetSummaryDTO
 }

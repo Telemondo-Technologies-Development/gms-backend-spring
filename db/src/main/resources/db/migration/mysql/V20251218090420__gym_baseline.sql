@@ -469,6 +469,7 @@ CREATE TABLE assets (
   manufactured_date 		datetime(6) NULL,
   end_of_life 				datetime(6) NULL,
   acquisition_date          datetime(6) NULL,
+  `condition`                 varchar(255) NOT NULL,
   status                    varchar(255) NOT NULL,
   remarks 					text NULL,
   -- Not final

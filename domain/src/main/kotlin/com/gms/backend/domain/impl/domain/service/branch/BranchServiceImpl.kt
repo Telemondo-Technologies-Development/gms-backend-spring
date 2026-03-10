@@ -2,6 +2,7 @@ package com.gms.backend.domain.impl.domain.service.branch
 
 import com.gms.backend.domain.application.mapper.branch.BranchMapper
 import com.gms.backend.domain.application.rest.branch.BranchController
+import com.gms.backend.domain.application.rest.member.MemberController
 import com.gms.backend.domain.domain.model.branch.BranchPersonnel
 import com.gms.backend.domain.domain.model.user.Employee
 import com.gms.backend.domain.domain.repository.branch.BranchPersonnelRepository
@@ -60,16 +61,16 @@ class BranchServiceImpl(
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('branch_read')")
     override fun getBranches(pageable: Pageable): Page<BranchController.BranchTableDTO> {
-        return branchRepository.findAll(pageable).map { branch -> branchMapper.branchToDTO(branch) }
+        return branchRepository.findAllProjectedBy(pageable)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('branch_read')")
     override fun getBranchById(id: UUID): BranchController.BranchTableDTO {
-        val branch = branchRepository.findById(id).orElseThrow {
+        val branch = branchRepository.findProjectedBy(id).orElseThrow {
             NoSuchElementException("Branch not found with ID: $id")
         }
-        return branchMapper.branchToDTO(branch)
+        return branch
     }
 
     @Transactional
