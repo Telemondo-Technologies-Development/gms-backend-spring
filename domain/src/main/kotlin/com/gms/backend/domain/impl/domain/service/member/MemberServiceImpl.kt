@@ -2,6 +2,7 @@ package com.gms.backend.domain.impl.domain.service.member
 
 import com.gms.backend.domain.application.mapper.member.MemberMapper
 import com.gms.backend.domain.application.rest.member.MemberController
+import com.gms.backend.domain.domain.model.member.Member
 import com.gms.backend.domain.domain.model.user.Actor
 import com.gms.backend.domain.domain.repository.member.MemberRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
@@ -42,14 +43,26 @@ class MemberServiceImpl(
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('member_read')")
-    override fun getMembers(pageable: Pageable): Page<MemberController.MemberTableDTO> {
-        return memberRepository.findAllProjectedBy(pageable)
+    override fun getMembers(
+        pageable: Pageable,
+        fullName: String?,
+        status: Member.MemberStatus?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): Page<MemberController.MemberTableDTO> {
+        return memberRepository.findAllProjectedBy(pageable, fullName, status, dateFrom, dateTo)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('member_read')")
-    override fun getMemberById(id: UUID): MemberController.MemberTableDTO {
-        val member = memberRepository.findProjectedBy(id).orElseThrow()
+    override fun getMemberById(
+        id: UUID,
+        fullName: String?,
+        status: Member.MemberStatus?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): MemberController.MemberTableDTO {
+        val member = memberRepository.findProjectedBy(id, fullName, status, dateFrom, dateTo).orElseThrow()
         return member
     }
 

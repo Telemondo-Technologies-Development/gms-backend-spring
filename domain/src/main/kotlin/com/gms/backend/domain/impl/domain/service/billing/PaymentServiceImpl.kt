@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -45,10 +46,12 @@ class PaymentServiceImpl(
                 invoiceRepository.save(invoice)
                 invoiceScheduleService.createPendingInvoice(invoice.id)
             }
+
             Payment.PaymentStatus.PARTIAL -> {
                 invoice.apply { status = Invoice.InvoiceStatus.PARTIAL }
                 invoiceRepository.save(invoice)
             }
+
             else -> {
                 // Optional: handle other statuses (e.g., PENDING, FAILED)
             }
@@ -59,15 +62,26 @@ class PaymentServiceImpl(
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('payment_read')")
-    override fun getPayments(pageable: Pageable): Page<PaymentController.PaymentTableDTO> {
-        return paymentRepository.findAllProjectedBy(pageable)
+    override fun getPayments(
+        pageable: Pageable,
+        status: Payment.PaymentStatus?,
+        paymentMethodName: String?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): Page<PaymentController.PaymentTableDTO> {
+        return paymentRepository.findAllProjectedBy(pageable, status, paymentMethodName, dateFrom, dateTo)
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('payment_read')")
-    override fun getPaymentById(id: UUID): PaymentController.PaymentTableDTO {
-        val entity = paymentRepository.findById(id).orElseThrow()
-        return paymentMapper.paymentToPaymentTableDTO(entity)
+    override fun getPaymentById(
+        id: UUID,
+        status: Payment.PaymentStatus?,
+        paymentMethodName: String?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): PaymentController.PaymentTableDTO {
+        return paymentRepository.findByPaymentId(id, status, paymentMethodName, dateFrom, dateTo).orElseThrow()
     }
 
     @Transactional

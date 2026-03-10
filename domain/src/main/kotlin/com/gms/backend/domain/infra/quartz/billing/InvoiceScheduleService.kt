@@ -89,12 +89,15 @@ class InvoiceScheduleService(
         val currentZonedDate = invoice.dueDate.atZone(ZoneId.systemDefault())
 
         val nextZonedDate = when (invoice.subscriptionAvailed.intervals) {
+            BillingCycle.Interval.ONCE -> null
             BillingCycle.Interval.MINUTES -> currentZonedDate.plusMinutes(invoice.subscriptionAvailed.intervalCount.toLong())
             BillingCycle.Interval.DAILY -> currentZonedDate.plusDays(invoice.subscriptionAvailed.intervalCount.toLong())
             BillingCycle.Interval.WEEKLY -> currentZonedDate.plusWeeks(invoice.subscriptionAvailed.intervalCount.toLong())
             BillingCycle.Interval.MONTHLY -> currentZonedDate.plusMonths(invoice.subscriptionAvailed.intervalCount.toLong())
             BillingCycle.Interval.YEARLY -> currentZonedDate.plusYears(invoice.subscriptionAvailed.intervalCount.toLong())
         }
+
+        if (nextZonedDate == null) return
 
         val nextDueDate = nextZonedDate.toInstant()
         // If this date is already in the past, the job will instantly create the invoice
