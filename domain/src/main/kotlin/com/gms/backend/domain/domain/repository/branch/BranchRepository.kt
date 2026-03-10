@@ -1,10 +1,16 @@
 package com.gms.backend.domain.domain.repository.branch
 
+import com.gms.backend.domain.application.rest.asset.BrandController
 import com.gms.backend.domain.application.rest.branch.BranchController
+import com.gms.backend.domain.application.rest.member.MemberController
 import com.gms.backend.domain.domain.model.branch.Branch
+import io.swagger.v3.oas.annotations.media.Schema
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.time.Instant
 import java.util.*
 
 interface BranchRepository : JpaRepository<Branch, UUID> {
@@ -23,4 +29,46 @@ interface BranchRepository : JpaRepository<Branch, UUID> {
     """
     )
     fun findBranchByUserId(@Param("userId") userId: UUID): List<BranchController.BranchListDTO>
+
+    @Query(
+        value = $$"""
+        SELECT new com.gms.backend.domain.application.rest.branch.BranchController$BranchTableDTO(
+            b.id,
+            b.name,
+            b.address,
+            b.longitude,
+            b.latitude,
+            b.status,
+            b.createdById,
+            b.updatedById,
+            b.createdAt,
+            b.updatedAt,
+            b.profilePictureId
+        )
+        FROM Branch b 
+        """,
+        countQuery = "SELECT COUNT(b) FROM Branch b"
+    )
+    fun findAllProjectedBy(pageable: Pageable): Page<BranchController.BranchTableDTO>
+
+    @Query(
+        value = $$"""
+        SELECT new com.gms.backend.domain.application.rest.branch.BranchController$BranchTableDTO(
+            b.id,
+            b.name,
+            b.address,
+            b.longitude,
+            b.latitude,
+            b.status,
+            b.createdById,
+            b.updatedById,
+            b.createdAt,
+            b.updatedAt,
+            b.profilePictureId
+        )
+        FROM Branch b 
+        WHERE b.id = :branchId 
+        """
+    )
+    fun findProjectedBy(@Param("branchId") id: UUID): Optional<BranchController.BranchTableDTO>
 }

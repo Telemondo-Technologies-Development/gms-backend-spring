@@ -36,7 +36,8 @@ class BranchController (
         val createdById: UUID?,
         val updatedById: UUID?,
         val createdAt: Instant,
-        val updatedAt: Instant
+        val updatedAt: Instant,
+        val profilePictureId: UUID?
     )
 
     @Schema(description = "Format for Branch create")

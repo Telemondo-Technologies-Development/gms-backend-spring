@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.PastOrPresent
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
 
@@ -34,16 +35,36 @@ class AssetController(
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
         val acquisitionDate: Instant?,
+        val condition: Asset.AssetCondition,
         val status: Asset.AssetStatus,
         val remarks: String?,
         val createdById: UUID?,
         val updatedById: UUID?,
         val createdAt: Instant,
-        val updatedAt: Instant
+        val updatedAt: Instant,
+        val cost: BigDecimal = BigDecimal.ZERO
     ){
         var brandIds: List<UUID> = emptyList()
         var objectIds: List<UUID> = emptyList()
     }
+
+    @Schema(description = "Format for summarized Asset read")
+    data class AssetSummaryDTO(
+        val id: UUID,
+        val name: String,
+        val branchId: UUID,
+        val assetCategoryId: UUID,
+        val manufacturedDate: Instant?,
+        val endOfLife: Instant?,
+        val acquisitionDate: Instant?,
+        val condition: Asset.AssetCondition,
+        val status: Asset.AssetStatus,
+        val remarks: String?,
+        val createdById: UUID?,
+        val updatedById: UUID?,
+        val createdAt: Instant,
+        val updatedAt: Instant,
+    )
 
     data class AssetMappingDTO(
         val assetId: UUID,
@@ -60,6 +81,7 @@ class AssetController(
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
         val acquisitionDate: Instant?,
+        val condition: Asset.AssetCondition,
         val status: Asset.AssetStatus,
         val remarks: String?,
         val brandIds: List<UUID> = emptyList(),
@@ -94,6 +116,7 @@ class AssetController(
         val manufacturedDate: Instant?,
         val endOfLife: Instant?,
         val acquisitionDate: Instant?,
+        val condition: Asset.AssetCondition,
         val status: Asset.AssetStatus,
         val remarks: String?,
         val brandIds: List<UUID> = emptyList(),

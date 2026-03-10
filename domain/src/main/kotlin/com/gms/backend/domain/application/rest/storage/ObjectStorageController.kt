@@ -51,6 +51,13 @@ class ObjectStorageController(
     fun deleteFile(@PathVariable id: UUID) =
         storageService.deleteFile(id).toOkResponse("file deleted from database and object storage")
 
+    // -- 1. Branch --
+
+    @PostMapping("/upload/branch/profile")
+    @Operation(summary = "(private)")
+    fun uploadBranchProfile(@RequestParam("file") file: MultipartFile) =
+        storageService.uploadFile(file, bucketConfig.private, "branch/profile", storageService.getCurrentActor()).toCreatedResponse("Branch profile uploaded")
+
     // --- 2. EXPENSES & BILLING (Private Bucket) ---
 
     @PostMapping("/upload/expense/receipt")

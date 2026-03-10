@@ -20,12 +20,14 @@ interface AssetRepository : JpaRepository<Asset, UUID> {
                 a.manufacturedDate,
                 a.endOfLife,
                 a.acquisitionDate,
+                a.condition,
                 a.status,
                 a.remarks,
                 a.createdById,
                 a.updatedById,
                 a.createdAt,
-                a.updatedAt
+                a.updatedAt,
+                (SELECT COALESCE(SUM(ae.amount), 0) FROM AssetExpense ae WHERE ae.asset.id = a.id)
             )
             FROM Asset a
         """, countQuery = "SELECT COUNT(a) FROM Asset a")
@@ -57,12 +59,14 @@ interface AssetRepository : JpaRepository<Asset, UUID> {
                 a.manufacturedDate,
                 a.endOfLife,
                 a.acquisitionDate,
+                a.condition,
                 a.status,
                 a.remarks,
                 a.createdById,
                 a.updatedById,
                 a.createdAt,
-                a.updatedAt
+                a.updatedAt,
+                (SELECT COALESCE(SUM(ae.amount), 0) FROM AssetExpense ae WHERE ae.asset.id = a.id)
             )
             FROM Asset a
             WHERE a.id = :id

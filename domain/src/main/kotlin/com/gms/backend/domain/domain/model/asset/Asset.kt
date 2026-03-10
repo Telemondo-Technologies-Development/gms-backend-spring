@@ -24,6 +24,13 @@ class Asset {
         DECOMMISSIONED
     }
 
+    enum class AssetCondition{
+        EXCELLENT,
+        GOOD,
+        FAIR,
+        POOR
+    }
+
     @Id
     @Column(nullable = false, updatable = false, columnDefinition = "binary(16)")
     @GeneratedValue
@@ -60,6 +67,10 @@ class Asset {
 
             return isAfterManufactured && isBeforeEndOfLife
         }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "`condition`", nullable = false)
+    lateinit var condition: AssetCondition
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
