@@ -43,9 +43,14 @@ class AssetController(
         val createdAt: Instant,
         val updatedAt: Instant,
     ){
-        var expenses: List<BigDecimal> = emptyList()
+        var expenses: List<AssetExpenseDTO> = emptyList()
+
+        val totalCost: BigDecimal
+            get() = expenses.sumOf { it.amount }
+
         var brandIds: List<UUID> = emptyList()
         var objectIds: List<UUID> = emptyList()
+
     }
 
     @Schema(description = "Format for summarized Asset read")
@@ -69,6 +74,11 @@ class AssetController(
     data class AssetMappingDTO(
         val assetId: UUID,
         val relatedId: UUID,
+    )
+
+    data class AssetExpenseDTO(
+        val id: UUID,
+        val amount: BigDecimal
     )
 
     @Schema(description = "Format for Asset create")

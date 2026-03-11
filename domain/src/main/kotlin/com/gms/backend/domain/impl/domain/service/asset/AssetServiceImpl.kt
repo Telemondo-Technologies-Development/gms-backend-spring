@@ -116,7 +116,7 @@ class AssetServiceImpl(
         val allExpenses = assetExpenseRepository.findAllByAssetIdIn(assetIds)
         val expensesByAssetId = allExpenses.groupBy(
             { it.asset.id },
-            { it.amount }
+            { AssetController.AssetExpenseDTO(it.id, it.amount) }
         )
 
         // fetch Brands
@@ -135,7 +135,7 @@ class AssetServiceImpl(
 
         return assets.map { asset ->
             asset.apply {
-                expenses = expensesByAssetId.getOrDefault(id, emptyList())
+                this.expenses = expensesByAssetId.getOrDefault(id, emptyList())
                 brandIds = brandsByAssetId.getOrDefault(id, emptyList())
                 objectIds = objectsByAssetId.getOrDefault(id, emptyList())
             }
