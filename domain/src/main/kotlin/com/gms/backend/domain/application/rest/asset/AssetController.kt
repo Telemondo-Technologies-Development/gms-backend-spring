@@ -42,8 +42,8 @@ class AssetController(
         val updatedById: UUID?,
         val createdAt: Instant,
         val updatedAt: Instant,
-        val cost: BigDecimal = BigDecimal.ZERO
     ){
+        var expenses: List<BigDecimal> = emptyList()
         var brandIds: List<UUID> = emptyList()
         var objectIds: List<UUID> = emptyList()
     }

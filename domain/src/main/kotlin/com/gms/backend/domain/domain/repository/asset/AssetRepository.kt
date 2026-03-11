@@ -30,8 +30,7 @@ interface AssetRepository : JpaRepository<Asset, UUID> {
                 a.createdById,
                 a.updatedById,
                 a.createdAt,
-                a.updatedAt,
-                (SELECT COALESCE(SUM(ae.amount), 0) FROM AssetExpense ae WHERE ae.asset.id = a.id)
+                a.updatedAt
             )
             FROM Asset a
             WHERE (:name IS NULL OR LOWER(a.name) LIKE LOWER(CONCAT('%', :name, '%')))
@@ -97,8 +96,7 @@ interface AssetRepository : JpaRepository<Asset, UUID> {
                 a.createdById,
                 a.updatedById,
                 a.createdAt,
-                a.updatedAt,
-                (SELECT COALESCE(SUM(ae.amount), 0) FROM AssetExpense ae WHERE ae.asset.id = a.id)
+                a.updatedAt
             )
             FROM Asset a
             WHERE a.id = :id

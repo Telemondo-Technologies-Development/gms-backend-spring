@@ -14,6 +14,7 @@ import com.gms.backend.domain.domain.repository.asset.AssetRepository
 import com.gms.backend.domain.domain.repository.asset.BrandRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
+import com.gms.backend.domain.domain.repository.expense.AssetExpenseRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.asset.AssetService
@@ -38,7 +39,8 @@ class AssetServiceImpl(
     private val maintenanceScheduleRepository: MaintenanceScheduleRepository,
     private val maintenanceScheduleMapper: MaintenanceScheduleMapper,
     private val maintenanceMapper: AssetMaintenanceMapper,
-    private val brandRepository: BrandRepository
+    private val brandRepository: BrandRepository,
+    private val assetExpenseRepository: AssetExpenseRepository
 ) : AssetService {
 
     @Transactional
@@ -110,6 +112,13 @@ class AssetServiceImpl(
         val assetIds = assets.content.map { it.id }
         if (assetIds.isEmpty()) return assets
 
+        // fetch asset expenses
+        val allExpenses = assetExpenseRepository.findAllByAssetIdIn(assetIds)
+        val expensesByAssetId = allExpenses.groupBy(
+            { it.asset.id },
+            { it.amount }
+        )
+
         // fetch Brands
         val brandMappings = assetRepository.findAllBrandIdsByAssetIds(assetIds)
         val brandsByAssetId = brandMappings.groupBy(
@@ -126,6 +135,7 @@ class AssetServiceImpl(
 
         return assets.map { asset ->
             asset.apply {
+                expenses = expensesByAssetId.getOrDefault(id, emptyList())
                 brandIds = brandsByAssetId.getOrDefault(id, emptyList())
                 objectIds = objectsByAssetId.getOrDefault(id, emptyList())
             }
