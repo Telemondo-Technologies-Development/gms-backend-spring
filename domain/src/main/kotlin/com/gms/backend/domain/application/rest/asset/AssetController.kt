@@ -42,10 +42,15 @@ class AssetController(
         val updatedById: UUID?,
         val createdAt: Instant,
         val updatedAt: Instant,
-        val cost: BigDecimal = BigDecimal.ZERO
     ){
+        var expenses: List<AssetExpenseDTO> = emptyList()
+
+        val totalCost: BigDecimal
+            get() = expenses.sumOf { it.amount }
+
         var brandIds: List<UUID> = emptyList()
         var objectIds: List<UUID> = emptyList()
+
     }
 
     @Schema(description = "Format for summarized Asset read")
@@ -69,6 +74,11 @@ class AssetController(
     data class AssetMappingDTO(
         val assetId: UUID,
         val relatedId: UUID,
+    )
+
+    data class AssetExpenseDTO(
+        val id: UUID,
+        val amount: BigDecimal
     )
 
     @Schema(description = "Format for Asset create")
@@ -154,8 +164,18 @@ class AssetController(
 
     @GetMapping
     @Operation(summary = "Get all Assets")
-    fun getAllAssets(pageable: Pageable) =
-        assetService.getAssets(pageable).toPaginatedResponse()
+    fun getAllAssets(
+        pageable: Pageable,
+        @RequestParam(required = false) name: String?,
+        @RequestParam(required = false) branchId: UUID?,
+        @RequestParam(required = false) categoryId: UUID?,
+        @RequestParam(required = false) status: Asset.AssetStatus?,
+        @RequestParam(required = false) condition: Asset.AssetCondition?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) = assetService.getAssets(
+        pageable, name, branchId, categoryId, condition, status, dateFrom, dateTo
+    ).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get an Asset by ID")

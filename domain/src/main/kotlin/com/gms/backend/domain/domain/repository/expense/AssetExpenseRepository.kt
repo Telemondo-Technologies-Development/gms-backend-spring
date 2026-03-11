@@ -6,4 +6,5 @@ import java.util.*
 
 interface AssetExpenseRepository : JpaRepository<AssetExpense, UUID> {
     fun findAllByAssetExpensesObjectsId(id: UUID): List<AssetExpense>
+    fun findAllByAssetIdIn(assetIds: List<UUID>): List<AssetExpense>
 }

@@ -7,12 +7,14 @@ import com.gms.backend.domain.application.rest.asset.AssetController
 import com.gms.backend.domain.application.rest.asset.AssetMaintenanceController
 import com.gms.backend.domain.application.rest.asset.MaintenanceScheduleController
 import com.gms.backend.domain.application.rest.member.report.ReportController
+import com.gms.backend.domain.domain.model.asset.Asset
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
 import com.gms.backend.domain.domain.repository.asset.BrandRepository
 import com.gms.backend.domain.domain.repository.asset.MaintenanceScheduleRepository
 import com.gms.backend.domain.domain.repository.branch.BranchRepository
+import com.gms.backend.domain.domain.repository.expense.AssetExpenseRepository
 import com.gms.backend.domain.domain.repository.storage.ObjectStorageRepository
 import com.gms.backend.domain.domain.repository.user.ActorRepository
 import com.gms.backend.domain.domain.service.asset.AssetService
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -36,7 +39,8 @@ class AssetServiceImpl(
     private val maintenanceScheduleRepository: MaintenanceScheduleRepository,
     private val maintenanceScheduleMapper: MaintenanceScheduleMapper,
     private val maintenanceMapper: AssetMaintenanceMapper,
-    private val brandRepository: BrandRepository
+    private val brandRepository: BrandRepository,
+    private val assetExpenseRepository: AssetExpenseRepository
 ) : AssetService {
 
     @Transactional
@@ -90,11 +94,30 @@ class AssetServiceImpl(
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('asset_read')")
-    override fun getAssets(pageable: Pageable): Page<AssetController.AssetTableDTO> {
-        val assets = assetRepository.findAllProjectedBy(pageable)
+    override fun getAssets(
+        pageable: Pageable,
+        name: String?,
+        branchId: UUID?,
+        categoryId: UUID?,
+        condition: Asset.AssetCondition?,
+        status: Asset.AssetStatus?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): Page<AssetController.AssetTableDTO> {
+        // Pass the filters to the repository
+        val assets = assetRepository.findAllProjectedBy(
+            pageable, name, branchId, categoryId, condition, status, dateFrom, dateTo
+        )
 
         val assetIds = assets.content.map { it.id }
         if (assetIds.isEmpty()) return assets
+
+        // fetch asset expenses
+        val allExpenses = assetExpenseRepository.findAllByAssetIdIn(assetIds)
+        val expensesByAssetId = allExpenses.groupBy(
+            { it.asset.id },
+            { AssetController.AssetExpenseDTO(it.id, it.amount) }
+        )
 
         // fetch Brands
         val brandMappings = assetRepository.findAllBrandIdsByAssetIds(assetIds)
@@ -112,6 +135,7 @@ class AssetServiceImpl(
 
         return assets.map { asset ->
             asset.apply {
+                this.expenses = expensesByAssetId.getOrDefault(id, emptyList())
                 brandIds = brandsByAssetId.getOrDefault(id, emptyList())
                 objectIds = objectsByAssetId.getOrDefault(id, emptyList())
             }
