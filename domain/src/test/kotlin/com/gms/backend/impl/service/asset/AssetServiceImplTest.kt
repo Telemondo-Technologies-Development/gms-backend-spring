@@ -32,7 +32,10 @@ class AssetServiceImplTest @Autowired constructor(
 
     @Test
     fun testReadAssetLogs() {
-        val logs = assetServiceImpl.getAssets(Pageable.unpaged())
+        val logs = assetServiceImpl.getAssets(
+            Pageable.unpaged(),
+            null, null, null, null, null, null, null
+        )
         assertEquals(3, logs.totalElements)
     }
 

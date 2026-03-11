@@ -7,6 +7,7 @@ import com.gms.backend.domain.application.rest.asset.AssetController
 import com.gms.backend.domain.application.rest.asset.AssetMaintenanceController
 import com.gms.backend.domain.application.rest.asset.MaintenanceScheduleController
 import com.gms.backend.domain.application.rest.member.report.ReportController
+import com.gms.backend.domain.domain.model.asset.Asset
 import com.gms.backend.domain.domain.repository.asset.AssetCategoryRepository
 import com.gms.backend.domain.domain.repository.asset.AssetMaintenanceRepository
 import com.gms.backend.domain.domain.repository.asset.AssetRepository
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -90,8 +92,20 @@ class AssetServiceImpl(
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('asset_read')")
-    override fun getAssets(pageable: Pageable): Page<AssetController.AssetTableDTO> {
-        val assets = assetRepository.findAllProjectedBy(pageable)
+    override fun getAssets(
+        pageable: Pageable,
+        name: String?,
+        branchId: UUID?,
+        categoryId: UUID?,
+        condition: Asset.AssetCondition?,
+        status: Asset.AssetStatus?,
+        dateFrom: Instant?,
+        dateTo: Instant?
+    ): Page<AssetController.AssetTableDTO> {
+        // Pass the filters to the repository
+        val assets = assetRepository.findAllProjectedBy(
+            pageable, name, branchId, categoryId, condition, status, dateFrom, dateTo
+        )
 
         val assetIds = assets.content.map { it.id }
         if (assetIds.isEmpty()) return assets

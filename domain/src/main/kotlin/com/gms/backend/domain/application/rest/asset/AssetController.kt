@@ -154,8 +154,18 @@ class AssetController(
 
     @GetMapping
     @Operation(summary = "Get all Assets")
-    fun getAllAssets(pageable: Pageable) =
-        assetService.getAssets(pageable).toPaginatedResponse()
+    fun getAllAssets(
+        pageable: Pageable,
+        @RequestParam(required = false) name: String?,
+        @RequestParam(required = false) branchId: UUID?,
+        @RequestParam(required = false) categoryId: UUID?,
+        @RequestParam(required = false) status: Asset.AssetStatus?,
+        @RequestParam(required = false) condition: Asset.AssetCondition?,
+        @RequestParam(required = false) dateFrom: Instant?,
+        @RequestParam(required = false) dateTo: Instant?
+    ) = assetService.getAssets(
+        pageable, name, branchId, categoryId, condition, status, dateFrom, dateTo
+    ).toPaginatedResponse()
 
     @GetMapping("/{id}")
     @Operation(summary = "Get an Asset by ID")
